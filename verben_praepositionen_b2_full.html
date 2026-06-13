@@ -539,12 +539,12 @@ function getBestGermanVoice() {
     const nameL = v.name.toLowerCase();
     let score = 0;
     
+    if (nameL.includes('siri')) score += 150;
     if (nameL.includes('yannick')) score += 100;
     if (nameL.includes('marlene')) score += 100;
     if (nameL.includes('anna')) score += 80;
     if (nameL.includes('martin')) score += 80;
     if (nameL.includes('helen')) score += 80;
-    if (nameL.includes('siri')) score += 50;
     if (nameL.includes('enhanced')) score += 40;
     if (nameL.includes('premium')) score += 40;
     if (nameL.includes('natural')) score += 30;
