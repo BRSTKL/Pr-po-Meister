@@ -96,6 +96,16 @@
 .speak-btn svg { width:18px; height:18px; }
 .fc-speak { position:absolute; top:12px; right:12px; color:var(--color-text-secondary); z-index:5; }
 .fc-speak:hover { color:var(--color-text-primary); }
+.pa-opt-grid { display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; margin-bottom:12px; }
+.pa-opt-grid-prefix { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px; }
+.pa-opt-btn { padding:10px 8px; border-radius:var(--border-radius-md, 6px); border:0.5px solid var(--color-border-secondary); background:var(--color-background-secondary); cursor:pointer; font-size:13px; color:var(--color-text-primary); font-family:var(--font-sans); text-align:center; transition:all .15s ease; -webkit-tap-highlight-color:transparent; font-weight:500; }
+.pa-opt-btn:active:not(:disabled) { transform:scale(0.95); background:rgba(55,138,221,0.08); }
+.pa-opt-btn.selected { background:rgba(55,138,221,0.08)!important; border-color:#378ADD!important; color:#378ADD!important; }
+.pa-opt-btn.correct { background:#EAF3DE!important; border-color:#C0DD97!important; color:#27500A!important; }
+.pa-opt-btn.wrong { background:#FCEBEB!important; border-color:#F7C1C1!important; color:#791F1F!important; }
+.pa-opt-lbl { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--color-text-secondary); margin-bottom:6px; text-align:left; }
+.pa-formula { display:flex; align-items:center; justify-content:center; gap:10px; font-size:16px; font-weight:700; margin-top:12px; padding:10px; background:var(--color-background-secondary); border-radius:var(--border-radius-md, 6px); border:1px dashed var(--color-border-secondary); color:var(--color-text-secondary); }
+.pa-formula .val { color:#378ADD; border-bottom:2px solid #378ADD; min-width:40px; text-align:center; }
 </style>
 
 <div class="app">
@@ -371,6 +381,7 @@ let fcIdx=0;
 let fcFlip=false;
 let qData=[],qIdx=0,qScore=0,qAnswered=false;
 let pqData=[],pqIdx=0,pqScore=0,pqAnswered=false;
+let selectedPA = { prefix: '', prep: '' };
 
 function speak(text){
   if('speechSynthesis' in window){
@@ -600,55 +611,133 @@ function renderPAQuiz(){
   }
   const q=pqData[pqIdx];
   const pct=Math.round(pqIdx/pqData.length*100);
-  const type=pqIdx%3;
-  let qHTML='',opts=[],correct='',exText='',trText='';
-  if(type===0){
-    const blank=q.ex_da.replace(new RegExp(q.dar,'i'),'___');
-    const dist=PA.filter(p=>p.dar!==q.dar).sort(()=>Math.random()-0.5).slice(0,3).map(p=>p.dar);
-    opts=[...new Set([...dist,q.dar])].sort(()=>Math.random()-0.5).slice(0,4);
-    if(!opts.includes(q.dar))opts[3]=q.dar;
-    opts=opts.sort(()=>Math.random()-0.5);
-    correct=q.dar;
-    qHTML=`<div class="qtype">Doğru da(r)+Präp formunu seç</div><div class="qsent">${blank.replace('___','<span class="blank">___</span>')}</div>`;
-    exText=q.ex_da;
-    trText=q.ex_da_tr;
-  } else if(type===1){
-    const dist=PA.filter(p=>p.wor!==q.wor).sort(()=>Math.random()-0.5).slice(0,3).map(p=>p.wor);
-    opts=[...dist,q.wor].sort(()=>Math.random()-0.5);correct=q.wor;
-    qHTML=`<div class="qtype">Hangi wo(r)+ sorusu?</div><div class="qsent"><strong>${q.verb}</strong> + ${q.prep}</div><div style="font-size:12px;color:var(--color-text-secondary);margin-top:-8px;margin-bottom:12px">İpucu: ${q.ex_wo_tr}</div>`;
-    exText=q.ex_wo;
-    trText=q.ex_wo_tr;
-  } else {
-    const blank=q.ex_wo.replace(new RegExp(q.wor,'i'),'___');
-    const dist=PA.filter(p=>p.wor!==q.wor).sort(()=>Math.random()-0.5).slice(0,3).map(p=>p.wor);
-    opts=[...dist,q.wor].sort(()=>Math.random()-0.5);correct=q.wor;
-    qHTML=`<div class="qtype">Soruyu tamamla</div><div class="qsent">${blank.replace('___','<span class="blank">___</span>')}</div><div style="font-size:12px;color:var(--color-text-secondary);margin-top:-8px;margin-bottom:12px">${q.ex_wo_tr}</div>`;
-    exText=q.ex_wo;
-    trText=q.ex_wo_tr;
-  }
+  
+  selectedPA = { prefix: '', prep: '' };
+  pqAnswered = false;
+
+  const preps = ['auf', 'über', 'für', 'an', 'mit', 'von', 'vor', 'zu'];
+
   c.innerHTML=`<div class="ptxt">${pqIdx+1} / ${pqData.length}</div>
   <div class="pbar"><div class="pfill" style="width:${pct}%"></div></div>
-  <div class="qcard">${qHTML}
-    <div class="opts">${opts.map(o=>`<button class="obtn" onclick="checkPA(this,'${o}','${correct}','${exText.replace(/'/g,"&#39;")}','${trText.replace(/'/g,"&#39;")}')">${o}</button>`).join('')}</div>
+  <div class="qcard">
+    <div class="qtype">Edat ve da(r) Önekini Eşleştirin</div>
+    <div style="text-align:center;font-size:14px;color:var(--color-text-secondary);margin-bottom:4px;">Fiil:</div>
+    <div class="qsent" style="font-size:24px;margin-bottom:4px;"><strong>${q.verb}</strong></div>
+    
+    <div class="pa-formula">
+      <span class="val" id="pa-formula-prefix">Önek</span> + <span class="val" id="pa-formula-prep">Edat</span>
+    </div>
+
+    <div style="margin-top:16px;">
+      <div class="pa-opt-lbl">1. Önek Seçin</div>
+      <div class="pa-opt-grid-prefix">
+        <button class="pa-opt-btn" id="pa-pref-da" onclick="selectPAPrefix('da')">da-</button>
+        <button class="pa-opt-btn" id="pa-pref-dar" onclick="selectPAPrefix('dar')">dar-</button>
+      </div>
+
+      <div class="pa-opt-lbl">2. Edat Seçin</div>
+      <div class="pa-opt-grid">
+        ${preps.map(p=>`<button class="pa-opt-btn" id="pa-prep-${p}" onclick="selectPAPrep('${p}')">${p}</button>`).join('')}
+      </div>
+    </div>
+
+    <button class="nbtn" id="pa-check-btn" onclick="checkPAQuizAnswer()" disabled style="width:100%;margin-top:12px;text-align:center;">Kontrol Et</button>
     <div id="pafb"></div>
   </div>`;
-  pqAnswered=false;
 }
 
-function checkPA(btn,chosen,correct,ex,tr){
-  if(pqAnswered)return;pqAnswered=true;
-  const isOk=chosen===correct;
-  if(isOk)pqScore++;
-  document.querySelectorAll('#paquiz-c .obtn').forEach(b=>{
-    b.disabled=true;
-    const t=b.textContent.trim();
-    if(t===correct)b.classList.add(isOk&&t===chosen?'correct':'show-ok');
-    else if(t===chosen&&!isOk)b.classList.add('wrong');
-  });
-  document.getElementById('pafb').innerHTML=`<div class="fb2 ${isOk?'ok':'no'}">${isOk?'✓ Doğru!':'✗ Yanlış — Doğru: <strong>'+correct+'</strong>'}<div style="margin-top:4px;font-size:12px;opacity:.85;display:flex;align-items:center;justify-content:space-between;gap:8px;"><div>📌 ${ex}</div><button class="speak-btn" onclick="speak('${ex.replace(/'/g, "\\'")}')" style="padding:2px;color:inherit;opacity:0.8;" title="Telaffuz et"><svg viewBox="0 0 24 24" style="width:14px;height:14px;"><path fill="currentColor" d="M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.85 14,18.71V20.77C18,19.86 21,16.28 21,12C21,7.72 18,4.14 14,3.23M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16C15.5,15.29 16.5,13.77 16.5,12M3,9V15H7L12,20V4L7,9H3Z"/></svg></button></div><div style="font-size:11px;opacity:.7;margin-top:2px">${tr}</div></div>
-  <button class="nbtn" onclick="nextPA()">${pqIdx+1>=pqData.length?'Sonuçları gör':'Sonraki →'}</button>`;
-  speak(ex);
+function selectPAPrefix(val){
+  if(pqAnswered)return;
+  selectedPA.prefix=val;
+  document.getElementById('pa-formula-prefix').textContent=val;
+  document.getElementById('pa-pref-da').classList.toggle('selected',val==='da');
+  document.getElementById('pa-pref-dar').classList.toggle('selected',val==='dar');
+  validatePASelection();
 }
+
+function selectPAPrep(val){
+  if(pqAnswered)return;
+  selectedPA.prep=val;
+  document.getElementById('pa-formula-prep').textContent=val;
+  ['auf', 'über', 'für', 'an', 'mit', 'von', 'vor', 'zu'].forEach(p=>{
+    const el=document.getElementById('pa-prep-'+p);
+    if(el)el.classList.toggle('selected',p===val);
+  });
+  validatePASelection();
+}
+
+function validatePASelection(){
+  const btn=document.getElementById('pa-check-btn');
+  if(btn){
+    btn.disabled=!(selectedPA.prefix && selectedPA.prep);
+  }
+}
+
+function checkPAQuizAnswer(){
+  if(pqAnswered)return;pqAnswered=true;
+  const q=pqData[pqIdx];
+  const chosenPrefix=selectedPA.prefix;
+  const chosenPrep=selectedPA.prep;
+  
+  const correctPrep=q.prep;
+  const correctPrefix=q.dar.replace(q.prep,'');
+  
+  const isPrepCorrect=chosenPrep===correctPrep;
+  const isPrefixCorrect=chosenPrefix===correctPrefix;
+  const isOk=isPrepCorrect && isPrefixCorrect;
+  
+  if(isOk)pqScore++;
+  if(typeof adjustWordScore === 'function') adjustWordScore(q.verb,q.prep,isOk?1:-2);
+  
+  // Style prefix buttons
+  document.getElementById('pa-pref-da').classList.remove('selected');
+  document.getElementById('pa-pref-dar').classList.remove('selected');
+  document.getElementById('pa-pref-'+correctPrefix).classList.add('correct');
+  if(!isPrefixCorrect){
+    document.getElementById('pa-pref-'+chosenPrefix).classList.add('wrong');
+  }
+  
+  // Style prep buttons
+  ['auf', 'über', 'für', 'an', 'mit', 'von', 'vor', 'zu'].forEach(p=>{
+    const el=document.getElementById('pa-prep-'+p);
+    if(el){
+      el.classList.remove('selected');
+      el.disabled=true;
+      if(p===correctPrep)el.classList.add('correct');
+      else if(p===chosenPrep && !isPrepCorrect)el.classList.add('wrong');
+    }
+  });
+  document.getElementById('pa-pref-da').disabled=true;
+  document.getElementById('pa-pref-dar').disabled=true;
+  
+  // Update formula text color based on correctness
+  document.getElementById('pa-formula-prefix').style.color=isPrefixCorrect?'#27500A':'#791F1F';
+  document.getElementById('pa-formula-prep').style.color=isPrepCorrect?'#27500A':'#791F1F';
+  
+  // Generate smart feedback message
+  let fbText='';
+  if(isOk){
+    fbText=`🎉 <strong>Doğru!</strong> <strong>${q.verb} + ${q.prep}</strong> yapısı <strong>${q.dar}</strong> (sorusu: <strong>${q.wor}</strong>) formunu oluşturur.`;
+  } else if(isPrepCorrect && !isPrefixCorrect){
+    fbText=`✗ <strong>Önek Yanlış!</strong> <strong>${q.verb} + ${q.prep}</strong> eşleşmesi doğru. Ancak <strong>${q.prep}</strong> sesli harfle başladığı için kaynaştırma 'r' alarak <strong>${q.dar}</strong> olmalıdır.`;
+  } else {
+    fbText=`✗ <strong>Yanlış!</strong> <strong>${q.verb}</strong> fiili <strong>${q.prep}</strong> edatı ile kullanılır ➔ <strong>${q.dar}</strong> (sorusu: <strong>${q.wor}</strong>).`;
+  }
+  
+  const fbDiv=document.getElementById('pafb');
+  fbDiv.innerHTML=`<div class="fb2 ${isOk?'ok':'no'}">${fbText}
+    <div style="margin-top:4px;font-size:12px;opacity:.85;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+      <div>📌 ${q.ex_da}</div>
+      <button class="speak-btn" onclick="speak('${q.ex_da.replace(/'/g, "\\'")}')" style="padding:2px;color:inherit;opacity:0.8;" title="Telaffuz et"><svg viewBox="0 0 24 24" style="width:14px;height:14px;"><path fill="currentColor" d="M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.85 14,18.71V20.77C18,19.86 21,16.28 21,12C21,7.72 18,4.14 14,3.23M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16C15.5,15.29 16.5,13.77 16.5,12M3,9V15H7L12,20V4L7,9H3Z"/></svg></button>
+    </div>
+    <div style="font-size:11px;opacity:.7;margin-top:2px">${q.ex_da_tr}</div>
+  </div>
+  <button class="nbtn" onclick="nextPA()" style="width:100%;margin-top:12px;text-align:center;">${pqIdx+1>=pqData.length?'Sonuçları gör':'Sonraki →'}</button>`;
+  
+  document.getElementById('pa-check-btn').style.display='none';
+  speak(q.ex_da);
+}
+
 function nextPA(){pqIdx++;renderPAQuiz();}
 
 renderListe();
