@@ -1466,6 +1466,7 @@ function checkQ(btn){
   const fb=document.getElementById('qfb');
   fb.innerHTML=`<div class="fb2 ${isOk?'ok':'no'}">${isOk?'✓ Doğru!':'✗ Yanlış — Doğru: <strong>'+correct+'</strong>'}<div style="margin-top:6px;font-size:12px;opacity:.85;display:flex;align-items:center;justify-content:space-between;gap:8px;"><div>📌 ${ex}</div><button class="speak-btn" onclick="speak('${ex.replace(/'/g, "\\'")}')" style="padding:2px;color:inherit;opacity:0.8;" title="Telaffuz et"><svg viewBox="0 0 24 24" style="width:14px;height:14px;"><path fill="currentColor" d="M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.85 14,18.71V20.77C18,19.86 21,16.28 21,12C21,7.72 18,4.14 14,3.23M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16C15.5,15.29 16.5,13.77 16.5,12M3,9V15H7L12,20V4L7,9H3Z"/></svg></button></div><div style="font-size:11px;opacity:.7;margin-top:3px">${tr}</div></div>
   <button class="nbtn" onclick="nextQ()">${qIdx+1>=qData.length?'Sonuçları Gör':'Sonraki →'}</button>`;
+  speak(ex);
 }
 function nextQ(){qIdx++;renderQuiz();}
 
@@ -1559,6 +1560,7 @@ function checkPA(btn){
   });
   document.getElementById('pafb').innerHTML=`<div class="fb2 ${isOk?'ok':'no'}">${isOk?'✓ Doğru!':'✗ Yanlış — Doğru: <strong>'+correct+'</strong>'}<div style="margin-top:6px;font-size:12px;opacity:.85;display:flex;align-items:center;justify-content:space-between;gap:8px;"><div>📌 ${ex}</div><button class="speak-btn" onclick="speak('${ex.replace(/'/g, "\\'")}')" style="padding:2px;color:inherit;opacity:0.8;" title="Telaffuz et"><svg viewBox="0 0 24 24" style="width:14px;height:14px;"><path fill="currentColor" d="M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.85 14,18.71V20.77C18,19.86 21,16.28 21,12C21,7.72 18,4.14 14,3.23M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16C15.5,15.29 16.5,13.77 16.5,12M3,9V15H7L12,20V4L7,9H3Z"/></svg></button></div><div style="font-size:11px;opacity:.7;margin-top:3px">${tr}</div></div>
   <button class="nbtn" onclick="nextPA()">${pqIdx+1>=pqData.length?'Sonuçları Gör':'Sonraki →'}</button>`;
+  speak(ex);
 }
 function nextPA(){pqIdx++;renderPAQuiz();}
 
