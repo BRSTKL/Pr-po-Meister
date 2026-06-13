@@ -777,7 +777,7 @@ function checkPAQuizAnswer(){
   const isOk=isPrepCorrect && isPrefixCorrect;
   
   if(isOk)pqScore++;
-  if(typeof adjustWordScore === 'function') adjustWordScore(q.verb,q.prep,isOk?1:-2);
+  if(typeof adjustPAWordScore === 'function') adjustPAWordScore(q.verb,q.prep,isOk?1:-2);
   
   // Style prefix buttons
   document.getElementById('pa-pref-da').classList.remove('selected');

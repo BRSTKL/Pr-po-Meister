@@ -1020,12 +1020,14 @@ function getWordKey(v,p){
 
 function getWordState(v,p){
   const key=getWordKey(v,p);
-  return userProgress[key]||{score:0,starred:false};
+  const state=userProgress[key]||{score:0,paScore:0,starred:false};
+  if(state.paScore===undefined)state.paScore=0;
+  return state;
 }
 
 function setWordScore(v,p,score){
   const key=getWordKey(v,p);
-  if(!userProgress[key])userProgress[key]={score:0,starred:false};
+  if(!userProgress[key])userProgress[key]={score:0,paScore:0,starred:false};
   userProgress[key].score=Math.max(0,Math.min(5,score));
   saveProgress();
   updateProgressUI();
@@ -1037,9 +1039,22 @@ function adjustWordScore(v,p,delta){
   setWordScore(v,p,newScore);
 }
 
+function setPAWordScore(v,p,score){
+  const key=getWordKey(v,p);
+  if(!userProgress[key])userProgress[key]={score:0,paScore:0,starred:false};
+  userProgress[key].paScore=Math.max(0,Math.min(5,score));
+  saveProgress();
+}
+
+function adjustPAWordScore(v,p,delta){
+  const state=getWordState(v,p);
+  const newScore=Math.max(0,Math.min(5,(state.paScore || 0)+delta));
+  setPAWordScore(v,p,newScore);
+}
+
 function toggleWordStar(v,p){
   const key=getWordKey(v,p);
-  if(!userProgress[key])userProgress[key]={score:0,starred:false};
+  if(!userProgress[key])userProgress[key]={score:0,paScore:0,starred:false};
   userProgress[key].starred=!userProgress[key].starred;
   saveProgress();
   updateProgressUI();
@@ -1119,7 +1134,7 @@ function getWeightedRandomSamplePA(pool, sampleSize){
     let totalWeight = 0;
     const itemWeights = tempPool.map(v => {
       const state = getWordState(v.verb, v.prep);
-      const score = state.score !== undefined ? state.score : 0;
+      const score = state.paScore !== undefined ? state.paScore : 0;
       const w = weightMap[score] !== undefined ? weightMap[score] : 1.0;
       totalWeight += w;
       return w;
@@ -1714,7 +1729,7 @@ function checkPAQuizAnswer(){
   const isOk=isPrepCorrect && isPrefixCorrect;
   
   if(isOk)pqScore++;
-  adjustWordScore(q.verb,q.prep,isOk?1:-2);
+  adjustPAWordScore(q.verb,q.prep,isOk?1:-2);
   
   // Style prefix buttons
   document.getElementById('pa-pref-da').classList.remove('selected');
