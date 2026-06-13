@@ -1458,7 +1458,7 @@ function renderPAQuiz(){
   const type=pqIdx%3;
   let qHTML='',opts=[],correct='';
   if(type===0){
-    const blank=q.ex_da.replace(q.dar,'___');
+    const blank=q.ex_da.replace(new RegExp(q.dar,'i'),'___');
     const dist=PA.filter(p=>p.dar!==q.dar).sort(()=>Math.random()-0.5).slice(0,3).map(p=>p.dar);
     opts=[...new Set([...dist,q.dar])].sort(()=>Math.random()-0.5).slice(0,4);
     if(!opts.includes(q.dar))opts[3]=q.dar;
@@ -1476,7 +1476,7 @@ function renderPAQuiz(){
     currentQuestion.ex = q.ex_wo;
     currentQuestion.tr = q.ex_wo_tr;
   } else {
-    const blank=q.ex_wo.replace(q.wor,'___');
+    const blank=q.ex_wo.replace(new RegExp(q.wor,'i'),'___');
     const dist=PA.filter(p=>p.wor!==q.wor).sort(()=>Math.random()-0.5).slice(0,3).map(p=>p.wor);
     opts=[...dist,q.wor].sort(()=>Math.random()-0.5);correct=q.wor;
     qHTML=`<div class="qtype">Soruyu tamamla</div><div class="qsent">${blank.replace('___','<span class="blank">___</span>')}</div><div style="font-size:12px;color:var(--text-2);margin-top:-8px;margin-bottom:12px">${q.ex_wo_tr}</div>`;
