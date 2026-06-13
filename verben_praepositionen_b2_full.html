@@ -334,7 +334,7 @@ const V=[
 {v:"absehen",p:"von",k:"Dat",l:"B2",m:"(bir şeyi) göz ardı etmek",ex:"Abgesehen von dieser Frage war alles gut.",tr:"Bu sorun dışında her şey iyiydi."},
 ];
 
-const PA=[
+const staticPA=[
 {verb:"warten",prep:"auf",dar:"darauf",wor:"worauf",ex_da:"Ich warte darauf, dass er anruft.",ex_wo:"Worauf wartest du?",ex_da_tr:"Onun aramasını bekliyorum.",ex_wo_tr:"Neyi bekliyorsun?"},
 {verb:"sich freuen",prep:"auf",dar:"darauf",wor:"worauf",ex_da:"Ich freue mich darauf, dich zu sehen.",ex_wo:"Worauf freust du dich?",ex_da_tr:"Seni görmekten mutluyum.",ex_wo_tr:"Neye sevinerek bekliyorsun?"},
 {verb:"sich freuen",prep:"über",dar:"darüber",wor:"worüber",ex_da:"Ich freue mich darüber, dass du da bist.",ex_wo:"Worüber freust du dich?",ex_da_tr:"Burada olduğuna sevindim.",ex_wo_tr:"Neye seviniyorsun?"},
@@ -383,6 +383,37 @@ let qData=[],qIdx=0,qScore=0,qAnswered=false;
 let pqData=[],pqIdx=0,pqScore=0,pqAnswered=false;
 let selectedPA = { prefix: '', prep: '' };
 let paQuizSettings = { level: 'all', kasus: 'all' };
+let PA = [];
+
+function initPAData() {
+  const vowels = ['a', 'e', 'i', 'o', 'u', 'ä', 'ö', 'ü', 'A', 'E', 'I', 'O', 'U', 'Ä', 'Ö', 'Ü'];
+  PA = V.map(v => {
+    const staticMatch = staticPA.find(sp => sp.verb === v.v && sp.prep === v.p);
+    if (staticMatch) {
+      return {
+        ...staticMatch,
+        level: v.l,
+        kasus: v.k
+      };
+    }
+    const firstChar = v.p.charAt(0);
+    const isVowel = vowels.includes(firstChar);
+    const dar = isVowel ? 'dar' + v.p : 'da' + v.p;
+    const wor = isVowel ? 'wor' + v.p : 'wo' + v.p;
+    return {
+      verb: v.v,
+      prep: v.p,
+      dar: dar,
+      wor: wor,
+      ex_da: v.ex,
+      ex_da_tr: v.tr,
+      ex_wo: `${wor} + ${v.v}?`,
+      ex_wo_tr: '',
+      level: v.l,
+      kasus: v.k
+    };
+  });
+}
 
 function speak(text){
   if('speechSynthesis' in window){
@@ -833,5 +864,6 @@ function nextPA(){pqIdx++;renderPAQuiz();}
 renderListe();
 applyFCFilter();
 renderFC();
+initPAData();
 renderPATable();
 </script>
