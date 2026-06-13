@@ -89,6 +89,97 @@
 .slbl{font-size:14px;color:var(--color-text-secondary);margin-bottom:1.25rem}
 .rbtn{padding:8px 20px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:transparent;cursor:pointer;font-size:14px;font-family:var(--font-sans);color:var(--color-text-primary)}
 .fncnt{font-size:13px;color:var(--color-text-secondary);padding:0 10px}
+
+/* Autoplay Panel */
+.autoplay-panel {
+  background: var(--color-background-secondary);
+  border: 0.5px solid var(--color-border-secondary);
+  border-radius: var(--border-radius-lg);
+  padding: 14px;
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.autoplay-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.autoplay-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.autoplay-status {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  text-align: center;
+  min-height: 18px;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+.autoplay-status.active {
+  color: #378ADD;
+}
+.autoplay-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.autoplay-play-btn {
+  flex: 1;
+  padding: 8px 16px;
+  border-radius: var(--border-radius-md);
+  background: #378ADD;
+  color: #fff;
+  border: none;
+  font-weight: 500;
+  font-size: 13px;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.autoplay-play-btn:active {
+  transform: scale(0.96);
+}
+.autoplay-play-btn.playing {
+  background: #D9534F;
+}
+.autoplay-speed-container {
+  display: flex;
+  gap: 4px;
+  background: var(--color-background-primary);
+  border: 0.5px solid var(--color-border-tertiary);
+  padding: 2px;
+  border-radius: var(--border-radius-md);
+}
+.autoplay-speed-btn {
+  padding: 5px 10px;
+  border-radius: var(--border-radius-sm, 4px);
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  font-weight: 500;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: all 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.autoplay-speed-btn.on {
+  background: var(--color-background-secondary);
+  color: var(--color-text-primary);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
 .section-title{font-size:14px;font-weight:500;color:var(--color-text-secondary);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
 .speak-btn { background:none; border:none; cursor:pointer; color:var(--color-text-secondary); padding:6px; display:inline-flex; align-items:center; justify-content:center; border-radius:var(--border-radius-sm, 4px); transition:all 0.2s ease; -webkit-tap-highlight-color:transparent; }
 .speak-btn:hover { color:var(--color-text-primary); background:var(--color-background-secondary); }
@@ -178,6 +269,26 @@
       <button class="fnbtn" onclick="fcMove(1)">Sonraki →</button>
     </div>
     <div style="margin-top:10px;text-align:center"><button class="fnbtn" onclick="shuffleFC()" style="font-size:12px">Karıştır</button></div>
+    <!-- Eller Serbest Modu -->
+    <div class="autoplay-panel">
+      <div class="autoplay-header">
+        <div class="autoplay-title">🎧 Eller Serbest (Otomatik Oynat)</div>
+        <div style="font-size: 11px; color: var(--color-text-secondary); font-weight: 500;">
+          Ses: <span class="active-voice-name" style="color: #378ADD;">Yükleniyor...</span>
+        </div>
+      </div>
+      <div class="autoplay-status" id="fc-autoplay-status">Duraklatıldı</div>
+      <div class="autoplay-controls">
+        <button class="autoplay-play-btn" id="fc-autoplay-btn" onclick="toggleFCAutoPlay()">
+          ▶️ Oynat
+        </button>
+        <div class="autoplay-speed-container">
+          <button class="autoplay-speed-btn" id="fc-speed-slow" onclick="setFCAutoPlaySpeed('slow')">Yavaş</button>
+          <button class="autoplay-speed-btn on" id="fc-speed-normal" onclick="setFCAutoPlaySpeed('normal')">Normal</button>
+          <button class="autoplay-speed-btn" id="fc-speed-fast" onclick="setFCAutoPlaySpeed('fast')">Hızlı</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -455,11 +566,34 @@ function getBestGermanVoice() {
 if ('speechSynthesis' in window) {
   window.speechSynthesis.onvoiceschanged = () => {
     selectedDeVoice = getBestGermanVoice();
+    updateActiveVoiceIndicator();
   };
   selectedDeVoice = getBestGermanVoice();
 }
 
-function speak(text){
+function updateActiveVoiceIndicator() {
+  if (!selectedDeVoice) {
+    selectedDeVoice = getBestGermanVoice();
+  }
+  let voiceText = "⚠️ Ses yüklenemedi (Desteklenmiyor)";
+  if ('speechSynthesis' in window) {
+    if (selectedDeVoice) {
+      voiceText = selectedDeVoice.name + ' (' + selectedDeVoice.lang + ')';
+    } else {
+      voiceText = "⚠️ Almanca Ses Paketi Eksik!";
+    }
+  }
+  document.querySelectorAll('.active-voice-name').forEach(el => {
+    el.textContent = voiceText;
+    if (selectedDeVoice) {
+      el.style.color = "#378ADD";
+    } else {
+      el.style.color = "#D9534F";
+    }
+  });
+}
+
+function speak(text, callback){
   if('speechSynthesis' in window){
     window.speechSynthesis.cancel();
     const u=new SpeechSynthesisUtterance(text);
@@ -472,7 +606,38 @@ function speak(text){
     if(selectedDeVoice) u.voice = selectedDeVoice;
     u.rate = 0.90;
     u.pitch = 1.0;
+    
+    let callbackCalled = false;
+    const triggerCallback = () => {
+      if (callbackCalled) return;
+      callbackCalled = true;
+      if (callback) callback();
+    };
+    
+    u.onend = () => {
+      setTimeout(triggerCallback, 50);
+    };
+    
+    u.onerror = (err) => {
+      console.warn("TTS speak error:", err);
+      setTimeout(triggerCallback, 50);
+    };
+    
+    const fallbackTimer = setTimeout(() => {
+      triggerCallback();
+    }, 12000);
+    
+    const originalCallback = callback;
+    callback = () => {
+      clearTimeout(fallbackTimer);
+      if (originalCallback) originalCallback();
+    };
+    
     window.speechSynthesis.speak(u);
+  } else {
+    if (callback) {
+      setTimeout(callback, 1500);
+    }
   }
 }
 function speakCurrentFCVerb(){
@@ -487,6 +652,9 @@ function speakCurrentFCExample(){
 }
 
 function switchTab(n){
+  if (n !== 'karten' && typeof stopFCAutoPlay === 'function') {
+    stopFCAutoPlay();
+  }
   document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['liste','karten','quiz','pa','paquiz'][i]===n));
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.getElementById('sec-'+n).classList.add('active');
@@ -616,6 +784,7 @@ function renderFC(){
   document.getElementById('fc-back').classList.remove('vis');
   document.getElementById('fc-front').style.display='block';
   document.getElementById('fc-cnt').textContent=(fcIdx+1)+' / '+fcData.length;
+  updateActiveVoiceIndicator();
 }
 
 function flipCard(){
@@ -626,6 +795,133 @@ function flipCard(){
 
 function fcMove(d){fcIdx=(fcIdx+d+fcData.length)%fcData.length;renderFC();}
 function shuffleFC(){fcData=[...fcData].sort(()=>Math.random()-0.5);fcIdx=0;renderFC();}
+
+// CARD AUTOPLAY (ELLER SERBEST)
+let fcAutoPlay = false;
+let fcTimer = null;
+let fcSpeed = 'normal'; // 'slow', 'normal', 'fast'
+
+const fcSpeedSettings = {
+  slow: { front: 4000, back: 5000 },
+  normal: { front: 2500, back: 3500 },
+  fast: { front: 1500, back: 2200 }
+};
+
+function toggleFCAutoPlay() {
+  if (fcAutoPlay) {
+    stopFCAutoPlay();
+  } else {
+    startFCAutoPlay();
+  }
+}
+
+function startFCAutoPlay() {
+  fcAutoPlay = true;
+  
+  const btn = document.getElementById('fc-autoplay-btn');
+  if (btn) {
+    btn.innerHTML = '⏸️ Duraklat';
+    btn.classList.add('playing');
+  }
+  const statusEl = document.getElementById('fc-autoplay-status');
+  if (statusEl) {
+    statusEl.classList.add('active');
+  }
+  
+  if (fcFlip) {
+    flipCard();
+  }
+  
+  runFCAutoPlayLoop();
+}
+
+function stopFCAutoPlay() {
+  fcAutoPlay = false;
+  if (fcTimer) {
+    clearTimeout(fcTimer);
+    fcTimer = null;
+  }
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+  }
+  
+  const btn = document.getElementById('fc-autoplay-btn');
+  if (btn) {
+    btn.innerHTML = '▶️ Oynat';
+    btn.classList.remove('playing');
+  }
+  const statusEl = document.getElementById('fc-autoplay-status');
+  if (statusEl) {
+    statusEl.textContent = 'Duraklatıldı';
+    statusEl.classList.remove('active');
+  }
+}
+
+function setFCAutoPlaySpeed(speed) {
+  fcSpeed = speed;
+  ['slow', 'normal', 'fast'].forEach(s => {
+    const el = document.getElementById('fc-speed-' + s);
+    if (el) el.classList.toggle('on', s === speed);
+  });
+}
+
+function runFCAutoPlayLoop() {
+  if (!fcAutoPlay) return;
+  if (!fcData || !fcData.length) return;
+  
+  const v = fcData[fcIdx];
+  const speed = fcSpeedSettings[fcSpeed] || fcSpeedSettings.normal;
+  const statusEl = document.getElementById('fc-autoplay-status');
+  
+  if (statusEl) statusEl.textContent = '🔊 Almanca fiil seslendiriliyor...';
+  
+  speak(v.v + ' ' + v.p, () => {
+    if (!fcAutoPlay) return;
+    
+    let countdown = Math.round(speed.front / 1000);
+    if (statusEl) statusEl.textContent = '⏳ Çeviriyi düşünün... (' + countdown + 's)';
+    
+    const intervalTime = 1000;
+    let elapsed = 0;
+    
+    const waitFront = () => {
+      if (!fcAutoPlay) return;
+      elapsed += intervalTime;
+      if (elapsed >= speed.front) {
+        flipCard();
+        
+        if (statusEl) statusEl.textContent = '🔊 Örnek cümle seslendiriliyor...';
+        speak(v.ex, () => {
+          if (!fcAutoPlay) return;
+          
+          let backCountdown = Math.round(speed.back / 1000);
+          if (statusEl) statusEl.textContent = '⏳ Sonraki kelimeye geçiliyor... (' + backCountdown + 's)';
+          
+          let backElapsed = 0;
+          const waitBack = () => {
+            if (!fcAutoPlay) return;
+            backElapsed += intervalTime;
+            if (backElapsed >= speed.back) {
+              fcMove(1);
+              runFCAutoPlayLoop();
+            } else {
+              let currentSec = Math.max(0, Math.round((speed.back - backElapsed) / 1000));
+              if (statusEl) statusEl.textContent = '⏳ Sonraki kelimeye geçiliyor... (' + currentSec + 's)';
+              fcTimer = setTimeout(waitBack, intervalTime);
+            }
+          };
+          fcTimer = setTimeout(waitBack, intervalTime);
+        });
+      } else {
+        let currentSec = Math.max(0, Math.round((speed.front - elapsed) / 1000));
+        if (statusEl) statusEl.textContent = '⏳ Çeviriyi düşünün... (' + currentSec + 's)';
+        fcTimer = setTimeout(waitFront, intervalTime);
+      }
+    };
+    
+    fcTimer = setTimeout(waitFront, intervalTime);
+  });
+}
 
 function startQuiz(){
   const pool=qLevel==='all'?V:V.filter(v=>v.l===qLevel);
@@ -740,8 +1036,12 @@ function showPAQuizSetup(){
       <button class="rbtn" onclick="startPAQuiz()" style="width: 100%; border-radius: var(--border-radius-md); margin-top: 8px; font-weight: 800; font-size: 15px; letter-spacing: 0.02em; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; cursor: pointer;">
         🚀 Sınavı Başlat
       </button>
+      <div style="font-size: 11px; color: var(--color-text-secondary); margin-top: 6px; text-align: center; opacity: 0.95; border-top: 0.5px solid var(--color-border-secondary); padding-top: 8px;">
+        🔊 Aktif Ses: <span class="active-voice-name" style="color: #378ADD; font-weight: 600;">Yükleniyor...</span>
+      </div>
     </div>
   `;
+  updateActiveVoiceIndicator();
 }
 
 function setPAQuizSetting(key, val, btn){
@@ -926,4 +1226,5 @@ applyFCFilter();
 renderFC();
 initPAData();
 renderPATable();
+updateActiveVoiceIndicator();
 </script>
