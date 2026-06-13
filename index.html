@@ -1,0 +1,1606 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Verben mit Präpositionen — A1 bis B2</title>
+<meta name="description" content="Almanca fiiller ve edatları öğrenme aracı: Liste, Flashcard, Quiz ve Präpositionaladverbien. A1'den B2'ye kadar 90+ fiil.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   DESIGN TOKENS
+   ═══════════════════════════════════════════ */
+:root {
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --bg-body: #0c0e14;
+  --bg-surface: #14161e;
+  --bg-card: #1a1d28;
+  --bg-card-hover: #1f2230;
+  --bg-elevated: #22253a;
+  --bg-input: #181b26;
+  --border-subtle: rgba(255,255,255,0.06);
+  --border-medium: rgba(255,255,255,0.1);
+  --border-strong: rgba(255,255,255,0.15);
+  --text-primary: #e8eaf0;
+  --text-secondary: #8b8fa4;
+  --text-muted: #5e6278;
+  --accent: #6c8cff;
+  --accent-soft: rgba(108,140,255,0.12);
+  --accent-glow: rgba(108,140,255,0.25);
+  --green: #34d399;
+  --green-soft: rgba(52,211,153,0.12);
+  --green-border: rgba(52,211,153,0.3);
+  --red: #f87171;
+  --red-soft: rgba(248,113,113,0.12);
+  --red-border: rgba(248,113,113,0.3);
+  --orange: #fbbf24;
+  --orange-soft: rgba(251,191,36,0.12);
+  --purple: #a78bfa;
+  --purple-soft: rgba(167,139,250,0.12);
+  --cyan: #22d3ee;
+  --cyan-soft: rgba(34,211,238,0.12);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-pill: 100px;
+  --shadow-card: 0 2px 8px rgba(0,0,0,0.25), 0 0 1px rgba(255,255,255,0.05) inset;
+  --shadow-glow: 0 0 20px rgba(108,140,255,0.08);
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Level colors */
+  --a1: #34d399; --a1-bg: rgba(52,211,153,0.1); --a1-border: rgba(52,211,153,0.25);
+  --a2: #6c8cff; --a2-bg: rgba(108,140,255,0.1); --a2-border: rgba(108,140,255,0.25);
+  --b1: #a78bfa; --b1-bg: rgba(167,139,250,0.1); --b1-border: rgba(167,139,250,0.25);
+  --b2: #fbbf24; --b2-bg: rgba(251,191,36,0.1); --b2-border: rgba(251,191,36,0.25);
+  /* Kasus colors */
+  --akk-color: #f97316; --akk-bg: rgba(249,115,22,0.1); --akk-border: rgba(249,115,22,0.25);
+  --dat-color: #34d399; --dat-bg: rgba(52,211,153,0.1); --dat-border: rgba(52,211,153,0.25);
+}
+
+/* ═══════════════════════════════════════════
+   RESET & BASE
+   ═══════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-body);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Ambient glow background */
+body::before {
+  content: '';
+  position: fixed;
+  top: -40%; left: -20%;
+  width: 140%; height: 140%;
+  background: radial-gradient(ellipse at 30% 20%, rgba(108,140,255,0.04) 0%, transparent 60%),
+              radial-gradient(ellipse at 70% 80%, rgba(167,139,250,0.03) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ═══════════════════════════════════════════
+   APP CONTAINER
+   ═══════════════════════════════════════════ */
+.app-wrapper {
+  position: relative;
+  z-index: 1;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 16px;
+  padding-bottom: 100px;
+}
+
+/* ═══════════════════════════════════════════
+   HEADER
+   ═══════════════════════════════════════════ */
+.header {
+  text-align: center;
+  padding: 32px 0 24px;
+}
+
+.header-icon {
+  font-size: 36px;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.header h1 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+
+.header p {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* ═══════════════════════════════════════════
+   BOTTOM TAB BAR (Mobile-first)
+   ═══════════════════════════════════════════ */
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  background: rgba(20,22,30,0.88);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-top: 1px solid var(--border-subtle);
+  padding: 6px 8px env(safe-area-inset-bottom, 8px);
+}
+
+.tab-bar-inner {
+  display: flex;
+  gap: 4px;
+  max-width: 500px;
+  width: 100%;
+}
+
+.tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 8px 4px 6px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tab-icon {
+  font-size: 20px;
+  line-height: 1;
+  transition: transform var(--transition-fast);
+}
+
+.tab.active {
+  color: var(--accent);
+}
+
+.tab.active .tab-icon {
+  transform: scale(1.1);
+}
+
+.tab.active::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 3px;
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+.tab:active {
+  transform: scale(0.95);
+}
+
+/* ═══════════════════════════════════════════
+   SECTIONS
+   ═══════════════════════════════════════════ */
+.section {
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+.section.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════════
+   SEARCH INPUT
+   ═══════════════════════════════════════════ */
+.search-wrap {
+  position: relative;
+  margin-bottom: 12px;
+}
+
+.search-wrap .search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.search {
+  width: 100%;
+  padding: 12px 14px 12px 40px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-medium);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  outline: none;
+  transition: all var(--transition-fast);
+}
+
+.search::placeholder { color: var(--text-muted); }
+
+.search:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+/* ═══════════════════════════════════════════
+   FILTER CHIPS
+   ═══════════════════════════════════════════ */
+.filters {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+  align-items: center;
+}
+
+.fb {
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-medium);
+  background: transparent;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.fb:active { transform: scale(0.95); }
+
+.fb-a1.on { background: var(--a1-bg); color: var(--a1); border-color: var(--a1-border); }
+.fb-a2.on { background: var(--a2-bg); color: var(--a2); border-color: var(--a2-border); }
+.fb-b1.on { background: var(--b1-bg); color: var(--b1); border-color: var(--b1-border); }
+.fb-b2.on { background: var(--b2-bg); color: var(--b2); border-color: var(--b2-border); }
+.fb-akk.on { background: var(--akk-bg); color: var(--akk-color); border-color: var(--akk-border); }
+.fb-dat.on { background: var(--dat-bg); color: var(--dat-color); border-color: var(--dat-border); }
+.fb-all.on { background: var(--accent-soft); color: var(--accent); border-color: rgba(108,140,255,0.25); }
+
+.sep {
+  width: 1px;
+  height: 20px;
+  background: var(--border-medium);
+  flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════
+   STAT PILLS
+   ═══════════════════════════════════════════ */
+.stat-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.stat {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  flex: 1;
+  min-width: 80px;
+}
+
+.stat span {
+  font-weight: 700;
+  color: var(--text-primary);
+  font-size: 20px;
+  display: block;
+  margin-bottom: 2px;
+}
+
+/* ═══════════════════════════════════════════
+   VERB CARDS
+   ═══════════════════════════════════════════ */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  margin-bottom: 10px;
+  box-shadow: var(--shadow-card);
+  transition: all var(--transition-fast);
+}
+
+.card:hover {
+  border-color: var(--border-medium);
+  transform: translateY(-1px);
+}
+
+.vh {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.vname {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.pbadge {
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.akk { background: var(--akk-bg); color: var(--akk-color); border: 1px solid var(--akk-border); }
+.dat { background: var(--dat-bg); color: var(--dat-color); border: 1px solid var(--dat-border); }
+
+.lvlbadge {
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.la1 { background: var(--a1-bg); color: var(--a1); border: 1px solid var(--a1-border); }
+.la2 { background: var(--a2-bg); color: var(--a2); border: 1px solid var(--a2-border); }
+.lb1 { background: var(--b1-bg); color: var(--b1); border: 1px solid var(--b1-border); }
+.lb2 { background: var(--b2-bg); color: var(--b2); border: 1px solid var(--b2-border); }
+
+.vmean {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.ex {
+  background: var(--bg-elevated);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--text-primary);
+  border-left: 3px solid var(--accent);
+  margin-bottom: 4px;
+  line-height: 1.6;
+}
+
+.extr {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  font-style: italic;
+}
+
+.empty {
+  padding: 3rem 0;
+  font-size: 14px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 40px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+/* ═══════════════════════════════════════════
+   FLASHCARD
+   ═══════════════════════════════════════════ */
+.fc-wrap {
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.fc {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  padding: 2rem 1.5rem;
+  text-align: center;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-card), var(--shadow-glow);
+  transition: all var(--transition-smooth);
+  position: relative;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.fc::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--purple));
+  opacity: 0.6;
+}
+
+.fc:hover {
+  border-color: var(--border-medium);
+  box-shadow: var(--shadow-card), 0 0 30px rgba(108,140,255,0.12);
+}
+
+.fc:active { transform: scale(0.98); }
+
+.fcv {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+  letter-spacing: -0.02em;
+}
+
+.fcp {
+  font-size: 16px;
+  color: var(--accent);
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.fch {
+  font-size: 12px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.fch::before { content: '👆'; font-size: 14px; }
+
+.fcb { display: none; }
+.fcb.vis { display: block; animation: fadeIn 0.3s ease; }
+
+.fcm {
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+
+.fce {
+  font-size: 14px;
+  color: var(--text-primary);
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.fcet {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.fcnav {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+}
+
+.fnbtn {
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-medium);
+  background: var(--bg-card);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  transition: all var(--transition-fast);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.fnbtn:hover { background: var(--bg-elevated); border-color: var(--border-strong); }
+.fnbtn:active { transform: scale(0.95); }
+
+.fncnt {
+  font-size: 13px;
+  color: var(--text-secondary);
+  padding: 0 8px;
+  font-weight: 500;
+  min-width: 60px;
+  text-align: center;
+}
+
+.shuffle-area {
+  margin-top: 12px;
+  text-align: center;
+}
+
+.shuffle-btn {
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-medium);
+  background: transparent;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: var(--font-sans);
+  color: var(--text-secondary);
+  transition: all var(--transition-fast);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.shuffle-btn:hover { color: var(--accent); border-color: var(--accent); }
+
+/* ═══════════════════════════════════════════
+   QUIZ
+   ═══════════════════════════════════════════ */
+.quiz-wrap { max-width: 520px; margin: 0 auto; }
+
+.pbar {
+  height: 4px;
+  background: var(--bg-elevated);
+  border-radius: 2px;
+  margin-bottom: 18px;
+  overflow: hidden;
+}
+
+.pfill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--purple));
+  border-radius: 2px;
+  transition: width var(--transition-smooth);
+}
+
+.ptxt {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.qcard {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow-card);
+}
+
+.qtype {
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.qsent {
+  font-size: 16px;
+  color: var(--text-primary);
+  line-height: 1.6;
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+
+.blank {
+  display: inline-block;
+  min-width: 80px;
+  border-bottom: 2px solid var(--accent);
+  text-align: center;
+  padding: 0 4px;
+  color: var(--accent);
+}
+
+.opts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.obtn {
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-medium);
+  background: var(--bg-elevated);
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  text-align: left;
+  transition: all var(--transition-fast);
+  -webkit-tap-highlight-color: transparent;
+  font-weight: 500;
+}
+
+.obtn:hover:not(:disabled) {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.obtn:active:not(:disabled) { transform: scale(0.97); }
+
+.obtn.correct {
+  background: var(--green-soft) !important;
+  border-color: var(--green-border) !important;
+  color: var(--green) !important;
+}
+
+.obtn.wrong {
+  background: var(--red-soft) !important;
+  border-color: var(--red-border) !important;
+  color: var(--red) !important;
+}
+
+.obtn.show-ok {
+  background: var(--green-soft) !important;
+  border-color: var(--green-border) !important;
+  color: var(--green) !important;
+}
+
+.fb2 {
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  margin-top: 10px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.fb2.ok {
+  background: var(--green-soft);
+  color: var(--green);
+  border: 1px solid var(--green-border);
+}
+
+.fb2.no {
+  background: var(--red-soft);
+  color: var(--red);
+  border: 1px solid var(--red-border);
+}
+
+.nbtn {
+  margin-top: 10px;
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-medium);
+  background: var(--accent-soft);
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--accent);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  transition: all var(--transition-fast);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.nbtn:hover { background: rgba(108,140,255,0.2); }
+.nbtn:active { transform: scale(0.95); }
+
+/* Score card */
+.scard {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  padding: 2.5rem;
+  text-align: center;
+  box-shadow: var(--shadow-card), var(--shadow-glow);
+  position: relative;
+  overflow: hidden;
+}
+
+.scard::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--green), var(--accent));
+}
+
+.sbig {
+  font-size: 52px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+  letter-spacing: -0.03em;
+}
+
+.slbl {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+}
+
+.rbtn {
+  padding: 12px 28px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--accent);
+  background: var(--accent-soft);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  color: var(--accent);
+  transition: all var(--transition-fast);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.rbtn:hover { background: rgba(108,140,255,0.2); }
+.rbtn:active { transform: scale(0.95); }
+
+/* ═══════════════════════════════════════════
+   PA MODULE
+   ═══════════════════════════════════════════ */
+.section-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.pa-intro {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  box-shadow: var(--shadow-card);
+}
+
+.pa-intro strong { color: var(--text-primary); }
+
+.pa-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.pa-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  box-shadow: var(--shadow-card);
+  transition: all var(--transition-fast);
+}
+
+.pa-card:hover {
+  border-color: var(--border-medium);
+}
+
+.pa-form {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+
+.pa-rule {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.pa-ex {
+  font-size: 13px;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+  line-height: 1.5;
+}
+
+.pa-tr {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.pa-hl {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* PA Table */
+.table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 16px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+}
+
+.pa-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  min-width: 480px;
+}
+
+.pa-table th {
+  text-align: left;
+  padding: 10px 14px;
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid var(--border-medium);
+  position: sticky;
+  top: 0;
+}
+
+.pa-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+}
+
+.pa-table tr:last-child td { border-bottom: none; }
+
+.pa-table tr:hover td {
+  background: var(--bg-elevated);
+}
+
+.pa-quiz-area {
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.pa-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  font-size: 10px;
+  font-weight: 600;
+  background: var(--accent-soft);
+  color: var(--accent);
+  margin-left: 6px;
+}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE — MOBILE
+   ═══════════════════════════════════════════ */
+@media (max-width: 600px) {
+  .app-wrapper {
+    padding: 0 12px;
+    padding-bottom: 90px;
+  }
+
+  .header {
+    padding: 24px 0 16px;
+  }
+
+  .header h1 { font-size: 20px; }
+
+  .pa-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .opts {
+    grid-template-columns: 1fr;
+  }
+
+  .stat {
+    padding: 8px 12px;
+  }
+
+  .stat span { font-size: 18px; }
+
+  .fc {
+    padding: 1.5rem 1.25rem;
+    min-height: 180px;
+  }
+
+  .fcv { font-size: 22px; }
+  .fcp { font-size: 15px; }
+
+  .card {
+    padding: 14px 16px;
+  }
+
+  .vname { font-size: 16px; }
+
+  .qsent { font-size: 15px; }
+
+  .sbig { font-size: 44px; }
+
+  .tab { font-size: 9px; }
+  .tab-icon { font-size: 18px; }
+}
+
+/* Desktop — float tabs on top instead of bottom */
+@media (min-width: 769px) {
+  .tab-bar {
+    position: sticky;
+    top: 0;
+    bottom: auto;
+    border-top: none;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .app-wrapper {
+    padding-bottom: 40px;
+  }
+
+  .tab.active::after {
+    top: auto;
+    bottom: 2px;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   SCROLLBAR
+   ═══════════════════════════════════════════ */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-medium); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--border-strong); }
+
+/* Selection */
+::selection { background: var(--accent-soft); color: var(--accent); }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ TAB BAR ═══════════════ -->
+<nav class="tab-bar" id="tab-bar">
+  <div class="tab-bar-inner">
+    <button class="tab active" id="tab-liste" onclick="switchTab('liste')">
+      <span class="tab-icon">📋</span>Liste
+    </button>
+    <button class="tab" id="tab-karten" onclick="switchTab('karten')">
+      <span class="tab-icon">🃏</span>Kart
+    </button>
+    <button class="tab" id="tab-quiz" onclick="switchTab('quiz')">
+      <span class="tab-icon">✍️</span>Quiz
+    </button>
+    <button class="tab" id="tab-pa" onclick="switchTab('pa')">
+      <span class="tab-icon">🔗</span>da/wo
+    </button>
+    <button class="tab" id="tab-paquiz" onclick="switchTab('paquiz')">
+      <span class="tab-icon">🧩</span>PA Quiz
+    </button>
+  </div>
+</nav>
+
+<!-- ═══════════════ APP ═══════════════ -->
+<main class="app-wrapper">
+  <header class="header">
+    <span class="header-icon">🇩🇪</span>
+    <h1>Verben mit Präpositionen</h1>
+    <p>A1'den B2'ye — Fiil + Edat çalışma aracı</p>
+  </header>
+
+  <!-- ═══════════════ LISTE ═══════════════ -->
+  <div class="section active" id="sec-liste">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="search" type="text" id="srch" placeholder="Fiil, edat veya anlam ara..." oninput="renderListe()">
+    </div>
+    <div class="filters">
+      <button class="fb fb-all on" id="fl-all" onclick="setLF('level','all')">Tümü</button>
+      <button class="fb fb-a1" id="fl-a1" onclick="setLF('level','A1')">A1</button>
+      <button class="fb fb-a2" id="fl-a2" onclick="setLF('level','A2')">A2</button>
+      <button class="fb fb-b1" id="fl-b1" onclick="setLF('level','B1')">B1</button>
+      <button class="fb fb-b2" id="fl-b2" onclick="setLF('level','B2')">B2</button>
+      <div class="sep"></div>
+      <button class="fb fb-all on" id="fk-all" onclick="setLF('kasus','all')">Hepsi</button>
+      <button class="fb fb-akk" id="fk-akk" onclick="setLF('kasus','Akk')">Akkusativ</button>
+      <button class="fb fb-dat" id="fk-dat" onclick="setLF('kasus','Dat')">Dativ</button>
+    </div>
+    <div class="stat-row">
+      <div class="stat"><span id="st-total">0</span>fiil</div>
+      <div class="stat"><span id="st-akk">0</span>Akkusativ</div>
+      <div class="stat"><span id="st-dat">0</span>Dativ</div>
+    </div>
+    <div id="liste-c"></div>
+  </div>
+
+  <!-- ═══════════════ FLASHCARD ═══════════════ -->
+  <div class="section" id="sec-karten">
+    <div class="filters">
+      <button class="fb fb-all on" id="fck-all" onclick="setFCF('level','all')">Tümü</button>
+      <button class="fb fb-a1" id="fck-a1" onclick="setFCF('level','A1')">A1</button>
+      <button class="fb fb-a2" id="fck-a2" onclick="setFCF('level','A2')">A2</button>
+      <button class="fb fb-b1" id="fck-b1" onclick="setFCF('level','B1')">B1</button>
+      <button class="fb fb-b2" id="fck-b2" onclick="setFCF('level','B2')">B2</button>
+      <div class="sep"></div>
+      <button class="fb fb-all on" id="fck-kall" onclick="setFCF('kasus','all')">Hepsi</button>
+      <button class="fb fb-akk" id="fck-kakk" onclick="setFCF('kasus','Akk')">Akkusativ</button>
+      <button class="fb fb-dat" id="fck-kdat" onclick="setFCF('kasus','Dat')">Dativ</button>
+    </div>
+    <div class="fc-wrap">
+      <div class="fc" id="fc-card" onclick="flipCard()">
+        <div id="fc-front">
+          <div class="fcv" id="fc-verb"></div>
+          <div class="fcp" id="fc-prep"></div>
+          <div class="fch">Çevirmek için tıkla</div>
+        </div>
+        <div class="fcb" id="fc-back">
+          <div class="fcm" id="fc-mean"></div>
+          <div class="fce" id="fc-ex"></div>
+          <div class="fcet" id="fc-extr"></div>
+        </div>
+      </div>
+      <div class="fcnav">
+        <button class="fnbtn" onclick="fcMove(-1)">← Önceki</button>
+        <span class="fncnt" id="fc-cnt">1 / 0</span>
+        <button class="fnbtn" onclick="fcMove(1)">Sonraki →</button>
+      </div>
+      <div class="shuffle-area">
+        <button class="shuffle-btn" onclick="shuffleFC()">🔀 Karıştır</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ QUIZ ═══════════════ -->
+  <div class="section" id="sec-quiz">
+    <div class="filters">
+      <button class="fb fb-all on" id="fq-all" onclick="setQF('all')">Tümü</button>
+      <button class="fb fb-a1" id="fq-a1" onclick="setQF('A1')">A1</button>
+      <button class="fb fb-a2" id="fq-a2" onclick="setQF('A2')">A2</button>
+      <button class="fb fb-b1" id="fq-b1" onclick="setQF('B1')">B1</button>
+      <button class="fb fb-b2" id="fq-b2" onclick="setQF('B2')">B2</button>
+    </div>
+    <div class="quiz-wrap" id="quiz-c"></div>
+  </div>
+
+  <!-- ═══════════════ PA AÇIKLAMA ═══════════════ -->
+  <div class="section" id="sec-pa">
+    <div class="pa-intro">
+      <strong>Präpositionaladverbien nedir?</strong><br>
+      Bir fiil sabit bir edat alıyorsa (<em>warten auf, freuen über…</em>), bu edatı zamirle değil <strong>da(r)+edat</strong> veya <strong>wo(r)+edat</strong> ile ifade ederiz.<br><br>
+      <strong>da(r)+</strong> → yanıt / referans cümleleri &nbsp;|&nbsp; <strong>wo(r)+</strong> → soru cümleleri<br>
+      Edat sesli harfle başlıyorsa araya <strong>-r-</strong> girer: <em>da+auf = darauf</em>, <em>wo+über = worüber</em>
+    </div>
+    <div class="pa-grid">
+      <div class="pa-card">
+        <div class="pa-form">da(r) + Präp</div>
+        <div class="pa-rule">Yanıt / referans için</div>
+        <div class="pa-ex">Ich <span class="pa-hl">warte darauf</span>, dass er kommt.</div>
+        <div class="pa-tr">Onun gelmesini bekliyorum.</div>
+      </div>
+      <div class="pa-card">
+        <div class="pa-form">wo(r) + Präp</div>
+        <div class="pa-rule">Soru sormak için</div>
+        <div class="pa-ex"><span class="pa-hl">Worauf</span> wartest du?</div>
+        <div class="pa-tr">Neyi bekliyorsun?</div>
+      </div>
+      <div class="pa-card">
+        <div class="pa-form">dass-Satz</div>
+        <div class="pa-rule">da(r)+ → dass ile genişletme</div>
+        <div class="pa-ex">Ich freue mich <span class="pa-hl">darüber</span>, dass du kommst.</div>
+        <div class="pa-tr">Geldiğin için sevindim.</div>
+      </div>
+      <div class="pa-card">
+        <div class="pa-form">zu+Infinitiv</div>
+        <div class="pa-rule">da(r)+ → zu+Inf ile genişletme</div>
+        <div class="pa-ex">Ich habe keine Lust <span class="pa-hl">dazu</span>, zu lernen.</div>
+        <div class="pa-tr">Çalışmaya hiç niyetim yok.</div>
+      </div>
+    </div>
+    <div class="section-title">Sık kullanılan çiftler</div>
+    <div class="table-wrapper">
+      <table class="pa-table">
+        <thead><tr><th>Fiil + Edat</th><th>da(r)+</th><th>wo(r)+</th><th>Örnek soru</th></tr></thead>
+        <tbody id="pa-table-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══════════════ PA QUIZ ═══════════════ -->
+  <div class="section" id="sec-paquiz">
+    <div class="pa-quiz-area" id="paquiz-c"></div>
+  </div>
+</main>
+
+<script>
+// ═══════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════
+const V=[
+{v:"kommen",p:"aus",k:"Dat",l:"A1",m:"(bir yerden) gelmek",ex:"Ich komme aus der Türkei.",tr:"Türkiye'den geliyorum."},
+{v:"sein",p:"aus",k:"Dat",l:"A1",m:"oralı olmak",ex:"Sie ist aus Berlin.",tr:"O Berlin'li."},
+{v:"fahren",p:"mit",k:"Dat",l:"A1",m:"(bir araçla) gitmek",ex:"Wir fahren mit dem Bus.",tr:"Otobüsle gidiyoruz."},
+{v:"spielen",p:"mit",k:"Dat",l:"A1",m:"(biriyle/şeyle) oynamak",ex:"Das Kind spielt mit dem Ball.",tr:"Çocuk topla oynuyor."},
+{v:"sprechen",p:"mit",k:"Dat",l:"A1",m:"(biriyle) konuşmak",ex:"Ich spreche mit meiner Mutter.",tr:"Annemle konuşuyorum."},
+{v:"wohnen",p:"in",k:"Dat",l:"A1",m:"(bir yerde) oturmak",ex:"Er wohnt in Berlin.",tr:"O Berlin'de oturuyor."},
+{v:"arbeiten",p:"bei",k:"Dat",l:"A1",m:"(bir şirkette) çalışmak",ex:"Sie arbeitet bei Siemens.",tr:"Siemens'te çalışıyor."},
+{v:"fragen",p:"nach",k:"Dat",l:"A1",m:"(bir şeyi) sormak",ex:"Er fragt nach dem Weg.",tr:"Yolu soruyor."},
+{v:"suchen",p:"nach",k:"Dat",l:"A1",m:"aramak",ex:"Ich suche nach meinem Schlüssel.",tr:"Anahtarımı arıyorum."},
+{v:"gehen",p:"zu",k:"Dat",l:"A1",m:"(bir yere) gitmek",ex:"Sie geht zum Arzt.",tr:"Doktora gidiyor."},
+{v:"helfen",p:"bei",k:"Dat",l:"A1",m:"(bir işte) yardım etmek",ex:"Er hilft mir bei den Hausaufgaben.",tr:"Ödevlerimde yardım ediyor."},
+{v:"warten",p:"auf",k:"Akk",l:"A1",m:"beklemek",ex:"Ich warte auf den Bus.",tr:"Otobüsü bekliyorum."},
+{v:"antworten",p:"auf",k:"Akk",l:"A1",m:"(bir şeye) cevap vermek",ex:"Sie antwortet auf die Frage.",tr:"Soruya cevap veriyor."},
+{v:"schreiben",p:"an",k:"Akk",l:"A1",m:"(birine) yazmak",ex:"Ich schreibe an meine Freundin.",tr:"Arkadaşıma yazıyorum."},
+{v:"denken",p:"an",k:"Akk",l:"A1",m:"(birini) düşünmek",ex:"Ich denke oft an dich.",tr:"Seni sık sık düşünüyorum."},
+{v:"erzählen",p:"von",k:"Dat",l:"A1",m:"(bir şey hakkında) anlatmak",ex:"Sie erzählt von ihrer Reise.",tr:"Seyahatinden anlatıyor."},
+{v:"träumen",p:"von",k:"Dat",l:"A1",m:"rüya görmek",ex:"Er träumt von einem Hund.",tr:"Köpek hayal ediyor."},
+{v:"telefonieren",p:"mit",k:"Dat",l:"A2",m:"(biriyle) telefon etmek",ex:"Ich telefoniere mit meiner Schwester.",tr:"Kız kardeşimle telefon ediyorum."},
+{v:"einladen",p:"zu",k:"Dat",l:"A2",m:"(bir etkinliğe) davet etmek",ex:"Wir laden dich zur Party ein.",tr:"Seni partiye davet ediyoruz."},
+{v:"gehören",p:"zu",k:"Dat",l:"A2",m:"(bir gruba) ait olmak",ex:"Dieses Buch gehört zu meiner Sammlung.",tr:"Bu kitap koleksiyonuma ait."},
+{v:"passen",p:"zu",k:"Dat",l:"A2",m:"(bir şeye) yakışmak",ex:"Die Schuhe passen zum Kleid.",tr:"Ayakkabılar elbiseye yakışıyor."},
+{v:"gratulieren",p:"zu",k:"Dat",l:"A2",m:"(bir şey için) tebrik etmek",ex:"Ich gratuliere dir zum Geburtstag.",tr:"Doğum günün için tebrik ediyorum."},
+{v:"sprechen",p:"über",k:"Akk",l:"A2",m:"(bir şey) hakkında konuşmak",ex:"Wir sprechen über das Wetter.",tr:"Hava hakkında konuşuyoruz."},
+{v:"sich freuen",p:"auf",k:"Akk",l:"A2",m:"(gelecek şeye) sevinmek",ex:"Ich freue mich auf die Ferien.",tr:"Tatili dört gözle bekliyorum."},
+{v:"sich freuen",p:"über",k:"Akk",l:"A2",m:"(mevcut şeye) sevinmek",ex:"Sie freut sich über das Geschenk.",tr:"Hediyeye sevindi."},
+{v:"sich interessieren",p:"für",k:"Akk",l:"A2",m:"(bir şeyle) ilgilenmek",ex:"Ich interessiere mich für Musik.",tr:"Müzikle ilgileniyorum."},
+{v:"achten",p:"auf",k:"Akk",l:"A2",m:"dikkat etmek",ex:"Achte auf deine Gesundheit.",tr:"Sağlığına dikkat et."},
+{v:"danken",p:"für",k:"Akk",l:"A2",m:"(bir şey için) teşekkür etmek",ex:"Ich danke dir für deine Hilfe.",tr:"Yardımın için teşekkür ediyorum."},
+{v:"sorgen",p:"für",k:"Akk",l:"A2",m:"(birini) bakmak",ex:"Sie sorgt für die Kinder.",tr:"Çocuklara bakıyor."},
+{v:"wissen",p:"von",k:"Dat",l:"A2",m:"(bir şeyden) haberdar olmak",ex:"Weißt du von dem Treffen?",tr:"Toplantıdan haberdar mısın?"},
+{v:"abhängen",p:"von",k:"Dat",l:"A2",m:"(bir şeye) bağlı olmak",ex:"Das hängt von dir ab.",tr:"Bu sana bağlı."},
+{v:"teilnehmen",p:"an",k:"Dat",l:"A2",m:"(bir etkinliğe) katılmak",ex:"Sie nimmt an dem Kurs teil.",tr:"Kursa katılıyor."},
+{v:"anfangen",p:"mit",k:"Dat",l:"A2",m:"(bir şeye) başlamak",ex:"Wir fangen mit dem Essen an.",tr:"Yemeğe başlıyoruz."},
+{v:"aufhören",p:"mit",k:"Dat",l:"A2",m:"(bir şeyi) bırakmak",ex:"Er hat mit dem Rauchen aufgehört.",tr:"Sigarayı bıraktı."},
+{v:"sich beschäftigen",p:"mit",k:"Dat",l:"A2",m:"(bir şeyle) meşgul olmak",ex:"Sie beschäftigt sich mit dem Thema.",tr:"Konuyla meşgul oluyor."},
+{v:"hoffen",p:"auf",k:"Akk",l:"B1",m:"ummak",ex:"Wir hoffen auf besseres Wetter.",tr:"Daha iyi hava umuyoruz."},
+{v:"sich gewöhnen",p:"an",k:"Akk",l:"B1",m:"(bir şeye) alışmak",ex:"Ich gewöhne mich an das Klima.",tr:"İklime alışıyorum."},
+{v:"sich erinnern",p:"an",k:"Akk",l:"B1",m:"(bir şeyi) hatırlamak",ex:"Ich erinnere mich an die Schulzeit.",tr:"Okul yıllarını hatırlıyorum."},
+{v:"glauben",p:"an",k:"Akk",l:"B1",m:"(birine/şeye) inanmak",ex:"Sie glaubt an den Erfolg.",tr:"Başarıya inanıyor."},
+{v:"sich verlassen",p:"auf",k:"Akk",l:"B1",m:"(birine) güvenmek",ex:"Ich kann mich auf dich verlassen.",tr:"Sana güvenebilirim."},
+{v:"reagieren",p:"auf",k:"Akk",l:"B1",m:"(bir şeye) tepki vermek",ex:"Er reagiert nicht auf meine Frage.",tr:"Soruma tepki vermiyor."},
+{v:"sich bewerben",p:"um",k:"Akk",l:"B1",m:"(bir şeye) başvurmak",ex:"Sie bewirbt sich um die Stelle.",tr:"Pozisyona başvuruyor."},
+{v:"bitten",p:"um",k:"Akk",l:"B1",m:"(bir şey için) rica etmek",ex:"Er bittet um Hilfe.",tr:"Yardım istiyor."},
+{v:"sich kümmern",p:"um",k:"Akk",l:"B1",m:"(biriyle) ilgilenmek",ex:"Er kümmert sich um seinen Vater.",tr:"Babasıyla ilgileniyor."},
+{v:"nachdenken",p:"über",k:"Akk",l:"B1",m:"(bir şey) üzerine düşünmek",ex:"Sie denkt über das Problem nach.",tr:"Problem üzerine düşünüyor."},
+{v:"sich ärgern",p:"über",k:"Akk",l:"B1",m:"(bir şeye) sinirlenmiş olmak",ex:"Er ärgert sich über den Stau.",tr:"Trafikten siniri bozuldu."},
+{v:"lachen",p:"über",k:"Akk",l:"B1",m:"(bir şeye) gülmek",ex:"Alle lachen über den Witz.",tr:"Herkes şakaya güldü."},
+{v:"sich beschweren",p:"über",k:"Akk",l:"B1",m:"(bir şeyden) şikâyet etmek",ex:"Er beschwert sich über den Lärm.",tr:"Gürültüden şikâyet ediyor."},
+{v:"sich wundern",p:"über",k:"Akk",l:"B1",m:"(bir şeye) şaşırmak",ex:"Ich wundere mich über seine Aussage.",tr:"Açıklamasına şaşırdım."},
+{v:"zweifeln",p:"an",k:"Dat",l:"B1",m:"(bir şeyden) şüphe etmek",ex:"Er zweifelt an seinen Fähigkeiten.",tr:"Yeteneklerinden şüphe ediyor."},
+{v:"leiden",p:"unter",k:"Dat",l:"B1",m:"(bir şeyden) acı çekmek",ex:"Sie leidet unter dem Stress.",tr:"Stresten muzdarip."},
+{v:"sich fürchten",p:"vor",k:"Dat",l:"B1",m:"(bir şeyden) korkmak",ex:"Das Kind fürchtet sich vor Hunden.",tr:"Çocuk köpeklerden korkuyor."},
+{v:"warnen",p:"vor",k:"Dat",l:"B1",m:"(bir şeye karşı) uyarmak",ex:"Er warnt uns vor dem Sturm.",tr:"Bizi fırtınaya karşı uyarıyor."},
+{v:"sich verabschieden",p:"von",k:"Dat",l:"B1",m:"(birinden) veda etmek",ex:"Sie verabschiedet sich von den Gästen.",tr:"Misafirlerden vedalaşıyor."},
+{v:"sich erholen",p:"von",k:"Dat",l:"B1",m:"(bir şeyden) toparlanmak",ex:"Ich erhole mich von der Krankheit.",tr:"Hastalıktan iyileşiyorum."},
+{v:"halten",p:"von",k:"Dat",l:"B1",m:"(bir şey hakkında) düşünmek",ex:"Was hältst du davon?",tr:"Bu konuda ne düşünüyorsun?"},
+{v:"berichten",p:"über",k:"Akk",l:"B1",m:"(bir şey) hakkında rapor vermek",ex:"Die Zeitung berichtet über den Unfall.",tr:"Gazete kazayı anlatıyor."},
+{v:"diskutieren",p:"über",k:"Akk",l:"B1",m:"(bir şey) üzerine tartışmak",ex:"Wir diskutieren über Politik.",tr:"Politika üzerine tartışıyoruz."},
+{v:"sich einigen",p:"auf",k:"Akk",l:"B1",m:"(bir şey) üzerinde anlaşmak",ex:"Wir einigen uns auf einen Termin.",tr:"Bir tarih üzerinde anlaşıyoruz."},
+{v:"sich konzentrieren",p:"auf",k:"Akk",l:"B1",m:"(bir şeye) konsantre olmak",ex:"Ich konzentriere mich auf die Arbeit.",tr:"İşe konsantre oluyorum."},
+{v:"sich vorbereiten",p:"auf",k:"Akk",l:"B1",m:"(bir şeye) hazırlanmak",ex:"Er bereitet sich auf die Prüfung vor.",tr:"Sınava hazırlanıyor."},
+{v:"sich beziehen",p:"auf",k:"Akk",l:"B2",m:"(bir şeye) atıfta bulunmak",ex:"Das bezieht sich auf das letzte Kapitel.",tr:"Bu son bölüme atıfta bulunuyor."},
+{v:"hinweisen",p:"auf",k:"Akk",l:"B2",m:"(bir şeye) dikkat çekmek",ex:"Er weist auf das Problem hin.",tr:"Probleme dikkat çekiyor."},
+{v:"bestehen",p:"auf",k:"Dat",l:"B2",m:"(bir şeyde) ısrar etmek",ex:"Sie besteht auf einer Entschuldigung.",tr:"Özür dilemesinde ısrar ediyor."},
+{v:"beruhen",p:"auf",k:"Dat",l:"B2",m:"(bir şeye) dayanmak",ex:"Die Geschichte beruht auf Fakten.",tr:"Hikâye gerçeklere dayanıyor."},
+{v:"verzichten",p:"auf",k:"Akk",l:"B2",m:"(bir şeyden) vazgeçmek",ex:"Ich verzichte auf Alkohol.",tr:"Alkolden vazgeçiyorum."},
+{v:"stoßen",p:"auf",k:"Akk",l:"B2",m:"(bir şeyle) karşılaşmak",ex:"Wir stoßen auf Widerstand.",tr:"Dirençle karşılaşıyoruz."},
+{v:"sich spezialisieren",p:"auf",k:"Akk",l:"B2",m:"(bir alanda) uzmanlaşmak",ex:"Er spezialisiert sich auf Steuerrecht.",tr:"Vergi hukukunda uzmanlaşıyor."},
+{v:"sich sehnen",p:"nach",k:"Dat",l:"B2",m:"(bir şeye) özlem duymak",ex:"Sie sehnt sich nach ihrer Heimat.",tr:"Memleketine özlem duyuyor."},
+{v:"streben",p:"nach",k:"Dat",l:"B2",m:"(bir şeyin) peşinden koşmak",ex:"Er strebt nach Perfektion.",tr:"Mükemmelliğin peşinden koşuyor."},
+{v:"urteilen",p:"über",k:"Akk",l:"B2",m:"(bir şey) hakkında yargıda bulunmak",ex:"Man sollte nicht über andere urteilen.",tr:"İnsanlar başkalarını yargılamamalı."},
+{v:"verfügen",p:"über",k:"Akk",l:"B2",m:"(bir şeye) sahip olmak",ex:"Er verfügt über viel Erfahrung.",tr:"Çok deneyime sahip."},
+{v:"reflektieren",p:"über",k:"Akk",l:"B2",m:"(bir şey) üzerine düşünmek",ex:"Sie reflektiert über ihre Entscheidungen.",tr:"Kararları üzerine düşünüyor."},
+{v:"sich entscheiden",p:"für",k:"Akk",l:"B2",m:"(bir şeyi) tercih etmek",ex:"Ich entscheide mich für das rote Kleid.",tr:"Kırmızı elbiseyi seçiyorum."},
+{v:"eintreten",p:"für",k:"Akk",l:"B2",m:"(bir şey için) savunmak",ex:"Sie tritt für Gleichberechtigung ein.",tr:"Eşit haklar için savunuyor."},
+{v:"sich entschuldigen",p:"für",k:"Akk",l:"B2",m:"(bir şey için) özür dilemek",ex:"Er entschuldigt sich für seinen Fehler.",tr:"Hatasından dolayı özür diliyor."},
+{v:"sich begeistern",p:"für",k:"Akk",l:"B2",m:"(bir şeye) coşmak",ex:"Sie begeistert sich für klassische Musik.",tr:"Klasik müziğe coşuyor."},
+{v:"bestehen",p:"aus",k:"Dat",l:"B2",m:"(bir şeyden) oluşmak",ex:"Das Team besteht aus fünf Personen.",tr:"Takım beş kişiden oluşuyor."},
+{v:"resultieren",p:"aus",k:"Dat",l:"B2",m:"(bir şeyden) kaynaklanmak",ex:"Das Problem resultiert aus Missverständnissen.",tr:"Sorun yanlış anlamalardan kaynaklanıyor."},
+{v:"handeln",p:"von",k:"Dat",l:"B2",m:"(bir şey) hakkında olmak",ex:"Das Buch handelt von einem Detektiv.",tr:"Kitap bir dedektif hakkında."},
+{v:"überzeugen",p:"von",k:"Dat",l:"B2",m:"(bir şey) konusunda ikna etmek",ex:"Er überzeugte mich von seiner Idee.",tr:"Beni fikrine ikna etti."},
+{v:"profitieren",p:"von",k:"Dat",l:"B2",m:"(bir şeyden) faydalanmak",ex:"Alle profitieren von dieser Lösung.",tr:"Herkes bu çözümden faydalanıyor."},
+{v:"sich unterscheiden",p:"von",k:"Dat",l:"B2",m:"(bir şeyden) farklı olmak",ex:"Dieses Modell unterscheidet sich von den anderen.",tr:"Bu model diğerlerinden farklı."},
+{v:"rechnen",p:"mit",k:"Dat",l:"B2",m:"(bir şeyi) beklemek / hesaba katmak",ex:"Ich rechne mit Verzögerungen.",tr:"Gecikmeleri hesaba katıyorum."},
+{v:"umgehen",p:"mit",k:"Dat",l:"B2",m:"(bir şeyle) başa çıkmak",ex:"Wie gehst du mit Stress um?",tr:"Stresle nasıl başa çıkıyorsun?"},
+{v:"zusammenarbeiten",p:"mit",k:"Dat",l:"B2",m:"(biriyle) işbirliği yapmak",ex:"Wir arbeiten eng mit dem Team zusammen.",tr:"Ekiple yakın işbirliği yapıyoruz."},
+{v:"sich auseinandersetzen",p:"mit",k:"Dat",l:"B2",m:"(bir şeyle) derinlemesine ilgilenmek",ex:"Er setzt sich mit dem Thema auseinander.",tr:"Konuyu derinlemesine inceliyor."},
+{v:"klagen",p:"über",k:"Akk",l:"B2",m:"(bir şeyden) şikâyet etmek",ex:"Er klagt über starke Kopfschmerzen.",tr:"Şiddetli baş ağrısından şikâyet ediyor."},
+{v:"plädieren",p:"für",k:"Akk",l:"B2",m:"(bir şey) lehinde savunmak",ex:"Der Anwalt plädiert für Freispruch.",tr:"Avukat beraat için savunuyor."},
+{v:"absehen",p:"von",k:"Dat",l:"B2",m:"(bir şeyi) göz ardı etmek",ex:"Abgesehen von dieser Frage war alles gut.",tr:"Bu sorun dışında her şey iyiydi."},
+];
+
+const PA=[
+{verb:"warten",prep:"auf",dar:"darauf",wor:"worauf",ex_da:"Ich warte darauf, dass er anruft.",ex_wo:"Worauf wartest du?",ex_da_tr:"Onun aramasını bekliyorum.",ex_wo_tr:"Neyi bekliyorsun?"},
+{verb:"sich freuen",prep:"auf",dar:"darauf",wor:"worauf",ex_da:"Ich freue mich darauf, dich zu sehen.",ex_wo:"Worauf freust du dich?",ex_da_tr:"Seni görmekten mutluyum.",ex_wo_tr:"Neye sevinerek bekliyorsun?"},
+{verb:"sich freuen",prep:"über",dar:"darüber",wor:"worüber",ex_da:"Ich freue mich darüber, dass du da bist.",ex_wo:"Worüber freust du dich?",ex_da_tr:"Burada olduğuna sevindim.",ex_wo_tr:"Neye seviniyorsun?"},
+{verb:"sich ärgern",prep:"über",dar:"darüber",wor:"worüber",ex_da:"Ich ärgere mich darüber, dass er zu spät kam.",ex_wo:"Worüber ärgerst du dich?",ex_da_tr:"Geç kalmasına sinir oldum.",ex_wo_tr:"Neye sinir oldun?"},
+{verb:"nachdenken",prep:"über",dar:"darüber",wor:"worüber",ex_da:"Ich denke darüber nach, ob ich wechsle.",ex_wo:"Worüber denkst du nach?",ex_da_tr:"Değişip değiştirmeyeceğimi düşünüyorum.",ex_wo_tr:"Ne üzerine düşünüyorsun?"},
+{verb:"sprechen",prep:"über",dar:"darüber",wor:"worüber",ex_da:"Wir sprechen darüber, was zu tun ist.",ex_wo:"Worüber sprecht ihr?",ex_da_tr:"Ne yapılması gerektiği hakkında konuşuyoruz.",ex_wo_tr:"Ne hakkında konuşuyorsunuz?"},
+{verb:"sich interessieren",prep:"für",dar:"dafür",wor:"wofür",ex_da:"Ich interessiere mich dafür, neue Sprachen zu lernen.",ex_wo:"Wofür interessierst du dich?",ex_da_tr:"Yeni dil öğrenmeyle ilgileniyorum.",ex_wo_tr:"Neyle ilgileniyorsun?"},
+{verb:"sich entscheiden",prep:"für",dar:"dafür",wor:"wofür",ex_da:"Ich habe mich dafür entschieden, zu bleiben.",ex_wo:"Wofür hast du dich entschieden?",ex_da_tr:"Kalmaya karar verdim.",ex_wo_tr:"Ne için karar verdin?"},
+{verb:"danken",prep:"für",dar:"dafür",wor:"wofür",ex_da:"Ich danke dir dafür, dass du geholfen hast.",ex_wo:"Wofür bedankst du dich?",ex_da_tr:"Yardım ettiğin için teşekkür ederim.",ex_wo_tr:"Neyin için teşekkür ediyorsun?"},
+{verb:"hoffen",prep:"auf",dar:"darauf",wor:"worauf",ex_da:"Wir hoffen darauf, dass es besser wird.",ex_wo:"Worauf hoffst du?",ex_da_tr:"Daha iyi olacağını umuyoruz.",ex_wo_tr:"Neyi umuyorsun?"},
+{verb:"sich verlassen",prep:"auf",dar:"darauf",wor:"worauf",ex_da:"Ich verlasse mich darauf, dass du kommst.",ex_wo:"Worauf verlässt du dich?",ex_da_tr:"Geleceğine güveniyorum.",ex_wo_tr:"Neye güveniyorsun?"},
+{verb:"reagieren",prep:"auf",dar:"darauf",wor:"worauf",ex_da:"Er reagiert nicht darauf, was ich sage.",ex_wo:"Worauf reagiert er?",ex_da_tr:"Söylediklerime tepki vermiyor.",ex_wo_tr:"Neye tepki veriyor?"},
+{verb:"sich vorbereiten",prep:"auf",dar:"darauf",wor:"worauf",ex_da:"Ich bereite mich darauf vor, die Prüfung zu schreiben.",ex_wo:"Worauf bereitest du dich vor?",ex_da_tr:"Sınava girmek için hazırlanıyorum.",ex_wo_tr:"Neye hazırlanıyorsun?"},
+{verb:"hinweisen",prep:"auf",dar:"darauf",wor:"worauf",ex_da:"Er weist darauf hin, dass die Zeit knapp ist.",ex_wo:"Worauf weist er hin?",ex_da_tr:"Zamanın az olduğuna dikkat çekiyor.",ex_wo_tr:"Neye dikkat çekiyor?"},
+{verb:"sich konzentrieren",prep:"auf",dar:"darauf",wor:"worauf",ex_da:"Ich konzentriere mich darauf, den Text zu verstehen.",ex_wo:"Worauf konzentrierst du dich?",ex_da_tr:"Metni anlamaya odaklanıyorum.",ex_wo_tr:"Neye odaklanıyorsun?"},
+{verb:"sich erinnern",prep:"an",dar:"daran",wor:"woran",ex_da:"Ich erinnere mich daran, was er gesagt hat.",ex_wo:"Woran erinnerst du dich?",ex_da_tr:"Onun ne söylediğini hatırlıyorum.",ex_wo_tr:"Neyi hatırlıyorsun?"},
+{verb:"denken",prep:"an",dar:"daran",wor:"woran",ex_da:"Ich denke oft daran, zurückzukehren.",ex_wo:"Woran denkst du?",ex_da_tr:"Geri dönmeyi sık sık düşünüyorum.",ex_wo_tr:"Neyi düşünüyorsun?"},
+{verb:"sich gewöhnen",prep:"an",dar:"daran",wor:"woran",ex_da:"Ich gewöhne mich daran, früh aufzustehen.",ex_wo:"Woran gewöhnst du dich?",ex_da_tr:"Erken kalkmaya alışıyorum.",ex_wo_tr:"Neye alışıyorsun?"},
+{verb:"glauben",prep:"an",dar:"daran",wor:"woran",ex_da:"Ich glaube daran, dass alles besser wird.",ex_wo:"Woran glaubst du?",ex_da_tr:"Her şeyin daha iyi olacağına inanıyorum.",ex_wo_tr:"Neye inanıyorsun?"},
+{verb:"zweifeln",prep:"an",dar:"daran",wor:"woran",ex_da:"Er zweifelt daran, ob es klappt.",ex_wo:"Woran zweifelst du?",ex_da_tr:"İşe yarayıp yaramayacağından şüphe ediyor.",ex_wo_tr:"Neyden şüphe ediyorsun?"},
+{verb:"sich beschäftigen",prep:"mit",dar:"damit",wor:"womit",ex_da:"Ich beschäftige mich damit, den Bericht zu schreiben.",ex_wo:"Womit beschäftigst du dich?",ex_da_tr:"Raporu yazmakla meşgulüm.",ex_wo_tr:"Neyle meşgulsün?"},
+{verb:"anfangen",prep:"mit",dar:"damit",wor:"womit",ex_da:"Wir fangen damit an, den Plan zu erklären.",ex_wo:"Womit fangt ihr an?",ex_da_tr:"Planı açıklamakla başlıyoruz.",ex_wo_tr:"Neyle başlıyorsunuz?"},
+{verb:"rechnen",prep:"mit",dar:"damit",wor:"womit",ex_da:"Ich rechne damit, dass es Probleme gibt.",ex_wo:"Womit rechnest du?",ex_da_tr:"Sorun çıkacağını bekliyorum.",ex_wo_tr:"Neyi bekliyorsun?"},
+{verb:"umgehen",prep:"mit",dar:"damit",wor:"womit",ex_da:"Er weiß nicht, wie er damit umgehen soll.",ex_wo:"Womit gehst du um?",ex_da_tr:"Bununla nasıl başa çıkacağını bilmiyor.",ex_wo_tr:"Neyle başa çıkıyorsun?"},
+{verb:"abhängen",prep:"von",dar:"davon",wor:"wovon",ex_da:"Es hängt davon ab, wie viel Zeit wir haben.",ex_wo:"Wovon hängt es ab?",ex_da_tr:"Ne kadar zamanımız olduğuna bağlı.",ex_wo_tr:"Neden bağlı?"},
+{verb:"träumen",prep:"von",dar:"davon",wor:"wovon",ex_da:"Ich träume davon, nach Japan zu reisen.",ex_wo:"Wovon träumst du?",ex_da_tr:"Japonya'ya seyahat etmeyi hayal ediyorum.",ex_wo_tr:"Ne hayal ediyorsun?"},
+{verb:"überzeugen",prep:"von",dar:"davon",wor:"wovon",ex_da:"Er überzeugt mich davon, dass es richtig ist.",ex_wo:"Wovon überzeugst du mich?",ex_da_tr:"Bunun doğru olduğuna beni ikna ediyor.",ex_wo_tr:"Neden beni ikna ediyorsun?"},
+{verb:"profitieren",prep:"von",dar:"davon",wor:"wovon",ex_da:"Alle profitieren davon, dass wir zusammenarbeiten.",ex_wo:"Wovon profitieren alle?",ex_da_tr:"Herkes birlikte çalışmamızdan faydalanıyor.",ex_wo_tr:"Herkes neden faydalanıyor?"},
+{verb:"sich beschweren",prep:"über",dar:"darüber",wor:"worüber",ex_da:"Er beschwert sich darüber, dass es zu laut ist.",ex_wo:"Worüber beschwert er sich?",ex_da_tr:"Çok gürültülü olduğundan şikâyet ediyor.",ex_wo_tr:"Neden şikâyet ediyor?"},
+{verb:"verfügen",prep:"über",dar:"darüber",wor:"worüber",ex_da:"Er verfügt darüber, was nötig ist.",ex_wo:"Worüber verfügt er?",ex_da_tr:"Gerekli olan şeylere sahip.",ex_wo_tr:"Neye sahip?"},
+{verb:"sich wundern",prep:"über",dar:"darüber",wor:"worüber",ex_da:"Ich wundere mich darüber, was passiert ist.",ex_wo:"Worüber wunderst du dich?",ex_da_tr:"Olanlar karşısında şaşırıyorum.",ex_wo_tr:"Neye şaşırıyorsun?"},
+{verb:"sich fürchten",prep:"vor",dar:"davor",wor:"wovor",ex_da:"Das Kind fürchtet sich davor, allein zu sein.",ex_wo:"Wovor fürchtest du dich?",ex_da_tr:"Çocuk yalnız kalmaktan korkuyor.",ex_wo_tr:"Neden korkuyorsun?"},
+{verb:"warnen",prep:"vor",dar:"davor",wor:"wovor",ex_da:"Er warnt uns davor, zu schnell zu fahren.",ex_wo:"Wovor warnt er euch?",ex_da_tr:"Bizi çok hızlı sürmeye karşı uyarıyor.",ex_wo_tr:"Sizi neden uyarıyor?"},
+{verb:"verzichten",prep:"auf",dar:"darauf",wor:"worauf",ex_da:"Ich verzichte darauf, Fleisch zu essen.",ex_wo:"Worauf verzichtest du?",ex_da_tr:"Et yemekten vazgeçiyorum.",ex_wo_tr:"Neden vazgeçiyorsun?"},
+{verb:"sich entschuldigen",prep:"für",dar:"dafür",wor:"wofür",ex_da:"Er entschuldigt sich dafür, zu spät zu sein.",ex_wo:"Wofür entschuldigt er sich?",ex_da_tr:"Geç kaldığı için özür diliyor.",ex_wo_tr:"Neden özür diliyor?"},
+{verb:"bestehen",prep:"auf",dar:"darauf",wor:"worauf",ex_da:"Sie besteht darauf, die Wahrheit zu hören.",ex_wo:"Worauf besteht sie?",ex_da_tr:"Gerçeği duymakta ısrar ediyor.",ex_wo_tr:"Nede ısrar ediyor?"},
+];
+
+// ═══════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════
+let lf={level:'all',kasus:'all'};
+let fcf={level:'all',kasus:'all'};
+let qLevel='all';
+let fcData=[...V];
+let fcIdx=0;
+let fcFlip=false;
+let qData=[],qIdx=0,qScore=0,qAnswered=false;
+let pqData=[],pqIdx=0,pqScore=0,pqAnswered=false;
+
+// ═══════════════════════════════════════════
+// TAB SWITCHING
+// ═══════════════════════════════════════════
+const tabMap = ['liste','karten','quiz','pa','paquiz'];
+
+function switchTab(n){
+  tabMap.forEach(t => {
+    document.getElementById('tab-'+t).classList.toggle('active', t===n);
+  });
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('sec-'+n).classList.add('active');
+  if(n==='quiz'&&qData.length===0)startQuiz();
+  if(n==='paquiz'&&pqData.length===0)startPAQuiz();
+  if(n==='karten'){applyFCFilter();renderFC();}
+  if(n==='pa')renderPATable();
+}
+
+// ═══════════════════════════════════════════
+// FILTER LOGIC
+// ═══════════════════════════════════════════
+function filtered(f){
+  return V.filter(v=>{
+    if(f.level&&f.level!=='all'&&v.l!==f.level)return false;
+    if(f.kasus&&f.kasus!=='all'&&v.k!==f.kasus)return false;
+    return true;
+  });
+}
+
+function setLF(type,val){
+  lf[type]=val;
+  if(type==='level'){
+    ['all','a1','a2','b1','b2'].forEach(x=>{const e=document.getElementById('fl-'+x);if(e)e.classList.remove('on');});
+    const el=document.getElementById('fl-'+(val==='all'?'all':val.toLowerCase()));
+    if(el)el.classList.add('on');
+  } else {
+    ['all','akk','dat'].forEach(x=>{const e=document.getElementById('fk-'+x);if(e)e.classList.remove('on');});
+    const el=document.getElementById('fk-'+(val==='all'?'all':val.toLowerCase()));
+    if(el)el.classList.add('on');
+  }
+  renderListe();
+}
+
+function setFCF(type,val){
+  fcf[type]=val;
+  if(type==='level'){
+    ['all','a1','a2','b1','b2'].forEach(x=>{const e=document.getElementById('fck-'+x);if(e)e.classList.remove('on');});
+    const el=document.getElementById('fck-'+(val==='all'?'all':val.toLowerCase()));
+    if(el)el.classList.add('on');
+  } else {
+    ['kall','kakk','kdat'].forEach(x=>{const e=document.getElementById('fck-'+x);if(e)e.classList.remove('on');});
+    const map={all:'kall',Akk:'kakk',Dat:'kdat'};
+    const el=document.getElementById('fck-'+map[val]);
+    if(el)el.classList.add('on');
+  }
+  applyFCFilter();renderFC();
+}
+
+function setQF(val){
+  qLevel=val;
+  ['all','a1','a2','b1','b2'].forEach(x=>{const e=document.getElementById('fq-'+x);if(e)e.classList.remove('on');});
+  const el=document.getElementById('fq-'+(val==='all'?'all':val.toLowerCase()));
+  if(el)el.classList.add('on');
+  startQuiz();
+}
+
+// ═══════════════════════════════════════════
+// LISTE
+// ═══════════════════════════════════════════
+function renderListe(){
+  const q=(document.getElementById('srch')||{}).value||'';
+  const data=filtered(lf).filter(v=>!q||v.v.toLowerCase().includes(q.toLowerCase())||v.p.toLowerCase().includes(q.toLowerCase())||v.m.toLowerCase().includes(q.toLowerCase()));
+  document.getElementById('st-total').textContent=data.length;
+  document.getElementById('st-akk').textContent=data.filter(v=>v.k==='Akk').length;
+  document.getElementById('st-dat').textContent=data.filter(v=>v.k==='Dat').length;
+  const c=document.getElementById('liste-c');
+  if(!data.length){c.innerHTML='<div class="empty"><span class="empty-icon">🔍</span>Sonuç bulunamadı.</div>';return;}
+  c.innerHTML=data.map(v=>`<div class="card">
+    <div class="vh">
+      <span class="vname">${v.v}</span>
+      <span class="pbadge ${v.k==='Akk'?'akk':'dat'}">${v.p} + ${v.k}</span>
+      <span class="lvlbadge l${v.l.toLowerCase()}">${v.l}</span>
+    </div>
+    <div class="vmean">${v.m}</div>
+    <div class="ex">${hl(v.ex,v.v,v.p)}<div class="extr">${v.tr}</div></div>
+  </div>`).join('');
+}
+
+function hl(s,verb,prep){
+  let r=s;
+  const base=verb.replace('sich ','').replace(/en$/,'');
+  r=r.replace(new RegExp('\\b('+base+'\\w*)\\b','gi'),m=>'<strong>'+m+'</strong>');
+  r=r.replace(new RegExp('\\b'+prep+'\\b','g'),m=>'<span style="color:var(--accent);font-weight:600">'+m+'</span>');
+  return r;
+}
+
+// ═══════════════════════════════════════════
+// FLASHCARD
+// ═══════════════════════════════════════════
+function applyFCFilter(){
+  fcData=filtered(fcf).sort(()=>Math.random()-0.5);
+  if(!fcData.length)fcData=[...V];
+  fcIdx=0;
+}
+
+function renderFC(){
+  if(!fcData.length)applyFCFilter();
+  fcFlip=false;
+  const v=fcData[fcIdx];
+  document.getElementById('fc-verb').textContent=v.v;
+  document.getElementById('fc-prep').textContent=v.p+' + '+v.k+' ('+v.l+')';
+  document.getElementById('fc-mean').textContent=v.m;
+  document.getElementById('fc-ex').textContent=v.ex;
+  document.getElementById('fc-extr').textContent=v.tr;
+  document.getElementById('fc-back').classList.remove('vis');
+  document.getElementById('fc-front').style.display='flex';
+  document.getElementById('fc-front').style.flexDirection='column';
+  document.getElementById('fc-front').style.alignItems='center';
+  document.getElementById('fc-cnt').textContent=(fcIdx+1)+' / '+fcData.length;
+}
+
+function flipCard(){
+  fcFlip=!fcFlip;
+  document.getElementById('fc-back').classList.toggle('vis',fcFlip);
+  document.getElementById('fc-front').style.display=fcFlip?'none':'flex';
+}
+
+function fcMove(d){fcIdx=(fcIdx+d+fcData.length)%fcData.length;renderFC();}
+function shuffleFC(){fcData=[...fcData].sort(()=>Math.random()-0.5);fcIdx=0;renderFC();}
+
+// ═══════════════════════════════════════════
+// QUIZ
+// ═══════════════════════════════════════════
+function startQuiz(){
+  const pool=qLevel==='all'?V:V.filter(v=>v.l===qLevel);
+  qData=pool.sort(()=>Math.random()-0.5).slice(0,Math.min(10,pool.length));
+  qIdx=0;qScore=0;renderQuiz();
+}
+
+function renderQuiz(){
+  const c=document.getElementById('quiz-c');
+  if(qIdx>=qData.length){
+    const pct=Math.round(qScore/qData.length*100);
+    const e=pct>=80?'🎉':pct>=50?'👍':'💪';
+    c.innerHTML=`<div class="scard"><div style="font-size:40px;margin-bottom:10px">${e}</div><div class="sbig">${qScore}/${qData.length}</div><div class="slbl">%${pct} başarı</div><button class="rbtn" onclick="startQuiz()">Tekrar dene</button></div>`;
+    return;
+  }
+  const q=qData[qIdx];
+  const pct=Math.round(qIdx/qData.length*100);
+  const type=qIdx%3;
+  let qHTML='',opts=[],correct='';
+  const allPreps=[...new Set(V.map(v=>v.p))];
+  if(type===0){
+    const sent=q.ex.replace(new RegExp('\\b'+q.p+'\\b'),'___');
+    const dist=allPreps.filter(p=>p!==q.p).sort(()=>Math.random()-0.5).slice(0,3);
+    opts=[...dist,q.p].sort(()=>Math.random()-0.5);correct=q.p;
+    qHTML=`<div class="qtype">Doğru edatı seç</div><div class="qsent">${sent.replace('___','<span class="blank">___</span>')}</div>`;
+  } else if(type===1){
+    const dist=V.filter(v=>v.v!==q.v).sort(()=>Math.random()-0.5).slice(0,3);
+    opts=[...dist.map(v=>v.m),q.m].sort(()=>Math.random()-0.5);correct=q.m;
+    qHTML=`<div class="qtype">Türkçe anlamı nedir?</div><div class="qsent">${q.v} + <span style="color:var(--accent)">${q.p}</span> <span style="font-size:12px;color:var(--text-secondary)">(${q.l})</span></div>`;
+  } else {
+    const dist=V.filter(v=>v.v!==q.v||v.p!==q.p).sort(()=>Math.random()-0.5).slice(0,3);
+    opts=[...dist.map(v=>v.v+' + '+v.p),q.v+' + '+q.p].sort(()=>Math.random()-0.5);correct=q.v+' + '+q.p;
+    qHTML=`<div class="qtype">Hangi fiil + edat?</div><div class="qsent">${q.m}</div>`;
+  }
+  c.innerHTML=`<div class="ptxt">${qIdx+1} / ${qData.length}</div>
+  <div class="pbar"><div class="pfill" style="width:${pct}%"></div></div>
+  <div class="qcard">${qHTML}
+    <div class="opts">${opts.map(o=>`<button class="obtn" data-val="${o.replace(/"/g,'&quot;')}" onclick="checkQ(this,'${o.replace(/'/g,"&#39;")}','${correct.replace(/'/g,"&#39;")}','${q.ex.replace(/'/g,"&#39;")}','${q.tr.replace(/'/g,"&#39;")}')">${o}</button>`).join('')}</div>
+    <div id="qfb"></div>
+  </div>`;
+  qAnswered=false;
+}
+
+function checkQ(btn,chosen,correct,ex,tr){
+  if(qAnswered)return;qAnswered=true;
+  const isOk=chosen===correct;
+  if(isOk)qScore++;
+  document.querySelectorAll('.obtn').forEach(b=>{
+    b.disabled=true;
+    const t=b.textContent.trim();
+    if(t===correct)b.classList.add(isOk&&t===chosen?'correct':'show-ok');
+    else if(t===chosen&&!isOk)b.classList.add('wrong');
+  });
+  const fb=document.getElementById('qfb');
+  fb.innerHTML=`<div class="fb2 ${isOk?'ok':'no'}">${isOk?'✓ Doğru!':'✗ Yanlış — Doğru: <strong>'+correct+'</strong>'}<div style="margin-top:6px;font-size:12px;opacity:.85">📌 ${ex}</div><div style="font-size:11px;opacity:.7;margin-top:3px">${tr}</div></div>
+  <button class="nbtn" onclick="nextQ()">${qIdx+1>=qData.length?'Sonuçları gör':'Sonraki →'}</button>`;
+}
+function nextQ(){qIdx++;renderQuiz();}
+
+// ═══════════════════════════════════════════
+// PA TABLE
+// ═══════════════════════════════════════════
+function renderPATable(){
+  const tb=document.getElementById('pa-table-body');
+  tb.innerHTML=PA.map(p=>`<tr>
+    <td><strong>${p.verb}</strong> + ${p.prep}</td>
+    <td style="color:var(--accent);font-weight:600">${p.dar}</td>
+    <td style="color:var(--green);font-weight:600">${p.wor}</td>
+    <td style="color:var(--text-secondary)">${p.ex_wo}</td>
+  </tr>`).join('');
+}
+
+// ═══════════════════════════════════════════
+// PA QUIZ
+// ═══════════════════════════════════════════
+function startPAQuiz(){
+  pqData=[...PA].sort(()=>Math.random()-0.5).slice(0,10);
+  pqIdx=0;pqScore=0;renderPAQuiz();
+}
+
+function renderPAQuiz(){
+  const c=document.getElementById('paquiz-c');
+  if(pqIdx>=pqData.length){
+    const pct=Math.round(pqScore/pqData.length*100);
+    const e=pct>=80?'🎉':pct>=50?'👍':'💪';
+    c.innerHTML=`<div class="scard"><div style="font-size:40px;margin-bottom:10px">${e}</div><div class="sbig">${pqScore}/${pqData.length}</div><div class="slbl">%${pct} başarı</div><button class="rbtn" onclick="startPAQuiz()">Tekrar dene</button></div>`;
+    return;
+  }
+  const q=pqData[pqIdx];
+  const pct=Math.round(pqIdx/pqData.length*100);
+  const type=pqIdx%3;
+  let qHTML='',opts=[],correct='';
+  if(type===0){
+    const blank=q.ex_da.replace(q.dar,'___');
+    const dist=PA.filter(p=>p.dar!==q.dar).sort(()=>Math.random()-0.5).slice(0,3).map(p=>p.dar);
+    opts=[...new Set([...dist,q.dar])].sort(()=>Math.random()-0.5).slice(0,4);
+    if(!opts.includes(q.dar))opts[3]=q.dar;
+    opts=opts.sort(()=>Math.random()-0.5);
+    correct=q.dar;
+    qHTML=`<div class="qtype">Doğru da(r)+Präp formunu seç</div><div class="qsent">${blank.replace('___','<span class="blank">___</span>')}</div>`;
+  } else if(type===1){
+    const dist=PA.filter(p=>p.wor!==q.wor).sort(()=>Math.random()-0.5).slice(0,3).map(p=>p.wor);
+    opts=[...dist,q.wor].sort(()=>Math.random()-0.5);correct=q.wor;
+    qHTML=`<div class="qtype">Hangi wo(r)+ sorusu?</div><div class="qsent">${q.ex_da}</div><div style="font-size:12px;color:var(--text-secondary);margin-top:-8px;margin-bottom:12px">${q.ex_da_tr}</div>`;
+  } else {
+    const blank=q.ex_wo.replace(q.wor,'___');
+    const dist=PA.filter(p=>p.wor!==q.wor).sort(()=>Math.random()-0.5).slice(0,3).map(p=>p.wor);
+    opts=[...dist,q.wor].sort(()=>Math.random()-0.5);correct=q.wor;
+    qHTML=`<div class="qtype">Soruyu tamamla</div><div class="qsent">${blank.replace('___','<span class="blank">___</span>')}</div><div style="font-size:12px;color:var(--text-secondary);margin-top:-8px;margin-bottom:12px">${q.ex_wo_tr}</div>`;
+  }
+  c.innerHTML=`<div class="ptxt">${pqIdx+1} / ${pqData.length}</div>
+  <div class="pbar"><div class="pfill" style="width:${pct}%"></div></div>
+  <div class="qcard">${qHTML}
+    <div class="opts">${opts.map(o=>`<button class="obtn" onclick="checkPA(this,'${o}','${correct}','${q.ex_da.replace(/'/g,"&#39;")}','${q.ex_da_tr.replace(/'/g,"&#39;")}')">${o}</button>`).join('')}</div>
+    <div id="pafb"></div>
+  </div>`;
+  pqAnswered=false;
+}
+
+function checkPA(btn,chosen,correct,ex,tr){
+  if(pqAnswered)return;pqAnswered=true;
+  const isOk=chosen===correct;
+  if(isOk)pqScore++;
+  document.querySelectorAll('#paquiz-c .obtn').forEach(b=>{
+    b.disabled=true;
+    const t=b.textContent.trim();
+    if(t===correct)b.classList.add(isOk&&t===chosen?'correct':'show-ok');
+    else if(t===chosen&&!isOk)b.classList.add('wrong');
+  });
+  document.getElementById('pafb').innerHTML=`<div class="fb2 ${isOk?'ok':'no'}">${isOk?'✓ Doğru!':'✗ Yanlış — Doğru: <strong>'+correct+'</strong>'}<div style="margin-top:6px;font-size:12px;opacity:.85">📌 ${ex}</div><div style="font-size:11px;opacity:.7;margin-top:3px">${tr}</div></div>
+  <button class="nbtn" onclick="nextPA()">${pqIdx+1>=pqData.length?'Sonuçları gör':'Sonraki →'}</button>`;
+}
+function nextPA(){pqIdx++;renderPAQuiz();}
+
+// ═══════════════════════════════════════════
+// SWIPE SUPPORT (Flashcard)
+// ═══════════════════════════════════════════
+(function(){
+  let startX=0, startY=0;
+  const card=document.getElementById('fc-card');
+  if(!card) return;
+  card.addEventListener('touchstart', e=>{
+    startX=e.touches[0].clientX;
+    startY=e.touches[0].clientY;
+  }, {passive:true});
+  card.addEventListener('touchend', e=>{
+    const dx=e.changedTouches[0].clientX - startX;
+    const dy=e.changedTouches[0].clientY - startY;
+    if(Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)*1.5){
+      if(dx > 0) fcMove(-1);
+      else fcMove(1);
+    }
+  }, {passive:true});
+})();
+
+// ═══════════════════════════════════════════
+// KEYBOARD SUPPORT
+// ═══════════════════════════════════════════
+document.addEventListener('keydown', e=>{
+  const sec = document.getElementById('sec-karten');
+  if(!sec || !sec.classList.contains('active')) return;
+  if(e.key==='ArrowLeft') fcMove(-1);
+  else if(e.key==='ArrowRight') fcMove(1);
+  else if(e.key===' '||e.key==='Enter'){e.preventDefault(); flipCard();}
+});
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+renderListe();
+applyFCFilter();
+renderFC();
+renderPATable();
+</script>
+</body>
+</html>
