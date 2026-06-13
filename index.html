@@ -504,6 +504,14 @@ body{
 /* Scrollbar hide */
 ::-webkit-scrollbar{width:0;display:none}
 ::selection{background:var(--accent-bg2);color:var(--accent)}
+/* Progress border styles for cards */
+.card.status-mastered { border-left: 4px solid var(--green) !important; }
+.card.status-learning { border-left: 4px solid var(--accent) !important; }
+.fb-starred.on { background: rgba(245,158,11,0.08); color: var(--orange); border-color: rgba(245,158,11,0.22); }
+.fb-unseen.on { background: rgba(91,124,255,0.08); color: var(--accent-2); border-color: rgba(91,124,255,0.22); }
+.fb-mastered.on { background: var(--green-bg); color: var(--green); border-color: var(--green-bd); }
+.card-btn { background:none; border:none; cursor:pointer; font-size:16px; padding:4px; display:inline-flex; align-items:center; justify-content:center; border-radius:var(--r-sm); transition:all 0.2s var(--ease); -webkit-tap-highlight-color:transparent; }
+.card-btn:active { transform:scale(1.25); }
 </style>
 </head>
 <body>
@@ -529,6 +537,16 @@ body{
       <div class="sec-head">
         <div class="sec-title">Fiil Listesi</div>
       </div>
+      <!-- Progress Bar -->
+      <div class="progress-container" style="background: var(--bg-card); border: 1px solid var(--border-1); border-radius: var(--r-md); padding: 12px 14px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 6px;">
+        <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; color: var(--text-2);">
+          <span>Öğrenme İlerlemesi</span>
+          <span id="progress-text" style="color: var(--green);">0% (0 / 0 Fiil)</span>
+        </div>
+        <div style="height: 6px; background: var(--bg-elevated); border-radius: 3px; overflow: hidden;">
+          <div id="progress-bar-fill" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--green)); border-radius: 3px; transition: width .4s var(--ease);"></div>
+        </div>
+      </div>
       <div class="search-wrap">
         <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
         <input class="search" type="text" id="srch" placeholder="Fiil, edat veya anlam ara..." oninput="renderListe()">
@@ -543,6 +561,11 @@ body{
         <button class="fb fb-all on" id="fk-all" onclick="setLF('kasus','all')">Hepsi</button>
         <button class="fb fb-akk" id="fk-akk" onclick="setLF('kasus','Akk')">Akk</button>
         <button class="fb fb-dat" id="fk-dat" onclick="setLF('kasus','Dat')">Dat</button>
+        <div class="sep"></div>
+        <button class="fb fb-all on" id="fs-all" onclick="setLF('status','all')">Tüm Durumlar</button>
+        <button class="fb fb-starred" id="fs-starred" onclick="setLF('status','starred')">⭐ Favoriler</button>
+        <button class="fb fb-unseen" id="fs-unseen" onclick="setLF('status','unseen')">🆕 Öğrenilecekler</button>
+        <button class="fb fb-mastered" id="fs-mastered" onclick="setLF('status','mastered')">✅ Öğrenilenler</button>
       </div>
       <div class="stat-row">
         <div class="stat"><span id="st-total">0</span>Fiil</div>
@@ -910,17 +933,72 @@ const PA=[
 {verb:"bestehen",prep:"auf",dar:"darauf",wor:"worauf",ex_da:"Sie besteht darauf, die Wahrheit zu hören.",ex_wo:"Worauf besteht sie?",ex_da_tr:"Gerçeği duymakta ısrar ediyor.",ex_wo_tr:"Nede ısrar ediyor?"},
 ];
 
-// ═══════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════
-let lf={level:'all',kasus:'all'};
-let fcf={level:'all',kasus:'all'};
+let lf={level:'all',kasus:'all',status:'all'};
+let fcf={level:'all',kasus:'all',status:'all'};
 let qLevel='all';
 let fcData=[...V];
 let fcIdx=0;
 let fcFlip=false;
 let qData=[],qIdx=0,qScore=0,qAnswered=false;
 let pqData=[],pqIdx=0,pqScore=0,pqAnswered=false;
+let userProgress={};
+
+function loadProgress(){
+  try{
+    const saved=localStorage.getItem('deutsch_verben_progress');
+    userProgress=saved?JSON.parse(saved):{};
+  }catch(e){
+    userProgress={};
+  }
+}
+
+function saveProgress(){
+  try{
+    localStorage.setItem('deutsch_verben_progress',JSON.stringify(userProgress));
+  }catch(e){}
+}
+
+function getWordKey(v,p){
+  return v+'+'+p;
+}
+
+function getWordState(v,p){
+  const key=getWordKey(v,p);
+  return userProgress[key]||{status:'unseen',starred:false};
+}
+
+function setWordStatus(v,p,status){
+  const key=getWordKey(v,p);
+  if(!userProgress[key])userProgress[key]={status:'unseen',starred:false};
+  userProgress[key].status=status;
+  saveProgress();
+  updateProgressUI();
+}
+
+function toggleWordStar(v,p){
+  const key=getWordKey(v,p);
+  if(!userProgress[key])userProgress[key]={status:'unseen',starred:false};
+  userProgress[key].starred=!userProgress[key].starred;
+  saveProgress();
+  updateProgressUI();
+  return userProgress[key].starred;
+}
+
+function updateProgressUI(){
+  const total=V.length;
+  let mastered=0;
+  for(const v of V){
+    const state=getWordState(v.v,v.p);
+    if(state.status==='mastered')mastered++;
+  }
+  const pct=total>0?Math.round(mastered/total*100):0;
+  const txt=document.getElementById('progress-text');
+  const bar=document.getElementById('progress-bar-fill');
+  if(txt)txt.textContent=`${pct}% (${mastered} / ${total} Fiil)`;
+  if(bar)bar.style.width=`${pct}%`;
+}
 
 const headerTitles={liste:'Fiil Listesi',karten:'Flashcard',quiz:'Quiz',pa:'da(r)- / wo(r)-',paquiz:'PA Quiz'};
 
@@ -952,6 +1030,12 @@ function filtered(f){
   return V.filter(v=>{
     if(f.level&&f.level!=='all'&&v.l!==f.level)return false;
     if(f.kasus&&f.kasus!=='all'&&v.k!==f.kasus)return false;
+    if(f.status&&f.status!=='all'){
+      const progress=getWordState(v.v,v.p);
+      if(f.status==='starred'&&!progress.starred)return false;
+      if(f.status==='unseen'&&progress.status!=='unseen')return false;
+      if(f.status==='mastered'&&progress.status!=='mastered')return false;
+    }
     return true;
   });
 }
@@ -962,9 +1046,13 @@ function setLF(type,val){
     ['all','a1','a2','b1','b2'].forEach(x=>{const e=document.getElementById('fl-'+x);if(e)e.classList.remove('on');});
     const el=document.getElementById('fl-'+(val==='all'?'all':val.toLowerCase()));
     if(el)el.classList.add('on');
-  } else {
+  } else if(type==='kasus') {
     ['all','akk','dat'].forEach(x=>{const e=document.getElementById('fk-'+x);if(e)e.classList.remove('on');});
     const el=document.getElementById('fk-'+(val==='all'?'all':val.toLowerCase()));
+    if(el)el.classList.add('on');
+  } else if(type==='status') {
+    ['all','starred','unseen','mastered'].forEach(x=>{const e=document.getElementById('fs-'+x);if(e)e.classList.remove('on');});
+    const el=document.getElementById('fs-'+(val==='all'?'all':val.toLowerCase()));
     if(el)el.classList.add('on');
   }
   renderListe();
@@ -976,9 +1064,14 @@ function setFCF(type,val){
     ['all','a1','a2','b1','b2'].forEach(x=>{const e=document.getElementById('fck-'+x);if(e)e.classList.remove('on');});
     const el=document.getElementById('fck-'+(val==='all'?'all':val.toLowerCase()));
     if(el)el.classList.add('on');
-  } else {
+  } else if(type==='kasus') {
     ['kall','kakk','kdat'].forEach(x=>{const e=document.getElementById('fck-'+x);if(e)e.classList.remove('on');});
     const map={all:'kall',Akk:'kakk',Dat:'kdat'};
+    const el=document.getElementById('fck-'+map[val]);
+    if(el)el.classList.add('on');
+  } else if(type==='status') {
+    ['sall','sstarred','sunseen','smastered'].forEach(x=>{const e=document.getElementById('fck-'+x);if(e)e.classList.remove('on');});
+    const map={all:'sall',starred:'sstarred',unseen:'sunseen',mastered:'smastered'};
     const el=document.getElementById('fck-'+map[val]);
     if(el)el.classList.add('on');
   }
@@ -996,6 +1089,18 @@ function setQF(val){
 // ═══════════════════════════════════════════
 // LISTE
 // ═══════════════════════════════════════════
+function handleToggleStar(verb,prep){
+  toggleWordStar(verb,prep);
+  renderListe();
+}
+
+function handleToggleMastered(verb,prep){
+  const state=getWordState(verb,prep);
+  const newStatus=state.status==='mastered'?'unseen':'mastered';
+  setWordStatus(verb,prep,newStatus);
+  renderListe();
+}
+
 function renderListe(){
   const q=(document.getElementById('srch')||{}).value||'';
   const data=filtered(lf).filter(v=>!q||v.v.toLowerCase().includes(q.toLowerCase())||v.p.toLowerCase().includes(q.toLowerCase())||v.m.toLowerCase().includes(q.toLowerCase()));
@@ -1004,15 +1109,31 @@ function renderListe(){
   document.getElementById('st-dat').textContent=data.filter(v=>v.k==='Dat').length;
   const c=document.getElementById('liste-c');
   if(!data.length){c.innerHTML='<div class="empty"><span class="empty-icon">🔍</span><div class="empty-text">Sonuç bulunamadı.</div></div>';return;}
-  c.innerHTML=data.map(v=>`<div class="card">
-    <div class="vh">
-      <span class="vname">${v.v}</span>
-      <span class="pbadge ${v.k==='Akk'?'akk':'dat'}">${v.p} + ${v.k}</span>
-      <span class="lvlbadge l${v.l.toLowerCase()}">${v.l}</span>
-    </div>
-    <div class="vmean">${v.m}</div>
-    <div class="ex">${hl(v.ex,v.v,v.p)}<div class="extr">${v.tr}</div></div>
-  </div>`).join('');
+  c.innerHTML=data.map(v=>{
+    const progress=getWordState(v.v,v.p);
+    const isStarred=progress.starred;
+    const isMastered=progress.status==='mastered';
+    const cardStatusClass=progress.status==='mastered'?'status-mastered':(progress.status==='learning'?'status-learning':'');
+    
+    const starChar=isStarred?'★':'☆';
+    const starColor=isStarred?'var(--orange)':'var(--text-3)';
+    const checkChar=isMastered?'✔':'○';
+    const checkColor=isMastered?'var(--green)':'var(--text-3)';
+    
+    return `<div class="card ${cardStatusClass}">
+      <div class="vh">
+        <span class="vname">${v.v}</span>
+        <span class="pbadge ${v.k==='Akk'?'akk':'dat'}">${v.p} + ${v.k}</span>
+        <span class="lvlbadge l${v.l.toLowerCase()}">${v.l}</span>
+        <div style="margin-left: auto; display: flex; gap: 8px; align-items: center;">
+          <button class="card-btn" onclick="event.stopPropagation(); handleToggleStar('${v.v}', '${v.p}')" style="color: ${starColor};">${starChar}</button>
+          <button class="card-btn" onclick="event.stopPropagation(); handleToggleMastered('${v.v}', '${v.p}')" style="color: ${checkColor}; font-weight: bold;">${checkChar}</button>
+        </div>
+      </div>
+      <div class="vmean">${v.m}</div>
+      <div class="ex">${hl(v.ex,v.v,v.p)}<div class="extr">${v.tr}</div></div>
+    </div>`;
+  }).join('');
 }
 
 function hl(s,verb,prep){
@@ -1046,6 +1167,32 @@ function renderFC(){
   document.getElementById('fc-front').style.flexDirection='column';
   document.getElementById('fc-front').style.alignItems='center';
   document.getElementById('fc-cnt').textContent=(fcIdx+1)+' / '+fcData.length;
+  
+  const progress=getWordState(v.v,v.p);
+  const fcStar=document.getElementById('fc-star');
+  if(fcStar){
+    fcStar.textContent=progress.starred?'★':'☆';
+    fcStar.style.color=progress.starred?'var(--orange)':'var(--text-3)';
+  }
+}
+
+function toggleCurrentFCStar(){
+  if(!fcData||!fcData.length)return;
+  const v=fcData[fcIdx];
+  const isStarred=toggleWordStar(v.v,v.p);
+  const fcStar=document.getElementById('fc-star');
+  if(fcStar){
+    fcStar.textContent=isStarred?'★':'☆';
+    fcStar.style.color=isStarred?'var(--orange)':'var(--text-3)';
+  }
+  renderListe();
+}
+
+function handleFCEvaluation(status){
+  if(!fcData||!fcData.length)return;
+  const v=fcData[fcIdx];
+  setWordStatus(v.v,v.p,status);
+  fcMove(1);
 }
 
 function flipCard(){
@@ -1106,6 +1253,10 @@ function checkQ(btn,chosen,correct,ex,tr){
   if(qAnswered)return;qAnswered=true;
   const isOk=chosen===correct;
   if(isOk)qScore++;
+  
+  const q=qData[qIdx];
+  setWordStatus(q.v,q.p,isOk?'mastered':'learning');
+  
   document.querySelectorAll('#quiz-c .obtn').forEach(b=>{
     b.disabled=true;
     const t=b.textContent.trim();
@@ -1182,6 +1333,10 @@ function checkPA(btn,chosen,correct,ex,tr){
   if(pqAnswered)return;pqAnswered=true;
   const isOk=chosen===correct;
   if(isOk)pqScore++;
+  
+  const q=pqData[pqIdx];
+  setWordStatus(q.verb,q.prep,isOk?'mastered':'learning');
+  
   document.querySelectorAll('#paquiz-c .obtn').forEach(b=>{
     b.disabled=true;
     const t=b.textContent.trim();
@@ -1224,6 +1379,8 @@ document.addEventListener('keydown',e=>{
 // ═══════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════
+loadProgress();
+updateProgressUI();
 renderListe();
 applyFCFilter();
 renderFC();
