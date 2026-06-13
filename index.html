@@ -357,6 +357,97 @@ body{
 }
 .shuffle-btn:active{transform:scale(0.93);color:var(--accent);border-color:var(--accent)}
 
+/* Autoplay Panel */
+.autoplay-panel {
+  background: var(--bg-card-alt);
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-md);
+  padding: 14px;
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+.autoplay-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.autoplay-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-1);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.autoplay-status {
+  font-size: 12px;
+  color: var(--text-2);
+  text-align: center;
+  min-height: 18px;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+.autoplay-status.active {
+  color: var(--accent-2);
+}
+.autoplay-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.autoplay-play-btn {
+  flex: 1;
+  padding: 10px 16px;
+  border-radius: var(--r-sm);
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  font-weight: 700;
+  font-size: 13px;
+  font-family: var(--font);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s var(--ease);
+  -webkit-tap-highlight-color: transparent;
+}
+.autoplay-play-btn:active {
+  transform: scale(0.96);
+}
+.autoplay-play-btn.playing {
+  background: var(--red);
+}
+.autoplay-speed-container {
+  display: flex;
+  gap: 4px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-1);
+  padding: 3px;
+  border-radius: var(--r-sm);
+}
+.autoplay-speed-btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--text-2);
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: all 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.autoplay-speed-btn.on {
+  background: var(--bg-elevated);
+  color: var(--text-1);
+}
+
 /* ═══════════════════════════════════════════
    QUIZ
    ═══════════════════════════════════════════ */
@@ -633,6 +724,26 @@ body{
         </div>
         <div class="shuffle-area">
           <button class="shuffle-btn" onclick="shuffleFC()">🔀 Karıştır</button>
+        </div>
+        <!-- Eller Serbest Modu -->
+        <div class="autoplay-panel">
+          <div class="autoplay-header">
+            <div class="autoplay-title">🎧 Eller Serbest (Otomatik Oynat)</div>
+            <div style="font-size: 11px; color: var(--text-3); font-weight: 500;">
+              Ses: <span class="active-voice-name" style="color: var(--accent);">Yükleniyor...</span>
+            </div>
+          </div>
+          <div class="autoplay-status" id="fc-autoplay-status">Duraklatıldı</div>
+          <div class="autoplay-controls">
+            <button class="autoplay-play-btn" id="fc-autoplay-btn" onclick="toggleFCAutoPlay()">
+              ▶️ Oynat
+            </button>
+            <div class="autoplay-speed-container">
+              <button class="autoplay-speed-btn" id="fc-speed-slow" onclick="setFCAutoPlaySpeed('slow')">Yavaş</button>
+              <button class="autoplay-speed-btn on" id="fc-speed-normal" onclick="setFCAutoPlaySpeed('normal')">Normal</button>
+              <button class="autoplay-speed-btn" id="fc-speed-fast" onclick="setFCAutoPlaySpeed('fast')">Hızlı</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1035,11 +1146,34 @@ function getBestGermanVoice() {
 if ('speechSynthesis' in window) {
   window.speechSynthesis.onvoiceschanged = () => {
     selectedDeVoice = getBestGermanVoice();
+    updateActiveVoiceIndicator();
   };
   selectedDeVoice = getBestGermanVoice();
 }
 
-function speak(text){
+function updateActiveVoiceIndicator() {
+  if (!selectedDeVoice) {
+    selectedDeVoice = getBestGermanVoice();
+  }
+  let voiceText = "⚠️ Ses yüklenemedi (Desteklenmiyor)";
+  if ('speechSynthesis' in window) {
+    if (selectedDeVoice) {
+      voiceText = selectedDeVoice.name + ' (' + selectedDeVoice.lang + ')';
+    } else {
+      voiceText = "⚠️ Almanca Ses Paketi Eksik!";
+    }
+  }
+  document.querySelectorAll('.active-voice-name').forEach(el => {
+    el.textContent = voiceText;
+    if (selectedDeVoice) {
+      el.style.color = "var(--accent)";
+    } else {
+      el.style.color = "var(--red)";
+    }
+  });
+}
+
+function speak(text, callback){
   if('speechSynthesis' in window){
     window.speechSynthesis.cancel();
     const u=new SpeechSynthesisUtterance(text);
@@ -1052,7 +1186,38 @@ function speak(text){
     if(selectedDeVoice) u.voice = selectedDeVoice;
     u.rate = 0.90;
     u.pitch = 1.0;
+    
+    let callbackCalled = false;
+    const triggerCallback = () => {
+      if (callbackCalled) return;
+      callbackCalled = true;
+      if (callback) callback();
+    };
+    
+    u.onend = () => {
+      setTimeout(triggerCallback, 50);
+    };
+    
+    u.onerror = (err) => {
+      console.warn("TTS speak error:", err);
+      setTimeout(triggerCallback, 50);
+    };
+    
+    const fallbackTimer = setTimeout(() => {
+      triggerCallback();
+    }, 12000);
+    
+    const originalCallback = callback;
+    callback = () => {
+      clearTimeout(fallbackTimer);
+      if (originalCallback) originalCallback();
+    };
+    
     window.speechSynthesis.speak(u);
+  } else {
+    if (callback) {
+      setTimeout(callback, 1500);
+    }
   }
 }
 function speakCurrentFCVerb(){
@@ -1242,6 +1407,9 @@ const headerTitles={liste:'Fiil Listesi',karten:'Flashcard',quiz:'Quiz',pa:'da(r
 const tabNames=['liste','karten','quiz','pa','paquiz'];
 
 function switchTab(n){
+  if (n !== 'karten' && typeof stopFCAutoPlay === 'function') {
+    stopFCAutoPlay();
+  }
   tabNames.forEach(t=>{
     document.getElementById('tab-'+t).classList.toggle('active',t===n);
   });
@@ -1355,8 +1523,12 @@ function showQuizSetup(){
       <button class="rbtn" onclick="startQuiz()" style="width: 100%; border-radius: var(--r-md); margin-top: 8px; font-weight: 800; font-size: 15px; letter-spacing: 0.02em; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; cursor: pointer;">
         🚀 Sınavı Başlat
       </button>
+      <div style="font-size: 11px; color: var(--text-3); margin-top: 6px; text-align: center; opacity: 0.95; border-top: 1px solid var(--border-2); padding-top: 8px;">
+        🔊 Aktif Ses: <span class="active-voice-name" style="color: var(--accent); font-weight: 600;">Yükleniyor...</span>
+      </div>
     </div>
   `;
+  updateActiveVoiceIndicator();
 }
 
 function setQuizSetting(key, val, btn){
@@ -1479,6 +1651,7 @@ function renderFC(){
   if(fcCard){
     fcCard.style.borderLeft=score===5?'4px solid var(--green)':(score>0?'4px solid var(--accent)':'1px solid var(--border-2)');
   }
+  updateActiveVoiceIndicator();
 }
 
 function toggleCurrentFCStar(){
@@ -1512,6 +1685,133 @@ function flipCard(){
 
 function fcMove(d){fcIdx=(fcIdx+d+fcData.length)%fcData.length;renderFC();}
 function shuffleFC(){fcData=[...fcData].sort(()=>Math.random()-0.5);fcIdx=0;renderFC();}
+
+// CARD AUTOPLAY (ELLER SERBEST)
+let fcAutoPlay = false;
+let fcTimer = null;
+let fcSpeed = 'normal'; // 'slow', 'normal', 'fast'
+
+const fcSpeedSettings = {
+  slow: { front: 4000, back: 5000 },
+  normal: { front: 2500, back: 3500 },
+  fast: { front: 1500, back: 2200 }
+};
+
+function toggleFCAutoPlay() {
+  if (fcAutoPlay) {
+    stopFCAutoPlay();
+  } else {
+    startFCAutoPlay();
+  }
+}
+
+function startFCAutoPlay() {
+  fcAutoPlay = true;
+  
+  const btn = document.getElementById('fc-autoplay-btn');
+  if (btn) {
+    btn.innerHTML = '⏸️ Duraklat';
+    btn.classList.add('playing');
+  }
+  const statusEl = document.getElementById('fc-autoplay-status');
+  if (statusEl) {
+    statusEl.classList.add('active');
+  }
+  
+  if (fcFlip) {
+    flipCard();
+  }
+  
+  runFCAutoPlayLoop();
+}
+
+function stopFCAutoPlay() {
+  fcAutoPlay = false;
+  if (fcTimer) {
+    clearTimeout(fcTimer);
+    fcTimer = null;
+  }
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+  }
+  
+  const btn = document.getElementById('fc-autoplay-btn');
+  if (btn) {
+    btn.innerHTML = '▶️ Oynat';
+    btn.classList.remove('playing');
+  }
+  const statusEl = document.getElementById('fc-autoplay-status');
+  if (statusEl) {
+    statusEl.textContent = 'Duraklatıldı';
+    statusEl.classList.remove('active');
+  }
+}
+
+function setFCAutoPlaySpeed(speed) {
+  fcSpeed = speed;
+  ['slow', 'normal', 'fast'].forEach(s => {
+    const el = document.getElementById('fc-speed-' + s);
+    if (el) el.classList.toggle('on', s === speed);
+  });
+}
+
+function runFCAutoPlayLoop() {
+  if (!fcAutoPlay) return;
+  if (!fcData || !fcData.length) return;
+  
+  const v = fcData[fcIdx];
+  const speed = fcSpeedSettings[fcSpeed] || fcSpeedSettings.normal;
+  const statusEl = document.getElementById('fc-autoplay-status');
+  
+  if (statusEl) statusEl.textContent = '🔊 Almanca fiil seslendiriliyor...';
+  
+  speak(v.v + ' ' + v.p, () => {
+    if (!fcAutoPlay) return;
+    
+    let countdown = Math.round(speed.front / 1000);
+    if (statusEl) statusEl.textContent = '⏳ Çeviriyi düşünün... (' + countdown + 's)';
+    
+    const intervalTime = 1000;
+    let elapsed = 0;
+    
+    const waitFront = () => {
+      if (!fcAutoPlay) return;
+      elapsed += intervalTime;
+      if (elapsed >= speed.front) {
+        flipCard();
+        
+        if (statusEl) statusEl.textContent = '🔊 Örnek cümle seslendiriliyor...';
+        speak(v.ex, () => {
+          if (!fcAutoPlay) return;
+          
+          let backCountdown = Math.round(speed.back / 1000);
+          if (statusEl) statusEl.textContent = '⏳ Sonraki kelimeye geçiliyor... (' + backCountdown + 's)';
+          
+          let backElapsed = 0;
+          const waitBack = () => {
+            if (!fcAutoPlay) return;
+            backElapsed += intervalTime;
+            if (backElapsed >= speed.back) {
+              fcMove(1);
+              runFCAutoPlayLoop();
+            } else {
+              let currentSec = Math.max(0, Math.round((speed.back - backElapsed) / 1000));
+              if (statusEl) statusEl.textContent = '⏳ Sonraki kelimeye geçiliyor... (' + currentSec + 's)';
+              fcTimer = setTimeout(waitBack, intervalTime);
+            }
+          };
+          fcTimer = setTimeout(waitBack, intervalTime);
+        });
+      } else {
+        let currentSec = Math.max(0, Math.round((speed.front - elapsed) / 1000));
+        if (statusEl) statusEl.textContent = '⏳ Çeviriyi düşünün... (' + currentSec + 's)';
+        fcTimer = setTimeout(waitFront, intervalTime);
+      }
+    };
+    
+    fcTimer = setTimeout(waitFront, intervalTime);
+  });
+}
 
 // ═══════════════════════════════════════════
 // QUIZ
@@ -1692,8 +1992,12 @@ function showPAQuizSetup(){
       <button class="rbtn" onclick="startPAQuiz()" style="width: 100%; border-radius: var(--r-md); margin-top: 8px; font-weight: 800; font-size: 15px; letter-spacing: 0.02em; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; cursor: pointer;">
         🚀 Sınavı Başlat
       </button>
+      <div style="font-size: 11px; color: var(--text-3); margin-top: 6px; text-align: center; opacity: 0.95; border-top: 1px solid var(--border-2); padding-top: 8px;">
+        🔊 Aktif Ses: <span class="active-voice-name" style="color: var(--accent); font-weight: 600;">Yükleniyor...</span>
+      </div>
     </div>
   `;
+  updateActiveVoiceIndicator();
 }
 
 function setPAQuizSetting(key, val, btn){
@@ -1911,6 +2215,7 @@ applyFCFilter();
 renderFC();
 initPAData();
 renderPATable();
+updateActiveVoiceIndicator();
 </script>
 </body>
 </html>
