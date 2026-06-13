@@ -598,7 +598,17 @@ function renderQuiz(){
   let qHTML='',opts=[],correct='';
   const allPreps=[...new Set(V.map(v=>v.p))];
   if(type===0){
-    const sent=q.ex.replace(new RegExp('\\b'+q.p+'\\b'),'___');
+    const getWordsToReplace = (p) => {
+      const arr = [p, 'da'+p, 'dar'+p, 'wo'+p, 'wor'+p];
+      if(p==='zu') arr.push('zum','zur');
+      if(p==='an') arr.push('am','ans');
+      if(p==='in') arr.push('im','ins');
+      if(p==='von') arr.push('vom');
+      if(p==='bei') arr.push('beim');
+      return arr.sort((a,b)=>b.length-a.length);
+    };
+    const prepsToHide = getWordsToReplace(q.p);
+    const sent = q.ex.replace(new RegExp('\\b(' + prepsToHide.join('|') + ')\\b', 'gi'), '___');
     const dist=allPreps.filter(p=>p!==q.p).sort(()=>Math.random()-0.5).slice(0,3);
     opts=[...dist,q.p].sort(()=>Math.random()-0.5);correct=q.p;
     qHTML=`<div class="qtype">Doğru edatı seç</div><div class="qsent">${sent.replace('___','<span class="blank">___</span>')}</div>`;
