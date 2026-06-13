@@ -547,7 +547,7 @@ function renderPAQuiz(){
   const q=pqData[pqIdx];
   const pct=Math.round(pqIdx/pqData.length*100);
   const type=pqIdx%3;
-  let qHTML='',opts=[],correct='';
+  let qHTML='',opts=[],correct='',exText='',trText='';
   if(type===0){
     const blank=q.ex_da.replace(q.dar,'___');
     const dist=PA.filter(p=>p.dar!==q.dar).sort(()=>Math.random()-0.5).slice(0,3).map(p=>p.dar);
@@ -556,20 +556,26 @@ function renderPAQuiz(){
     opts=opts.sort(()=>Math.random()-0.5);
     correct=q.dar;
     qHTML=`<div class="qtype">Doğru da(r)+Präp formunu seç</div><div class="qsent">${blank.replace('___','<span class="blank">___</span>')}</div>`;
+    exText=q.ex_da;
+    trText=q.ex_da_tr;
   } else if(type===1){
     const dist=PA.filter(p=>p.wor!==q.wor).sort(()=>Math.random()-0.5).slice(0,3).map(p=>p.wor);
     opts=[...dist,q.wor].sort(()=>Math.random()-0.5);correct=q.wor;
-    qHTML=`<div class="qtype">Hangi wo(r)+ sorusu?</div><div class="qsent">${q.ex_da}</div><div style="font-size:12px;color:var(--color-text-secondary);margin-top:-8px;margin-bottom:12px">${q.ex_da_tr}</div>`;
+    qHTML=`<div class="qtype">Hangi wo(r)+ sorusu?</div><div class="qsent"><strong>${q.verb}</strong> + ${q.prep}</div><div style="font-size:12px;color:var(--color-text-secondary);margin-top:-8px;margin-bottom:12px">İpucu: ${q.ex_wo_tr}</div>`;
+    exText=q.ex_wo;
+    trText=q.ex_wo_tr;
   } else {
     const blank=q.ex_wo.replace(q.wor,'___');
     const dist=PA.filter(p=>p.wor!==q.wor).sort(()=>Math.random()-0.5).slice(0,3).map(p=>p.wor);
     opts=[...dist,q.wor].sort(()=>Math.random()-0.5);correct=q.wor;
     qHTML=`<div class="qtype">Soruyu tamamla</div><div class="qsent">${blank.replace('___','<span class="blank">___</span>')}</div><div style="font-size:12px;color:var(--color-text-secondary);margin-top:-8px;margin-bottom:12px">${q.ex_wo_tr}</div>`;
+    exText=q.ex_wo;
+    trText=q.ex_wo_tr;
   }
   c.innerHTML=`<div class="ptxt">${pqIdx+1} / ${pqData.length}</div>
   <div class="pbar"><div class="pfill" style="width:${pct}%"></div></div>
   <div class="qcard">${qHTML}
-    <div class="opts">${opts.map(o=>`<button class="obtn" onclick="checkPA(this,'${o}','${correct}','${q.ex_da.replace(/'/g,"&#39;")}','${q.ex_da_tr.replace(/'/g,"&#39;")}')">${o}</button>`).join('')}</div>
+    <div class="opts">${opts.map(o=>`<button class="obtn" onclick="checkPA(this,'${o}','${correct}','${exText.replace(/'/g,"&#39;")}','${trText.replace(/'/g,"&#39;")}')">${o}</button>`).join('')}</div>
     <div id="pafb"></div>
   </div>`;
   pqAnswered=false;
