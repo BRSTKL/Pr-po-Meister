@@ -960,6 +960,7 @@ let qData=[],qIdx=0,qScore=0,qAnswered=false;
 let pqData=[],pqIdx=0,pqScore=0,pqAnswered=false;
 let userProgress={};
 let quizSettings={level:'all',kasus:'all',starredOnly:false};
+let paQuizSettings={level:'all',kasus:'all',starredOnly:false};
 let currentQuestion={correct:'',ex:'',tr:''};
 let selectedPA = { prefix: '', prep: '' };
 
@@ -1092,6 +1093,52 @@ function getWeightedRandomSample(pool, sampleSize){
   return result;
 }
 
+function filteredPA(settings){
+  return PA.filter(p => {
+    const match = V.find(item => item.v === p.verb && item.p === p.prep);
+    if (!match) return false;
+    if (settings.level && settings.level !== 'all' && match.l !== settings.level) return false;
+    if (settings.kasus && settings.kasus !== 'all' && match.k !== settings.kasus) return false;
+    if (settings.starredOnly) {
+      const progress = getWordState(p.verb, p.prep);
+      if (!progress.starred) return false;
+    }
+    return true;
+  });
+}
+
+function getWeightedRandomSamplePA(pool, sampleSize){
+  if (!pool || pool.length === 0) return [];
+  if (pool.length <= sampleSize) {
+    return [...pool].sort(()=>Math.random()-0.5);
+  }
+  const weightMap = { 0: 1.0, 1: 0.8, 2: 0.6, 3: 0.4, 4: 0.2, 5: 0.05 };
+  const result = [];
+  const tempPool = [...pool];
+  for (let i = 0; i < sampleSize; i++) {
+    let totalWeight = 0;
+    const itemWeights = tempPool.map(v => {
+      const state = getWordState(v.verb, v.prep);
+      const score = state.score !== undefined ? state.score : 0;
+      const w = weightMap[score] !== undefined ? weightMap[score] : 1.0;
+      totalWeight += w;
+      return w;
+    });
+    let randomVal = Math.random() * totalWeight;
+    let selectedIdx = 0;
+    for (let j = 0; j < tempPool.length; j++) {
+      randomVal -= itemWeights[j];
+      if (randomVal <= 0) {
+        selectedIdx = j;
+        break;
+      }
+    }
+    result.push(tempPool[selectedIdx]);
+    tempPool.splice(selectedIdx, 1);
+  }
+  return result;
+}
+
 const headerTitles={liste:'Fiil Listesi',karten:'Flashcard',quiz:'Quiz',pa:'da(r)- / wo(r)-',paquiz:'PA Quiz'};
 
 // ═══════════════════════════════════════════
@@ -1110,7 +1157,7 @@ function switchTab(n){
   // Update header
   document.getElementById('header-text').textContent=headerTitles[n]||'Verben mit Präp.';
   if(n==='quiz'&&qData.length===0)showQuizSetup();
-  if(n==='paquiz'&&pqData.length===0)startPAQuiz();
+  if(n==='paquiz'&&pqData.length===0)showPAQuizSetup();
   if(n==='karten'){applyFCFilter();renderFC();}
   if(n==='pa')renderPATable();
 }
@@ -1497,8 +1544,79 @@ function renderPATable(){
 // ═══════════════════════════════════════════
 // PA QUIZ
 // ═══════════════════════════════════════════
+function showPAQuizSetup(){
+  pqData = [];
+  const c = document.getElementById('paquiz-c');
+  if(!c) return;
+  
+  c.innerHTML = `
+    <div class="setup-card" style="background: var(--bg-card); border: 1px solid var(--border-1); border-radius: var(--r-lg); padding: 20px; display: flex; flex-direction: column; gap: 16px;">
+      <div style="font-size: 15px; font-weight: 700; color: var(--text-1); border-bottom: 1px solid var(--border-2); padding-bottom: 8px; margin-bottom: 4px;">Sınav Ayarları</div>
+      
+      <!-- Seviye Seçimi -->
+      <div>
+        <div style="font-size: 12px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Çalışma Seviyesi</div>
+        <div class="setup-chips" style="display: flex; gap: 6px; flex-wrap: wrap;">
+          <button class="fb fb-all ${paQuizSettings.level==='all'?'on':''}" onclick="setPAQuizSetting('level','all',this)">Tümü</button>
+          <button class="fb fb-a1 ${paQuizSettings.level==='A1'?'on':''}" onclick="setPAQuizSetting('level','A1',this)">A1</button>
+          <button class="fb fb-a2 ${paQuizSettings.level==='A2'?'on':''}" onclick="setPAQuizSetting('level','A2',this)">A2</button>
+          <button class="fb fb-b1 ${paQuizSettings.level==='B1'?'on':''}" onclick="setPAQuizSetting('level','B1',this)">B1</button>
+          <button class="fb fb-b2 ${paQuizSettings.level==='B2'?'on':''}" onclick="setPAQuizSetting('level','B2',this)">B2</button>
+        </div>
+      </div>
+      
+      <!-- Kasus Seçimi -->
+      <div>
+        <div style="font-size: 12px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Edat Durumu (Kasus)</div>
+        <div class="setup-chips" style="display: flex; gap: 6px;">
+          <button class="fb fb-all ${paQuizSettings.kasus==='all'?'on':''}" onclick="setPAQuizSetting('kasus','all',this)">Tümü</button>
+          <button class="fb fb-akk ${paQuizSettings.kasus==='Akk'?'on':''}" onclick="setPAQuizSetting('kasus','Akk',this)">Akkusativ</button>
+          <button class="fb fb-dat ${paQuizSettings.kasus==='Dat'?'on':''}" onclick="setPAQuizSetting('kasus','Dat',this)">Dativ</button>
+        </div>
+      </div>
+      
+      <!-- Kapsam -->
+      <div>
+        <div style="font-size: 12px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Kelime Kapsamı</div>
+        <div class="setup-chips" style="display: flex; gap: 6px;">
+          <button class="fb fb-all ${!paQuizSettings.starredOnly?'on':''}" onclick="setPAQuizSetting('starredOnly',false,this)">Tüm Kelimeler</button>
+          <button class="fb fb-starred ${paQuizSettings.starredOnly?'on':''}" onclick="setPAQuizSetting('starredOnly',true,this)">⭐ Sadece Favoriler</button>
+        </div>
+      </div>
+      
+      <button class="rbtn" onclick="startPAQuiz()" style="width: 100%; border-radius: var(--r-md); margin-top: 8px; font-weight: 800; font-size: 15px; letter-spacing: 0.02em; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; cursor: pointer;">
+        🚀 Sınavı Başlat
+      </button>
+    </div>
+  `;
+}
+
+function setPAQuizSetting(key, val, btn){
+  paQuizSettings[key] = val;
+  const container = btn.parentElement;
+  container.querySelectorAll('button').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+}
+
 function startPAQuiz(){
-  pqData=[...PA].sort(()=>Math.random()-0.5).slice(0,10);
+  let pool = filteredPA(paQuizSettings);
+  
+  const c = document.getElementById('paquiz-c');
+  if(!pool.length){
+    if(c){
+      c.innerHTML=`
+        <div class="scard" style="padding: 30px 20px;">
+          <div style="font-size: 40px; margin-bottom: 12px;">⚠️</div>
+          <div style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">Kelime Bulunamadı</div>
+          <div style="font-size: 13px; color: var(--text-2); margin-bottom: 20px; line-height: 1.55;">Seçtiğiniz kriterlere uygun kelime bulunamadı. Lütfen filtreleri değiştirin veya bazı kelimeleri favorilere ekleyin.</div>
+          <button class="rbtn" onclick="showPAQuizSetup()" style="width: 100%;">Ayarlara Dön</button>
+        </div>
+      `;
+    }
+    return;
+  }
+  
+  pqData = getWeightedRandomSamplePA(pool, Math.min(10, pool.length));
   pqIdx=0;pqScore=0;renderPAQuiz();
 }
 
@@ -1507,7 +1625,15 @@ function renderPAQuiz(){
   if(pqIdx>=pqData.length){
     const pct=Math.round(pqScore/pqData.length*100);
     const e=pct>=80?'🎉':pct>=50?'👍':'💪';
-    c.innerHTML=`<div class="scard"><div style="font-size:40px;margin-bottom:10px">${e}</div><div class="sbig">${pqScore}/${pqData.length}</div><div class="slbl">%${pct} başarı</div><button class="rbtn" onclick="startPAQuiz()">Tekrar Dene</button></div>`;
+    c.innerHTML=`<div class="scard">
+      <div style="font-size:40px;margin-bottom:10px">${e}</div>
+      <div class="sbig">${pqScore}/${pqData.length}</div>
+      <div class="slbl">%${pct} başarı</div>
+      <div style="display: flex; flex-direction: column; gap: 8px; max-width: 240px; margin: 0 auto; width: 100%;">
+        <button class="rbtn" onclick="startPAQuiz()" style="width: 100%;">Aynı Ayarlarla Tekrarla</button>
+        <button class="fnbtn" onclick="showPAQuizSetup()" style="width: 100%; padding: 12px; border-radius: var(--r-pill);">Ayarları Değiştir</button>
+      </div>
+    </div>`;
     return;
   }
   const q=pqData[pqIdx];

@@ -382,6 +382,7 @@ let fcFlip=false;
 let qData=[],qIdx=0,qScore=0,qAnswered=false;
 let pqData=[],pqIdx=0,pqScore=0,pqAnswered=false;
 let selectedPA = { prefix: '', prep: '' };
+let paQuizSettings = { level: 'all', kasus: 'all' };
 
 function speak(text){
   if('speechSynthesis' in window){
@@ -410,7 +411,7 @@ function switchTab(n){
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.getElementById('sec-'+n).classList.add('active');
   if(n==='quiz'&&qData.length===0)startQuiz();
-  if(n==='paquiz'&&pqData.length===0)startPAQuiz();
+  if(n==='paquiz'&&pqData.length===0)showPAQuizSetup();
   if(n==='karten'){applyFCFilter();renderFC();}
   if(n==='pa')renderPATable();
 }
@@ -421,6 +422,25 @@ function filtered(f){
     if(f.kasus&&f.kasus!=='all'&&v.k!==f.kasus)return false;
     return true;
   });
+}
+
+function filteredPA(settings){
+  return PA.filter(p => {
+    const match = V.find(item => item.v === p.verb && item.p === p.prep);
+    if (!match) return false;
+    if (settings.level && settings.level !== 'all' && match.l !== settings.level) return false;
+    if (settings.kasus && settings.kasus !== 'all' && match.k !== settings.kasus) return false;
+    return true;
+  });
+}
+
+function getWeightedRandomSamplePA(pool, sampleSize){
+  if (!pool || pool.length === 0) return [];
+  if (pool.length <= sampleSize) {
+    return [...pool].sort(()=>Math.random()-0.5);
+  }
+  const tempPool = [...pool].sort(()=>Math.random()-0.5);
+  return tempPool.slice(0, sampleSize);
 }
 
 function setLF(type,val){
@@ -596,8 +616,70 @@ function renderPATable(){
   </tr>`).join('');
 }
 
+function showPAQuizSetup(){
+  pqData = [];
+  const c = document.getElementById('paquiz-c');
+  if(!c) return;
+  
+  c.innerHTML = `
+    <div class="setup-card" style="background: var(--color-background-secondary); border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-lg); padding: 20px; display: flex; flex-direction: column; gap: 16px;">
+      <div style="font-size: 15px; font-weight: 700; color: var(--color-text-primary); border-bottom: 0.5px solid var(--color-border-secondary); padding-bottom: 8px; margin-bottom: 4px;">Sınav Ayarları</div>
+      
+      <!-- Seviye Seçimi -->
+      <div>
+        <div style="font-size: 12px; font-weight: 700; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Çalışma Seviyesi</div>
+        <div class="setup-chips" style="display: flex; gap: 6px; flex-wrap: wrap;">
+          <button class="fb fb-all ${paQuizSettings.level==='all'?'on':''}" onclick="setPAQuizSetting('level','all',this)">Tümü</button>
+          <button class="fb fb-a1 ${paQuizSettings.level==='A1'?'on':''}" onclick="setPAQuizSetting('level','A1',this)">A1</button>
+          <button class="fb fb-a2 ${paQuizSettings.level==='A2'?'on':''}" onclick="setPAQuizSetting('level','A2',this)">A2</button>
+          <button class="fb fb-b1 ${paQuizSettings.level==='B1'?'on':''}" onclick="setPAQuizSetting('level','B1',this)">B1</button>
+          <button class="fb fb-b2 ${paQuizSettings.level==='B2'?'on':''}" onclick="setPAQuizSetting('level','B2',this)">B2</button>
+        </div>
+      </div>
+      
+      <!-- Kasus Seçimi -->
+      <div>
+        <div style="font-size: 12px; font-weight: 700; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Edat Durumu (Kasus)</div>
+        <div class="setup-chips" style="display: flex; gap: 6px;">
+          <button class="fb fb-all ${paQuizSettings.kasus==='all'?'on':''}" onclick="setPAQuizSetting('kasus','all',this)">Tümü</button>
+          <button class="fb fb-akk ${paQuizSettings.kasus==='Akk'?'on':''}" onclick="setPAQuizSetting('kasus','Akk',this)">Akkusativ</button>
+          <button class="fb fb-dat ${paQuizSettings.kasus==='Dat'?'on':''}" onclick="setPAQuizSetting('kasus','Dat',this)">Dativ</button>
+        </div>
+      </div>
+      
+      <button class="rbtn" onclick="startPAQuiz()" style="width: 100%; border-radius: var(--border-radius-md); margin-top: 8px; font-weight: 800; font-size: 15px; letter-spacing: 0.02em; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; cursor: pointer;">
+        🚀 Sınavı Başlat
+      </button>
+    </div>
+  `;
+}
+
+function setPAQuizSetting(key, val, btn){
+  paQuizSettings[key] = val;
+  const container = btn.parentElement;
+  container.querySelectorAll('button').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+}
+
 function startPAQuiz(){
-  pqData=[...PA].sort(()=>Math.random()-0.5).slice(0,10);
+  let pool = filteredPA(paQuizSettings);
+  
+  const c = document.getElementById('paquiz-c');
+  if(!pool.length){
+    if(c){
+      c.innerHTML=`
+        <div class="scard" style="padding: 30px 20px;">
+          <div style="font-size: 32px; margin-bottom: 8px;">⚠️</div>
+          <div style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">Kelime Bulunamadı</div>
+          <div style="font-size: 13px; color: var(--color-text-secondary); margin-bottom: 20px; line-height: 1.55;">Seçtiğiniz kriterlere uygun kelime bulunamadı. Lütfen filtreleri değiştirin.</div>
+          <button class="rbtn" onclick="showPAQuizSetup()" style="width: 100%;">Ayarlara Dön</button>
+        </div>
+      `;
+    }
+    return;
+  }
+  
+  pqData = getWeightedRandomSamplePA(pool, Math.min(10, pool.length));
   pqIdx=0;pqScore=0;renderPAQuiz();
 }
 
@@ -606,7 +688,15 @@ function renderPAQuiz(){
   if(pqIdx>=pqData.length){
     const pct=Math.round(pqScore/pqData.length*100);
     const e=pct>=80?'🎉':pct>=50?'👍':'💪';
-    c.innerHTML=`<div class="scard"><div style="font-size:32px;margin-bottom:8px">${e}</div><div class="sbig">${pqScore}/${pqData.length}</div><div class="slbl">%${pct} başarı</div><button class="rbtn" onclick="startPAQuiz()">Tekrar dene</button></div>`;
+    c.innerHTML=`<div class="scard">
+      <div style="font-size:32px;margin-bottom:8px">${e}</div>
+      <div class="sbig">${pqScore}/${pqData.length}</div>
+      <div class="slbl">%${pct} başarı</div>
+      <div style="display: flex; flex-direction: column; gap: 8px; max-width: 240px; margin: 0 auto; width: 100%;">
+        <button class="rbtn" onclick="startPAQuiz()" style="width: 100%;">Aynı Ayarlarla Tekrarla</button>
+        <button class="fnbtn" onclick="showPAQuizSetup()" style="width: 100%;">Ayarları Değiştir</button>
+      </div>
+    </div>`;
     return;
   }
   const q=pqData[pqIdx];
