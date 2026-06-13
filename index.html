@@ -1688,7 +1688,10 @@ function renderPAQuiz(){
   selectedPA = { prefix: '', prep: '' };
   pqAnswered = false;
 
-  const preps = ['auf', 'über', 'für', 'an', 'mit', 'von', 'vor', 'zu'];
+  const correctPrep = q.prep;
+  const distractors = ['aus', 'mit', 'in', 'bei', 'nach', 'zu', 'auf', 'an', 'von', 'über', 'für', 'um', 'unter', 'vor', 'gegen'].filter(p => p !== correctPrep);
+  const chosenDistractors = distractors.sort(() => Math.random() - 0.5).slice(0, 7);
+  const preps = [correctPrep, ...chosenDistractors].sort(() => Math.random() - 0.5);
 
   c.innerHTML=`<div class="ptxt">${pqIdx+1} / ${pqData.length}</div>
   <div class="pbar"><div class="pfill" style="width:${pct}%"></div></div>
@@ -1732,9 +1735,9 @@ function selectPAPrep(val){
   if(pqAnswered)return;
   selectedPA.prep=val;
   document.getElementById('pa-formula-prep').textContent=val;
-  ['auf', 'über', 'für', 'an', 'mit', 'von', 'vor', 'zu'].forEach(p=>{
-    const el=document.getElementById('pa-prep-'+p);
-    if(el)el.classList.toggle('selected',p===val);
+  document.querySelectorAll('.pa-opt-grid .pa-opt-btn').forEach(el=>{
+    const p = el.textContent.trim();
+    el.classList.toggle('selected', p===val);
   });
   validatePASelection();
 }
@@ -1771,14 +1774,12 @@ function checkPAQuizAnswer(){
   }
   
   // Style prep buttons
-  ['auf', 'über', 'für', 'an', 'mit', 'von', 'vor', 'zu'].forEach(p=>{
-    const el=document.getElementById('pa-prep-'+p);
-    if(el){
-      el.classList.remove('selected');
-      el.disabled=true;
-      if(p===correctPrep)el.classList.add('correct');
-      else if(p===chosenPrep && !isPrepCorrect)el.classList.add('wrong');
-    }
+  document.querySelectorAll('.pa-opt-grid .pa-opt-btn').forEach(el=>{
+    const p = el.textContent.trim();
+    el.classList.remove('selected');
+    el.disabled=true;
+    if(p===correctPrep)el.classList.add('correct');
+    else if(p===chosenPrep && !isPrepCorrect)el.classList.add('wrong');
   });
   document.getElementById('pa-pref-da').disabled=true;
   document.getElementById('pa-pref-dar').disabled=true;
