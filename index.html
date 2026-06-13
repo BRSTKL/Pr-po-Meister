@@ -938,6 +938,7 @@ let qData=[],qIdx=0,qScore=0,qAnswered=false;
 let pqData=[],pqIdx=0,pqScore=0,pqAnswered=false;
 let userProgress={};
 let quizSettings={level:'all',kasus:'all',starredOnly:false};
+let currentQuestion={correct:'',ex:'',tr:''};
 
 function loadProgress(){
   try{
@@ -1386,17 +1387,25 @@ function renderQuiz(){
     opts=[...dist.map(v=>v.v+' + '+v.p),q.v+' + '+q.p].sort(()=>Math.random()-0.5);correct=q.v+' + '+q.p;
     qHTML=`<div class="qtype">Hangi fiil + edat?</div><div class="qsent">${q.m}</div>`;
   }
+  currentQuestion.correct = correct;
+  currentQuestion.ex = q.ex;
+  currentQuestion.tr = q.tr;
+
   c.innerHTML=`<div class="ptxt">${qIdx+1} / ${qData.length}</div>
   <div class="pbar"><div class="pfill" style="width:${pct}%"></div></div>
   <div class="qcard">${qHTML}
-    <div class="opts">${opts.map(o=>`<button class="obtn" data-val="${o.replace(/"/g,'&quot;')}" onclick="checkQ(this,'${o.replace(/'/g,"&#39;")}','${correct.replace(/'/g,"&#39;")}','${q.ex.replace(/'/g,"&#39;")}','${q.tr.replace(/'/g,"&#39;")}')">${o}</button>`).join('')}</div>
+    <div class="opts">${opts.map(o=>`<button class="obtn" data-val="${o.replace(/"/g,'&quot;')}" onclick="checkQ(this)">${o}</button>`).join('')}</div>
     <div id="qfb"></div>
   </div>`;
   qAnswered=false;
 }
 
-function checkQ(btn,chosen,correct,ex,tr){
+function checkQ(btn){
   if(qAnswered)return;qAnswered=true;
+  const chosen=btn.getAttribute('data-val')||btn.textContent.trim();
+  const correct=currentQuestion.correct;
+  const ex=currentQuestion.ex;
+  const tr=currentQuestion.tr;
   const isOk=chosen===correct;
   if(isOk)qScore++;
   
@@ -1405,7 +1414,7 @@ function checkQ(btn,chosen,correct,ex,tr){
   
   document.querySelectorAll('#quiz-c .obtn').forEach(b=>{
     b.disabled=true;
-    const t=b.textContent.trim();
+    const t=b.getAttribute('data-val')||b.textContent.trim();
     if(t===correct)b.classList.add(isOk&&t===chosen?'correct':'show-ok');
     else if(t===chosen&&!isOk)b.classList.add('wrong');
   });
@@ -1466,17 +1475,25 @@ function renderPAQuiz(){
     opts=[...dist,q.wor].sort(()=>Math.random()-0.5);correct=q.wor;
     qHTML=`<div class="qtype">Soruyu tamamla</div><div class="qsent">${blank.replace('___','<span class="blank">___</span>')}</div><div style="font-size:12px;color:var(--text-2);margin-top:-8px;margin-bottom:12px">${q.ex_wo_tr}</div>`;
   }
+  currentQuestion.correct = correct;
+  currentQuestion.ex = q.ex_da;
+  currentQuestion.tr = q.ex_da_tr;
+
   c.innerHTML=`<div class="ptxt">${pqIdx+1} / ${pqData.length}</div>
   <div class="pbar"><div class="pfill" style="width:${pct}%"></div></div>
   <div class="qcard">${qHTML}
-    <div class="opts">${opts.map(o=>`<button class="obtn" onclick="checkPA(this,'${o}','${correct}','${q.ex_da.replace(/'/g,"&#39;")}','${q.ex_da_tr.replace(/'/g,"&#39;")}')">${o}</button>`).join('')}</div>
+    <div class="opts">${opts.map(o=>`<button class="obtn" data-val="${o.replace(/"/g,'&quot;')}" onclick="checkPA(this)">${o}</button>`).join('')}</div>
     <div id="pafb"></div>
   </div>`;
   pqAnswered=false;
 }
 
-function checkPA(btn,chosen,correct,ex,tr){
+function checkPA(btn){
   if(pqAnswered)return;pqAnswered=true;
+  const chosen=btn.getAttribute('data-val')||btn.textContent.trim();
+  const correct=currentQuestion.correct;
+  const ex=currentQuestion.ex;
+  const tr=currentQuestion.tr;
   const isOk=chosen===correct;
   if(isOk)pqScore++;
   
@@ -1485,7 +1502,7 @@ function checkPA(btn,chosen,correct,ex,tr){
   
   document.querySelectorAll('#paquiz-c .obtn').forEach(b=>{
     b.disabled=true;
-    const t=b.textContent.trim();
+    const t=b.getAttribute('data-val')||b.textContent.trim();
     if(t===correct)b.classList.add(isOk&&t===chosen?'correct':'show-ok');
     else if(t===chosen&&!isOk)b.classList.add('wrong');
   });
