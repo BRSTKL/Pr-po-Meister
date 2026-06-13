@@ -296,11 +296,11 @@
 <!-- QUIZ -->
 <div class="section" id="sec-quiz">
   <div class="filters">
-    <button class="fb fb-all on" id="fq-all" onclick="setQF('all')">Tüm seviyeler</button>
-    <button class="fb fb-a1" id="fq-a1" onclick="setQF('A1')">A1</button>
-    <button class="fb fb-a2" id="fq-a2" onclick="setQF('A2')">A2</button>
-    <button class="fb fb-b1" id="fq-b1" onclick="setQF('B1')">B1</button>
-    <button class="fb fb-b2" id="fq-b2" onclick="setQF('B2')">B2</button>
+    <button class="fb fb-all on" id="fq-all" onclick="toggleQuizLevel('all',this)">Tüm seviyeler</button>
+    <button class="fb fb-a1 on" id="fq-a1" onclick="toggleQuizLevel('A1',this)">A1</button>
+    <button class="fb fb-a2 on" id="fq-a2" onclick="toggleQuizLevel('A2',this)">A2</button>
+    <button class="fb fb-b1 on" id="fq-b1" onclick="toggleQuizLevel('B1',this)">B1</button>
+    <button class="fb fb-b2 on" id="fq-b2" onclick="toggleQuizLevel('B2',this)">B2</button>
   </div>
   <div class="quiz-wrap" id="quiz-c"></div>
 </div>
@@ -487,14 +487,14 @@ const staticPA=[
 
 let lf={level:'all',kasus:'all'};
 let fcf={level:'all',kasus:'all'};
-let qLevel='all';
+let qLevels=['A1','A2','B1','B2'];
 let fcData=[...V];
 let fcIdx=0;
 let fcFlip=false;
 let qData=[],qIdx=0,qScore=0,qAnswered=false;
 let pqData=[],pqIdx=0,pqScore=0,pqAnswered=false;
 let selectedPA = { prefix: '', prep: '' };
-let paQuizSettings = { level: 'all', kasus: 'all' };
+let paQuizSettings = { levels: ['A1','A2','B1','B2'], kasus: 'all' };
 let PA = [];
 
 function initPAData() {
@@ -720,7 +720,9 @@ function filteredPA(settings){
   return PA.filter(p => {
     const match = V.find(item => item.v === p.verb && item.p === p.prep);
     if (!match) return false;
-    if (settings.level && settings.level !== 'all' && match.l !== settings.level) return false;
+    if (settings.levels && settings.levels.length < 4) {
+      if (!settings.levels.includes(match.l)) return false;
+    }
     if (settings.kasus && settings.kasus !== 'all' && match.k !== settings.kasus) return false;
     return true;
   });
@@ -764,12 +766,60 @@ function setFCF(type,val){
   applyFCFilter();renderFC();
 }
 
-function setQF(val){
-  qLevel=val;
-  ['all','a1','a2','b1','b2'].forEach(x=>{const e=document.getElementById('fq-'+x);if(e)e.classList.remove('on');});
-  const el=document.getElementById('fq-'+(val==='all'?'all':val.toLowerCase()));
-  if(el)el.classList.add('on');
+function toggleQuizLevel(lvl, btn) {
+  const allLevels = ['A1', 'A2', 'B1', 'B2'];
+  if (lvl === 'all') {
+    qLevels = [...allLevels];
+  } else {
+    if (qLevels.includes(lvl)) {
+      if (qLevels.length > 1) {
+        qLevels = qLevels.filter(l => l !== lvl);
+      }
+    } else {
+      qLevels.push(lvl);
+    }
+  }
+  
+  const container = btn.parentElement;
+  const isAllSelected = qLevels.length === 4;
+  
+  const btnAll = container.querySelector('#fq-all');
+  if (btnAll) btnAll.classList.toggle('on', isAllSelected);
+  
+  allLevels.forEach(x => {
+    const el = container.querySelector('#fq-' + x.toLowerCase());
+    if (el) el.classList.toggle('on', qLevels.includes(x));
+  });
+  
   startQuiz();
+}
+
+function togglePAQuizLevel(level, btn) {
+  const allLevels = ['A1', 'A2', 'B1', 'B2'];
+  if (level === 'all') {
+    paQuizSettings.levels = [...allLevels];
+  } else {
+    if (paQuizSettings.levels.includes(level)) {
+      if (paQuizSettings.levels.length > 1) {
+        paQuizSettings.levels = paQuizSettings.levels.filter(l => l !== level);
+      }
+    } else {
+      paQuizSettings.levels.push(level);
+    }
+  }
+  
+  const container = btn.parentElement;
+  const isAllSelected = paQuizSettings.levels.length === 4;
+  
+  const btnAll = container.querySelector('.fb-all');
+  if (btnAll) btnAll.classList.toggle('on', isAllSelected);
+  
+  allLevels.forEach(lvl => {
+    const btnLvl = container.querySelector('.fb-' + lvl.toLowerCase());
+    if (btnLvl) {
+      btnLvl.classList.toggle('on', paQuizSettings.levels.includes(lvl));
+    }
+  });
 }
 
 function renderListe(){
@@ -968,7 +1018,7 @@ function runFCAutoPlayLoop() {
 }
 
 function startQuiz(){
-  const pool=qLevel==='all'?V:V.filter(v=>v.l===qLevel);
+  const pool=(qLevels.length===4)?V:V.filter(v=>qLevels.includes(v.l));
   qData=pool.sort(()=>Math.random()-0.5).slice(0,Math.min(10,pool.length));
   qIdx=0;qScore=0;renderQuiz();
 }
@@ -1059,11 +1109,11 @@ function showPAQuizSetup(){
       <div>
         <div style="font-size: 12px; font-weight: 700; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Çalışma Seviyesi</div>
         <div class="setup-chips" style="display: flex; gap: 6px; flex-wrap: wrap;">
-          <button class="fb fb-all ${paQuizSettings.level==='all'?'on':''}" onclick="setPAQuizSetting('level','all',this)">Tümü</button>
-          <button class="fb fb-a1 ${paQuizSettings.level==='A1'?'on':''}" onclick="setPAQuizSetting('level','A1',this)">A1</button>
-          <button class="fb fb-a2 ${paQuizSettings.level==='A2'?'on':''}" onclick="setPAQuizSetting('level','A2',this)">A2</button>
-          <button class="fb fb-b1 ${paQuizSettings.level==='B1'?'on':''}" onclick="setPAQuizSetting('level','B1',this)">B1</button>
-          <button class="fb fb-b2 ${paQuizSettings.level==='B2'?'on':''}" onclick="setPAQuizSetting('level','B2',this)">B2</button>
+          <button class="fb fb-all ${paQuizSettings.levels.length===4?'on':''}" onclick="togglePAQuizLevel('all',this)">Tümü</button>
+          <button class="fb fb-a1 ${paQuizSettings.levels.includes('A1')?'on':''}" onclick="togglePAQuizLevel('A1',this)">A1</button>
+          <button class="fb fb-a2 ${paQuizSettings.levels.includes('A2')?'on':''}" onclick="togglePAQuizLevel('A2',this)">A2</button>
+          <button class="fb fb-b1 ${paQuizSettings.levels.includes('B1')?'on':''}" onclick="togglePAQuizLevel('B1',this)">B1</button>
+          <button class="fb fb-b2 ${paQuizSettings.levels.includes('B2')?'on':''}" onclick="togglePAQuizLevel('B2',this)">B2</button>
         </div>
       </div>
       
