@@ -273,8 +273,9 @@
     <div class="autoplay-panel">
       <div class="autoplay-header">
         <div class="autoplay-title">🎧 Eller Serbest (Otomatik Oynat)</div>
-        <div style="font-size: 11px; color: var(--color-text-secondary); font-weight: 500;">
-          Ses: <span class="active-voice-name" style="color: #378ADD;">Yükleniyor...</span>
+        <div style="display: flex; align-items: center; gap: 4px;">
+          <span style="font-size: 11px; color: var(--color-text-secondary);">Ses:</span>
+          <select class="voice-select" onchange="userSelectVoice(this.value)" style="background: var(--color-background-primary); color: var(--color-text-primary); border: 0.5px solid var(--color-border-secondary); border-radius: 6px; padding: 2px 4px; font-size: 11px; max-width: 140px; font-family: var(--font-sans); outline: none; cursor: pointer;"></select>
         </div>
       </div>
       <div class="autoplay-status" id="fc-autoplay-status">Duraklatıldı</div>
@@ -526,7 +527,9 @@ function initPAData() {
   });
 }
 
+let userSelectedVoiceName = localStorage.getItem('user_de_voice_name') || null;
 let selectedDeVoice = null;
+
 function getBestGermanVoice() {
   if (!('speechSynthesis' in window)) return null;
   const voices = window.speechSynthesis.getVoices();
@@ -534,6 +537,11 @@ function getBestGermanVoice() {
   
   const deVoices = voices.filter(v => v.lang.toLowerCase().startsWith('de'));
   if (deVoices.length === 0) return null;
+  
+  if (userSelectedVoiceName) {
+    const match = deVoices.find(v => v.name === userSelectedVoiceName);
+    if (match) return match;
+  }
   
   const scoredVoices = deVoices.map(v => {
     const nameL = v.name.toLowerCase();
@@ -578,25 +586,55 @@ if ('speechSynthesis' in window) {
 }
 
 function updateActiveVoiceIndicator() {
-  if (!selectedDeVoice) {
-    selectedDeVoice = getBestGermanVoice();
-  }
-  let voiceText = "⚠️ Ses yüklenemedi (Desteklenmiyor)";
-  if ('speechSynthesis' in window) {
-    if (selectedDeVoice) {
-      voiceText = selectedDeVoice.name + ' (' + selectedDeVoice.lang + ')';
-    } else {
-      voiceText = "⚠️ Almanca Ses Paketi Eksik!";
+  if (!('speechSynthesis' in window)) return;
+  const voices = window.speechSynthesis.getVoices();
+  const deVoices = voices.filter(v => v.lang.toLowerCase().startsWith('de'));
+  
+  selectedDeVoice = getBestGermanVoice();
+  
+  document.querySelectorAll('.voice-select').forEach(select => {
+    select.innerHTML = '';
+    
+    if (deVoices.length === 0) {
+      const opt = document.createElement('option');
+      opt.value = '';
+      opt.textContent = 'Almanca Ses Yok';
+      select.appendChild(opt);
+      select.style.borderColor = '#D9534F';
+      return;
     }
-  }
+    
+    select.style.borderColor = 'var(--color-border-secondary)';
+    deVoices.forEach(v => {
+      const opt = document.createElement('option');
+      opt.value = v.name;
+      let dispName = v.name.replace('Microsoft', '').replace('Google', '').replace('German', '').replace('Deutsch', '').trim();
+      opt.textContent = dispName || v.name;
+      if (selectedDeVoice && v.name === selectedDeVoice.name) {
+        opt.selected = true;
+      }
+      select.appendChild(opt);
+    });
+  });
+  
+  const voiceText = selectedDeVoice ? selectedDeVoice.name : "⚠️ Almanca Ses Paketi Eksik!";
   document.querySelectorAll('.active-voice-name').forEach(el => {
     el.textContent = voiceText;
-    if (selectedDeVoice) {
-      el.style.color = "#378ADD";
-    } else {
-      el.style.color = "#D9534F";
-    }
+    el.style.color = selectedDeVoice ? "#378ADD" : "#D9534F";
   });
+}
+
+function userSelectVoice(name) {
+  if (!name) return;
+  userSelectedVoiceName = name;
+  localStorage.setItem('user_de_voice_name', name);
+  selectedDeVoice = getBestGermanVoice();
+  
+  document.querySelectorAll('.voice-select').forEach(select => {
+    select.value = name;
+  });
+  
+  speak("Hallo");
 }
 
 function speak(text, callback){
@@ -1042,8 +1080,9 @@ function showPAQuizSetup(){
       <button class="rbtn" onclick="startPAQuiz()" style="width: 100%; border-radius: var(--border-radius-md); margin-top: 8px; font-weight: 800; font-size: 15px; letter-spacing: 0.02em; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; cursor: pointer;">
         🚀 Sınavı Başlat
       </button>
-      <div style="font-size: 11px; color: var(--color-text-secondary); margin-top: 6px; text-align: center; opacity: 0.95; border-top: 0.5px solid var(--color-border-secondary); padding-top: 8px;">
-        🔊 Aktif Ses: <span class="active-voice-name" style="color: #378ADD; font-weight: 600;">Yükleniyor...</span>
+      <div style="font-size: 11px; color: var(--color-text-secondary); margin-top: 6px; text-align: center; opacity: 0.95; border-top: 0.5px solid var(--color-border-secondary); padding-top: 8px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+        <span>🔊 Aktif Ses:</span>
+        <select class="voice-select" onchange="userSelectVoice(this.value)" style="background: var(--color-background-primary); color: var(--color-text-primary); border: 0.5px solid var(--color-border-secondary); border-radius: 6px; padding: 2px 4px; font-size: 11px; max-width: 140px; font-family: var(--font-sans); outline: none; cursor: pointer;"></select>
       </div>
     </div>
   `;
