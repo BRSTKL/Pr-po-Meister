@@ -1071,8 +1071,8 @@ let fcFlip=false;
 let qData=[],qIdx=0,qScore=0,qAnswered=false;
 let pqData=[],pqIdx=0,pqScore=0,pqAnswered=false;
 let userProgress={};
-let quizSettings={level:'all',kasus:'all',starredOnly:false};
-let paQuizSettings={level:'all',kasus:'all',starredOnly:false};
+let quizSettings={levels:['A1','A2','B1','B2'],kasus:'all',starredOnly:false};
+let paQuizSettings={levels:['A1','A2','B1','B2'],kasus:'all',starredOnly:false};
 let currentQuestion={correct:'',ex:'',tr:''};
 let selectedPA = { prefix: '', prep: '' };
 let PA = [];
@@ -1401,7 +1401,9 @@ function filteredPA(settings){
   return PA.filter(p => {
     const match = V.find(item => item.v === p.verb && item.p === p.prep);
     if (!match) return false;
-    if (settings.level && settings.level !== 'all' && match.l !== settings.level) return false;
+    if (settings.levels && settings.levels.length < 4) {
+      if (!settings.levels.includes(match.l)) return false;
+    }
     if (settings.kasus && settings.kasus !== 'all' && match.k !== settings.kasus) return false;
     if (settings.starredOnly) {
       const progress = getWordState(p.verb, p.prep);
@@ -1537,11 +1539,11 @@ function showQuizSetup(){
       <div>
         <div style="font-size: 12px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Çalışma Seviyesi</div>
         <div class="setup-chips" style="display: flex; gap: 6px; flex-wrap: wrap;">
-          <button class="fb fb-all ${quizSettings.level==='all'?'on':''}" onclick="setQuizSetting('level','all',this)">Tümü</button>
-          <button class="fb fb-a1 ${quizSettings.level==='A1'?'on':''}" onclick="setQuizSetting('level','A1',this)">A1</button>
-          <button class="fb fb-a2 ${quizSettings.level==='A2'?'on':''}" onclick="setQuizSetting('level','A2',this)">A2</button>
-          <button class="fb fb-b1 ${quizSettings.level==='B1'?'on':''}" onclick="setQuizSetting('level','B1',this)">B1</button>
-          <button class="fb fb-b2 ${quizSettings.level==='B2'?'on':''}" onclick="setQuizSetting('level','B2',this)">B2</button>
+          <button class="fb fb-all ${quizSettings.levels.length===4?'on':''}" onclick="toggleQuizLevel('all',this,false)">Tümü</button>
+          <button class="fb fb-a1 ${quizSettings.levels.includes('A1')?'on':''}" onclick="toggleQuizLevel('A1',this,false)">A1</button>
+          <button class="fb fb-a2 ${quizSettings.levels.includes('A2')?'on':''}" onclick="toggleQuizLevel('A2',this,false)">A2</button>
+          <button class="fb fb-b1 ${quizSettings.levels.includes('B1')?'on':''}" onclick="toggleQuizLevel('B1',this,false)">B1</button>
+          <button class="fb fb-b2 ${quizSettings.levels.includes('B2')?'on':''}" onclick="toggleQuizLevel('B2',this,false)">B2</button>
         </div>
       </div>
       
@@ -1581,6 +1583,36 @@ function setQuizSetting(key, val, btn){
   const container = btn.parentElement;
   container.querySelectorAll('button').forEach(b => b.classList.remove('on'));
   btn.classList.add('on');
+}
+
+function toggleQuizLevel(level, btn, isPA) {
+  const settings = isPA ? paQuizSettings : quizSettings;
+  const allLevels = ['A1', 'A2', 'B1', 'B2'];
+  
+  if (level === 'all') {
+    settings.levels = [...allLevels];
+  } else {
+    if (settings.levels.includes(level)) {
+      if (settings.levels.length > 1) {
+        settings.levels = settings.levels.filter(l => l !== level);
+      }
+    } else {
+      settings.levels.push(level);
+    }
+  }
+  
+  const container = btn.parentElement;
+  const isAllSelected = settings.levels.length === 4;
+  
+  const btnAll = container.querySelector('.fb-all');
+  if (btnAll) btnAll.classList.toggle('on', isAllSelected);
+  
+  allLevels.forEach(lvl => {
+    const btnLvl = container.querySelector('.fb-' + lvl.toLowerCase());
+    if (btnLvl) {
+      btnLvl.classList.toggle('on', settings.levels.includes(lvl));
+    }
+  });
 }
 
 // ═══════════════════════════════════════════
@@ -1863,8 +1895,8 @@ function runFCAutoPlayLoop() {
 // ═══════════════════════════════════════════
 function startQuiz(){
   let pool=V;
-  if(quizSettings.level!=='all'){
-    pool=pool.filter(v=>v.l===quizSettings.level);
+  if(quizSettings.levels && quizSettings.levels.length < 4){
+    pool=pool.filter(v=>quizSettings.levels.includes(v.l));
   }
   if(quizSettings.kasus!=='all'){
     pool=pool.filter(v=>v.k===quizSettings.kasus);
@@ -2007,11 +2039,11 @@ function showPAQuizSetup(){
       <div>
         <div style="font-size: 12px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Çalışma Seviyesi</div>
         <div class="setup-chips" style="display: flex; gap: 6px; flex-wrap: wrap;">
-          <button class="fb fb-all ${paQuizSettings.level==='all'?'on':''}" onclick="setPAQuizSetting('level','all',this)">Tümü</button>
-          <button class="fb fb-a1 ${paQuizSettings.level==='A1'?'on':''}" onclick="setPAQuizSetting('level','A1',this)">A1</button>
-          <button class="fb fb-a2 ${paQuizSettings.level==='A2'?'on':''}" onclick="setPAQuizSetting('level','A2',this)">A2</button>
-          <button class="fb fb-b1 ${paQuizSettings.level==='B1'?'on':''}" onclick="setPAQuizSetting('level','B1',this)">B1</button>
-          <button class="fb fb-b2 ${paQuizSettings.level==='B2'?'on':''}" onclick="setPAQuizSetting('level','B2',this)">B2</button>
+          <button class="fb fb-all ${paQuizSettings.levels.length===4?'on':''}" onclick="toggleQuizLevel('all',this,true)">Tümü</button>
+          <button class="fb fb-a1 ${paQuizSettings.levels.includes('A1')?'on':''}" onclick="toggleQuizLevel('A1',this,true)">A1</button>
+          <button class="fb fb-a2 ${paQuizSettings.levels.includes('A2')?'on':''}" onclick="toggleQuizLevel('A2',this,true)">A2</button>
+          <button class="fb fb-b1 ${paQuizSettings.levels.includes('B1')?'on':''}" onclick="toggleQuizLevel('B1',this,true)">B1</button>
+          <button class="fb fb-b2 ${paQuizSettings.levels.includes('B2')?'on':''}" onclick="toggleQuizLevel('B2',this,true)">B2</button>
         </div>
       </div>
       
