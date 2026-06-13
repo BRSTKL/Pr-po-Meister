@@ -90,6 +90,12 @@
 .rbtn{padding:8px 20px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:transparent;cursor:pointer;font-size:14px;font-family:var(--font-sans);color:var(--color-text-primary)}
 .fncnt{font-size:13px;color:var(--color-text-secondary);padding:0 10px}
 .section-title{font-size:14px;font-weight:500;color:var(--color-text-secondary);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
+.speak-btn { background:none; border:none; cursor:pointer; color:var(--color-text-secondary); padding:6px; display:inline-flex; align-items:center; justify-content:center; border-radius:var(--border-radius-sm, 4px); transition:all 0.2s ease; -webkit-tap-highlight-color:transparent; }
+.speak-btn:hover { color:var(--color-text-primary); background:var(--color-background-secondary); }
+.speak-btn:active { transform:scale(0.9); }
+.speak-btn svg { width:18px; height:18px; }
+.fc-speak { position:absolute; top:12px; right:12px; color:var(--color-text-secondary); z-index:5; }
+.fc-speak:hover { color:var(--color-text-primary); }
 </style>
 
 <div class="app">
@@ -139,8 +145,22 @@
   </div>
   <div class="fc-wrap">
     <div class="fc" id="fc-card" onclick="flipCard()">
-      <div id="fc-front"><div class="fcv" id="fc-verb"></div><div class="fcp" id="fc-prep"></div><div class="fch">Çevirmek için tıkla</div></div>
-      <div class="fcb" id="fc-back"><div class="fcm" id="fc-mean"></div><div class="fce" id="fc-ex"></div><div class="fcet" id="fc-extr"></div></div>
+      <div id="fc-front">
+        <button class="speak-btn fc-speak" onclick="event.stopPropagation(); speakCurrentFCVerb()" title="Telaffuz et">
+          <svg viewBox="0 0 24 24"><path fill="currentColor" d="M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.85 14,18.71V20.77C18,19.86 21,16.28 21,12C21,7.72 18,4.14 14,3.23M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16C15.5,15.29 16.5,13.77 16.5,12M3,9V15H7L12,20V4L7,9H3Z"/></svg>
+        </button>
+        <div class="fcv" id="fc-verb"></div>
+        <div class="fcp" id="fc-prep"></div>
+        <div class="fch">Çevirmek için tıkla</div>
+      </div>
+      <div class="fcb" id="fc-back">
+        <button class="speak-btn fc-speak" onclick="event.stopPropagation(); speakCurrentFCExample()" title="Cümleyi seslendir">
+          <svg viewBox="0 0 24 24"><path fill="currentColor" d="M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.85 14,18.71V20.77C18,19.86 21,16.28 21,12C21,7.72 18,4.14 14,3.23M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16C15.5,15.29 16.5,13.77 16.5,12M3,9V15H7L12,20V4L7,9H3Z"/></svg>
+        </button>
+        <div class="fcm" id="fc-mean"></div>
+        <div class="fce" id="fc-ex"></div>
+        <div class="fcet" id="fc-extr"></div>
+      </div>
     </div>
     <div class="fcnav">
       <button class="fnbtn" onclick="fcMove(-1)">← Önceki</button>
@@ -352,6 +372,28 @@ let fcFlip=false;
 let qData=[],qIdx=0,qScore=0,qAnswered=false;
 let pqData=[],pqIdx=0,pqScore=0,pqAnswered=false;
 
+function speak(text){
+  if('speechSynthesis' in window){
+    window.speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang='de-DE';
+    const voices=window.speechSynthesis.getVoices();
+    const deVoice=voices.find(v=>v.lang.startsWith('de'));
+    if(deVoice)u.voice=deVoice;
+    window.speechSynthesis.speak(u);
+  }
+}
+function speakCurrentFCVerb(){
+  if(!fcData||!fcData.length)return;
+  const v=fcData[fcIdx];
+  speak(v.v+' '+v.p);
+}
+function speakCurrentFCExample(){
+  if(!fcData||!fcData.length)return;
+  const v=fcData[fcIdx];
+  speak(v.ex);
+}
+
 function switchTab(n){
   document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['liste','karten','quiz','pa','paquiz'][i]===n));
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
@@ -420,9 +462,20 @@ function renderListe(){
       <span class="vname">${v.v}</span>
       <span class="pbadge ${v.k==='Akk'?'akk':'dat'}">${v.p} + ${v.k}</span>
       <span class="lvlbadge l${v.l.toLowerCase()}">${v.l}</span>
+      <button class="speak-btn" onclick="event.stopPropagation(); speak('${v.v.replace(/'/g, "\\'")} ${v.p.replace(/'/g, "\\'")}')" title="Fiil ve edatı seslendir" style="padding: 4px; border-radius: var(--border-radius-sm, 4px);">
+        <svg viewBox="0 0 24 24" style="width:14px; height:14px;"><path fill="currentColor" d="M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.85 14,18.71V20.77C18,19.86 21,16.28 21,12C21,7.72 18,4.14 14,3.23M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16C15.5,15.29 16.5,13.77 16.5,12M3,9V15H7L12,20V4L7,9H3Z"/></svg>
+      </button>
     </div>
     <div class="vmean">${v.m}</div>
-    <div class="ex">${hl(v.ex,v.v,v.p)}<div class="extr">${v.tr}</div></div>
+    <div class="ex" style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
+      <div>
+        ${hl(v.ex,v.v,v.p)}
+        <div class="extr">${v.tr}</div>
+      </div>
+      <button class="speak-btn" onclick="event.stopPropagation(); speak('${v.ex.replace(/'/g, "\\'")}')" title="Cümleyi seslendir" style="flex-shrink:0;">
+        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.85 14,18.71V20.77C18,19.86 21,16.28 21,12C21,7.72 18,4.14 14,3.23M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16C15.5,15.29 16.5,13.77 16.5,12M3,9V15H7L12,20V4L7,9H3Z"/></svg>
+      </button>
+    </div>
   </div>`).join('');
 }
 
@@ -516,7 +569,7 @@ function checkQ(btn,chosen,correct,ex,tr){
     else if(t===chosen&&!isOk)b.classList.add('wrong');
   });
   const fb=document.getElementById('qfb');
-  fb.innerHTML=`<div class="fb2 ${isOk?'ok':'no'}">${isOk?'✓ Doğru!':'✗ Yanlış — Doğru: <strong>'+correct+'</strong>'}<div style="margin-top:4px;font-size:12px;opacity:.85">📌 ${ex}</div><div style="font-size:11px;opacity:.7;margin-top:2px">${tr}</div></div>
+  fb.innerHTML=`<div class="fb2 ${isOk?'ok':'no'}">${isOk?'✓ Doğru!':'✗ Yanlış — Doğru: <strong>'+correct+'</strong>'}<div style="margin-top:4px;font-size:12px;opacity:.85;display:flex;align-items:center;justify-content:space-between;gap:8px;"><div>📌 ${ex}</div><button class="speak-btn" onclick="speak('${ex.replace(/'/g, "\\'")}')" style="padding:2px;color:inherit;opacity:0.8;" title="Telaffuz et"><svg viewBox="0 0 24 24" style="width:14px;height:14px;"><path fill="currentColor" d="M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.85 14,18.71V20.77C18,19.86 21,16.28 21,12C21,7.72 18,4.14 14,3.23M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16C15.5,15.29 16.5,13.77 16.5,12M3,9V15H7L12,20V4L7,9H3Z"/></svg></button></div><div style="font-size:11px;opacity:.7;margin-top:2px">${tr}</div></div>
   <button class="nbtn" onclick="nextQ()">${qIdx+1>=qData.length?'Sonuçları gör':'Sonraki →'}</button>`;
 }
 function nextQ(){qIdx++;renderQuiz();}
@@ -591,7 +644,7 @@ function checkPA(btn,chosen,correct,ex,tr){
     if(t===correct)b.classList.add(isOk&&t===chosen?'correct':'show-ok');
     else if(t===chosen&&!isOk)b.classList.add('wrong');
   });
-  document.getElementById('pafb').innerHTML=`<div class="fb2 ${isOk?'ok':'no'}">${isOk?'✓ Doğru!':'✗ Yanlış — Doğru: <strong>'+correct+'</strong>'}<div style="margin-top:4px;font-size:12px;opacity:.85">📌 ${ex}</div><div style="font-size:11px;opacity:.7;margin-top:2px">${tr}</div></div>
+  document.getElementById('pafb').innerHTML=`<div class="fb2 ${isOk?'ok':'no'}">${isOk?'✓ Doğru!':'✗ Yanlış — Doğru: <strong>'+correct+'</strong>'}<div style="margin-top:4px;font-size:12px;opacity:.85;display:flex;align-items:center;justify-content:space-between;gap:8px;"><div>📌 ${ex}</div><button class="speak-btn" onclick="speak('${ex.replace(/'/g, "\\'")}')" style="padding:2px;color:inherit;opacity:0.8;" title="Telaffuz et"><svg viewBox="0 0 24 24" style="width:14px;height:14px;"><path fill="currentColor" d="M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.85 14,18.71V20.77C18,19.86 21,16.28 21,12C21,7.72 18,4.14 14,3.23M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16C15.5,15.29 16.5,13.77 16.5,12M3,9V15H7L12,20V4L7,9H3Z"/></svg></button></div><div style="font-size:11px;opacity:.7;margin-top:2px">${tr}</div></div>
   <button class="nbtn" onclick="nextPA()">${pqIdx+1>=pqData.length?'Sonuçları gör':'Sonraki →'}</button>`;
 }
 function nextPA(){pqIdx++;renderPAQuiz();}
