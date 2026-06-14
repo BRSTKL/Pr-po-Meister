@@ -892,6 +892,48 @@ body{
   border-top: 1px solid var(--border-2);
   padding-top: 16px;
 }
+
+/* wurde/geworden/worden styles */
+.c-wurde { color: var(--accent-2) !important; }
+.c-geworden { color: var(--green) !important; }
+.c-worden { color: var(--orange) !important; }
+
+.bg-wurde-badge { background: var(--accent-bg); color: var(--accent-2); border: 1px solid rgba(91,124,255,0.2); }
+.bg-geworden-badge { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-bd); }
+.bg-worden-badge { background: rgba(245, 158, 11, 0.08); color: var(--orange); border: 1px solid rgba(245, 158, 11, 0.2); }
+
+.flow-card {
+  background: var(--bg-card-alt);
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-md);
+  padding: 14px;
+  margin-bottom: 12px;
+}
+.flow-q {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-1);
+  margin-bottom: 10px;
+}
+.flow-branch {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  align-items: flex-start;
+  font-size: 12px;
+  color: var(--text-2);
+  line-height: 1.5;
+}
+.flow-branch:last-child {
+  margin-bottom: 0;
+}
+.flow-tag {
+  padding: 2px 8px;
+  border-radius: var(--r-pill);
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+}
 </style>
 </head>
 <body>
@@ -1298,6 +1340,29 @@ const staticPA=[
 {verb:"bestehen",prep:"auf",dar:"darauf",wor:"worauf",ex_da:"Sie besteht darauf, die Wahrheit zu hören.",ex_wo:"Worauf besteht sie?",ex_da_tr:"Gerçeği duymakta ısrar ediyor.",ex_wo_tr:"Nede ısrar ediyor?"},
 ];
 
+const wurdeQuizData = [
+  {c:'wurde',q:'Die kleine Abteilung ___ geschlossen, weil die Firma Geld sparen muss.',o:['wurde','geworden','worden','wird'],a:'wird',e:'Burada Präsens Passiv gerekiyor (şu anki durum): wird geschlossen. (wurde = Präteritum, geçmiş için kullanılır)'},
+  {c:'wurde',q:'Das Haus ___ 1995 gebaut.',o:['wurde','geworden','worden','wird'],a:'wurde',e:'Präteritum Passiv: Subj + wurde + Partizip II → 1995 gebaut wurde (geçmişte tek seferlik olay)'},
+  {c:'wurde',q:'Er ___ letztes Jahr Vater.',o:['wurde','geworden','worden','wird'],a:'wurde',e:'Edilgen değil — mesleğe/duruma geçiş, Präteritum: wurde Vater (oldu)'},
+  {c:'wurde',q:'Die Präsentation ___ gestern um 14 Uhr gehalten.',o:['wurde','geworden','worden','ist'],a:'wurde',e:'Geçmişte tek seferlik edilgen eylem → wurde + Partizip II'},
+  {c:'wurde',q:'Plötzlich ___ es sehr kalt.',o:['wurde','geworden','worden','wird'],a:'wurde',e:'Durum değişimi, Präteritum: wurde kalt (oldu)'},
+  {c:'geworden',q:'Das Wetter ist in den letzten Tagen viel besser ___.',o:['wurde','geworden','worden','wird'],a:'geworden',e:'Perfekt + Adjektiv (edilgen değil) → ist ... geworden (olmuş/hale gelmiş)'},
+  {c:'geworden',q:'Sie ist eine sehr erfolgreiche Anwältin ___.',o:['wurde','geworden','worden','wird'],a:'geworden',e:'Perfekt, mesleğe geçiş, edilgen yok → ist ... geworden'},
+  {c:'geworden',q:'In den letzten Jahren ist die Stadt viel größer ___.',o:['wurde','geworden','worden','wird'],a:'geworden',e:'Perfekt + Adjektiv (größer) — Partizip II yok → geworden'},
+  {c:'geworden',q:'Mein Bruder ist Ingenieur ___.',o:['wurde','geworden','worden','wird'],a:'geworden',e:'sein + Nomen + geworden → mesleğe geçiş, Perfekt'},
+  {c:'worden',q:'Die Abteilung ist letzten Monat geschlossen ___.',o:['wurde','geworden','worden','wird'],a:'worden',e:'Perfekt Passiv: ist + Partizip II (geschlossen) + worden'},
+  {c:'worden',q:'Das Projekt ist wegen Geldmangel abgesagt ___.',o:['wurde','geworden','worden','wird'],a:'worden',e:'sein + Partizip II + worden → Passiv Perfekt'},
+  {c:'worden',q:'Die Fenster sind letzte Woche repariert ___.',o:['wurde','geworden','worden','wird'],a:'worden',e:'sein + repariert + worden → Passiv Perfekt'},
+  {c:'worden',q:'Der Vertrag ist bereits unterschrieben ___.',o:['wurde','geworden','worden','wird'],a:'worden',e:'sein + unterschrieben + worden → Passiv Perfekt'},
+  {c:'mixed',q:'Nachdem die Nachricht verbreitet ___ war, kam es zu Protesten.',o:['wurde','geworden','worden','wird'],a:'worden',e:'war + Partizip II + worden → Plusquamperfekt Passiv (war ... worden)'},
+  {c:'mixed',q:'Ich habe gehört, dass die Regeln geändert ___ sind.',o:['wurde','geworden','worden','wird'],a:'worden',e:'sind + geändert + worden → Passiv Perfekt (Nebensatz)'},
+  {c:'mixed',q:'Am Anfang war die Lage schwierig, aber dann ___ alles besser.',o:['wurde','geworden','worden','wird'],a:'wurde',e:'Präteritum, durum değişimi (edilgen değil) → wurde besser'},
+  {c:'mixed',q:'Er ___ vor zwei Jahren krank und musste die Arbeit aufgeben.',o:['wurde','geworden','worden','wird'],a:'wurde',e:'Präteritum, durum değişimi → wurde krank'},
+  {c:'mixed',q:'Die neue Software ist erfolgreich getestet ___.',o:['wurde','geworden','worden','wird'],a:'worden',e:'ist + getestet + worden → Passiv Perfekt'},
+  {c:'mixed',q:'Mit der Zeit ___ die Arbeit immer interessanter.',o:['wurde','geworden','worden','wird'],a:'wurde',e:'Präteritum, değişim/gelişim anlatımı → wurde interessanter'},
+  {c:'mixed',q:'Die alte Fabrik ist zu einem Museum ___.',o:['wurde','geworden','worden','wird'],a:'geworden',e:'sein + zu + Nomen + geworden → bir şeye dönüşme, edilgen değil, Perfekt'},
+];
+
 // STATE
 // ═══════════════════════════════════════════
 let lf={level:'all',kasus:'all',status:'all'};
@@ -1313,6 +1378,7 @@ let quizSettings={levels:['A1','A2','B1','B2'],kasus:'all',starredOnly:false,typ
 let currentQuestion={correct:'',ex:'',tr:''};
 let selectedPA = { prefix: '', prep: '' };
 let PA = [];
+let wqState = { cat: 'all', data: [], idx: 0, score: 0, answered: false };
 
 function initPAData() {
   const vowels = ['a', 'e', 'i', 'o', 'u', 'ä', 'ö', 'ü', 'A', 'E', 'I', 'O', 'U', 'Ä', 'Ö', 'Ü'];
@@ -1768,6 +1834,8 @@ function showQuizSetup(){
   const c = document.getElementById('quiz-c');
   if(!c) return;
   
+  const showFilters = quizSettings.type !== 'wurde_geworden_worden';
+  
   c.innerHTML = `
     <div class="setup-card" style="background: var(--bg-card); border: 1px solid var(--border-1); border-radius: var(--r-lg); padding: 20px; display: flex; flex-direction: column; gap: 16px;">
       <div style="font-size: 15px; font-weight: 700; color: var(--text-1); border-bottom: 1px solid var(--border-2); padding-bottom: 8px; margin-bottom: 4px;">Sınav Ayarları</div>
@@ -1775,40 +1843,43 @@ function showQuizSetup(){
       <!-- Sınav Türü Seçimi -->
       <div>
         <div style="font-size: 12px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Sınav Türü</div>
-        <div class="setup-chips" style="display: flex; gap: 6px;">
+        <div class="setup-chips" style="display: flex; gap: 6px; flex-wrap: wrap;">
           <button class="fb fb-all ${quizSettings.type==='standard'?'on':''}" onclick="setQuizSetting('type','standard',this)">Edatlar & Anlamlar</button>
           <button class="fb fb-starred ${quizSettings.type==='pa'?'on':''}" onclick="setQuizSetting('type','pa',this)">Edat Zamirleri (da/wo)</button>
+          <button class="fb fb-b1 ${quizSettings.type==='wurde_geworden_worden'?'on':''}" onclick="setQuizSetting('type','wurde_geworden_worden',this)">wurde / geworden / worden</button>
         </div>
       </div>
 
-      <!-- Seviye Seçimi -->
-      <div>
-        <div style="font-size: 12px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Çalışma Seviyesi</div>
-        <div class="setup-chips" style="display: flex; gap: 6px; flex-wrap: wrap;">
-          <button class="fb fb-all ${quizSettings.levels.length===4?'on':''}" onclick="toggleQuizLevel('all',this)">Tümü</button>
-          <button class="fb fb-a1 ${quizSettings.levels.includes('A1')?'on':''}" onclick="toggleQuizLevel('A1',this)">A1</button>
-          <button class="fb fb-a2 ${quizSettings.levels.includes('A2')?'on':''}" onclick="toggleQuizLevel('A2',this)">A2</button>
-          <button class="fb fb-b1 ${quizSettings.levels.includes('B1')?'on':''}" onclick="toggleQuizLevel('B1',this)">B1</button>
-          <button class="fb fb-b2 ${quizSettings.levels.includes('B2')?'on':''}" onclick="toggleQuizLevel('B2',this)">B2</button>
+      <div id="quiz-filters-container" style="${showFilters ? 'display: flex; flex-direction: column; gap: 16px;' : 'display: none;'}">
+        <!-- Seviye Seçimi -->
+        <div>
+          <div style="font-size: 12px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Çalışma Seviyesi</div>
+          <div class="setup-chips" style="display: flex; gap: 6px; flex-wrap: wrap;">
+            <button class="fb fb-all ${quizSettings.levels.length===4?'on':''}" onclick="toggleQuizLevel('all',this)">Tümü</button>
+            <button class="fb fb-a1 ${quizSettings.levels.includes('A1')?'on':''}" onclick="toggleQuizLevel('A1',this)">A1</button>
+            <button class="fb fb-a2 ${quizSettings.levels.includes('A2')?'on':''}" onclick="toggleQuizLevel('A2',this)">A2</button>
+            <button class="fb fb-b1 ${quizSettings.levels.includes('B1')?'on':''}" onclick="toggleQuizLevel('B1',this)">B1</button>
+            <button class="fb fb-b2 ${quizSettings.levels.includes('B2')?'on':''}" onclick="toggleQuizLevel('B2',this)">B2</button>
+          </div>
         </div>
-      </div>
-      
-      <!-- Kasus Seçimi -->
-      <div>
-        <div style="font-size: 12px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Edat Durumu (Kasus)</div>
-        <div class="setup-chips" style="display: flex; gap: 6px;">
-          <button class="fb fb-all ${quizSettings.kasus==='all'?'on':''}" onclick="setQuizSetting('kasus','all',this)">Tümü</button>
-          <button class="fb fb-akk ${quizSettings.kasus==='Akk'?'on':''}" onclick="setQuizSetting('kasus','Akk',this)">Akkusativ</button>
-          <button class="fb fb-dat ${quizSettings.kasus==='Dat'?'on':''}" onclick="setQuizSetting('kasus','Dat',this)">Dativ</button>
+        
+        <!-- Kasus Seçimi -->
+        <div>
+          <div style="font-size: 12px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Edat Durumu (Kasus)</div>
+          <div class="setup-chips" style="display: flex; gap: 6px;">
+            <button class="fb fb-all ${quizSettings.kasus==='all'?'on':''}" onclick="setQuizSetting('kasus','all',this)">Tümü</button>
+            <button class="fb fb-akk ${quizSettings.kasus==='Akk'?'on':''}" onclick="setQuizSetting('kasus','Akk',this)">Akkusativ</button>
+            <button class="fb fb-dat ${quizSettings.kasus==='Dat'?'on':''}" onclick="setQuizSetting('kasus','Dat',this)">Dativ</button>
+          </div>
         </div>
-      </div>
-      
-      <!-- Kapsam -->
-      <div>
-        <div style="font-size: 12px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Kelime Kapsamı</div>
-        <div class="setup-chips" style="display: flex; gap: 6px;">
-          <button class="fb fb-all ${!quizSettings.starredOnly?'on':''}" onclick="setQuizSetting('starredOnly',false,this)">Tüm Kelimeler</button>
-          <button class="fb fb-starred ${quizSettings.starredOnly?'on':''}" onclick="setQuizSetting('starredOnly',true,this)">⭐ Sadece Favoriler</button>
+        
+        <!-- Kapsam -->
+        <div>
+          <div style="font-size: 12px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Kelime Kapsamı</div>
+          <div class="setup-chips" style="display: flex; gap: 6px;">
+            <button class="fb fb-all ${!quizSettings.starredOnly?'on':''}" onclick="setQuizSetting('starredOnly',false,this)">Tüm Kelimeler</button>
+            <button class="fb fb-starred ${quizSettings.starredOnly?'on':''}" onclick="setQuizSetting('starredOnly',true,this)">⭐ Sadece Favoriler</button>
+          </div>
         </div>
       </div>
       
@@ -1829,6 +1900,15 @@ function setQuizSetting(key, val, btn){
   const container = btn.parentElement;
   container.querySelectorAll('button').forEach(b => b.classList.remove('on'));
   btn.classList.add('on');
+  
+  if (key === 'type') {
+    const filtersContainer = document.getElementById('quiz-filters-container');
+    if (filtersContainer) {
+      filtersContainer.style.display = val === 'wurde_geworden_worden' ? 'none' : 'flex';
+      filtersContainer.style.flexDirection = 'column';
+      filtersContainer.style.gap = '16px';
+    }
+  }
 }
 
 function toggleQuizLevel(level, btn) {
@@ -2158,6 +2238,8 @@ function startQuiz(){
     }
     pqData = getWeightedRandomSamplePA(pool, Math.min(10, pool.length));
     pqIdx=0;pqScore=0;renderPAQuiz();
+  } else if (quizSettings.type === 'wurde_geworden_worden') {
+    startWurdeQuiz();
   } else {
     let pool=V;
     if(quizSettings.levels && quizSettings.levels.length < 4){
@@ -2276,6 +2358,130 @@ function checkQ(btn){
 }
 function nextQ(){qIdx++;renderQuiz();}
 
+function startWurdeQuiz() {
+  const pool = wqState.cat === 'all' ? wurdeQuizData : wurdeQuizData.filter(q => q.c === wqState.cat);
+  const shuffled = [...pool].sort(() => Math.random() - 0.5);
+  wqState.data = shuffled.slice(0, Math.min(10, shuffled.length));
+  wqState.idx = 0;
+  wqState.score = 0;
+  wqState.answered = false;
+  renderWurdeQuiz();
+}
+
+function renderWurdeQuiz() {
+  const c = document.getElementById('quiz-c');
+  if (!c) return;
+  
+  if (wqState.idx >= wqState.data.length) {
+    recordQuizCompletion(wqState.score, wqState.data.length);
+    const pct = Math.round(wqState.score / wqState.data.length * 100);
+    const emoji = pct >= 80 ? '🎉' : pct >= 50 ? '👍' : '💪';
+    c.innerHTML = `
+      <div class="scard">
+        <div style="font-size:40px;margin-bottom:10px">${emoji}</div>
+        <div class="sbig">${wqState.score}/${wqState.data.length}</div>
+        <div class="slbl">%${pct} başarı</div>
+        <div style="display: flex; flex-direction: column; gap: 8px; max-width: 240px; margin: 0 auto; width: 100%;">
+          <button class="rbtn" onclick="startWurdeQuiz()" style="width: 100%;">Aynı Ayarlarla Tekrarla</button>
+          <button class="fnbtn" onclick="showQuizSetup()" style="width: 100%; padding: 12px; border-radius: var(--r-pill);">Ayarları Değiştir</button>
+        </div>
+      </div>
+    `;
+    return;
+  }
+  
+  const q = wqState.data[wqState.idx];
+  const pct = Math.round(wqState.idx / wqState.data.length * 100);
+  
+  const catNames = { wurde: 'wurde(n)', geworden: 'geworden', worden: 'worden', mixed: 'Karışık' };
+  const catBadgeClass = q.c === 'wurde' ? 'bg-wurde-badge' : (q.c === 'geworden' ? 'bg-geworden-badge' : (q.c === 'worden' ? 'bg-worden-badge' : ''));
+  const badgeHtml = q.c === 'mixed' 
+    ? `<span class="lvlbadge" style="background:var(--bg-elevated);color:var(--text-2);border:1px solid var(--border-2);">Karışık</span>` 
+    : `<span class="lvlbadge ${catBadgeClass}">${catNames[q.c]}</span>`;
+  
+  let filtersHtml = `
+    <div class="filters" style="margin-bottom: 14px; padding-bottom: 2px;">
+      <button class="fb fb-all ${wqState.cat === 'all' ? 'on' : ''}" onclick="setWurdeQuizCat('all')">Tümü</button>
+      <button class="fb fb-a1 ${wqState.cat === 'wurde' ? 'on' : ''}" onclick="setWurdeQuizCat('wurde')">wurde(n)</button>
+      <button class="fb fb-a2 ${wqState.cat === 'geworden' ? 'on' : ''}" onclick="setWurdeQuizCat('geworden')">geworden</button>
+      <button class="fb fb-b1 ${wqState.cat === 'worden' ? 'on' : ''}" onclick="setWurdeQuizCat('worden')">worden</button>
+      <button class="fb fb-b2 ${wqState.cat === 'mixed' ? 'on' : ''}" onclick="setWurdeQuizCat('mixed')">Karışık</button>
+    </div>
+  `;
+  
+  const sent = q.q.replace('___', '<span class="blank">___</span>');
+  
+  c.innerHTML = `
+    ${filtersHtml}
+    <div class="ptxt" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+      <span>${wqState.idx + 1} / ${wqState.data.length}</span>
+      ${badgeHtml}
+    </div>
+    <div class="pbar"><div class="pfill" style="width:${pct}%"></div></div>
+    <div class="qcard">
+      <div class="qtype">Cümleyi tamamlayın</div>
+      <div class="qsent">${sent}</div>
+      <div class="opts" id="wurde-opts">
+        ${q.o.map(o => `<button class="obtn" data-val="${o}" onclick="checkWurdeQ(this)">${o}</button>`).join('')}
+      </div>
+      <div id="wqfb"></div>
+    </div>
+  `;
+}
+
+function checkWurdeQ(btn) {
+  if (wqState.answered) return;
+  wqState.answered = true;
+  
+  const q = wqState.data[wqState.idx];
+  const chosen = btn.getAttribute('data-val');
+  const correct = q.a;
+  const isOk = chosen === correct;
+  
+  if (isOk) wqState.score++;
+  
+  document.querySelectorAll('#wurde-opts .obtn').forEach(b => {
+    b.disabled = true;
+    const t = b.getAttribute('data-val');
+    if (t === correct) {
+      b.classList.add(isOk && t === chosen ? 'correct' : 'show-ok');
+    } else if (t === chosen && !isOk) {
+      b.classList.add('wrong');
+    }
+  });
+  
+  const fb = document.getElementById('wqfb');
+  if (fb) {
+    fb.innerHTML = `
+      <div class="fb2 ${isOk ? 'ok' : 'no'}">
+        ${isOk ? '✓ Doğru!' : '✗ Yanlış — Doğru: <strong>' + correct + '</strong>'}
+        <div style="margin-top:6px;font-size:12px;opacity:.85;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+          <div>📌 ${q.q.replace('___', '<strong>' + correct + '</strong>')}</div>
+          <button class="speak-btn" onclick="speak('${q.q.replace('___', correct).replace(/'/g, "\\'")}')" style="padding:2px;color:inherit;opacity:0.8;" title="Telaffuz et"><svg viewBox="0 0 24 24" style="width:14px;height:14px;"><path fill="currentColor" d="M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.85 14,18.71V20.77C18,19.86 21,16.28 21,12C21,7.72 18,4.14 14,3.23M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16C15.5,15.29 16.5,13.77 16.5,12M3,9V15H7L12,20V4L7,9H3Z"/></svg></button>
+        </div>
+        <div style="margin-top:4px;font-size:11px;opacity:.85;">
+          ${q.e}
+        </div>
+      </div>
+      <button class="nbtn" onclick="nextWurdeQ()" style="width:100%; margin-top:12px;">
+        ${wqState.idx + 1 >= wqState.data.length ? 'Sonuçları Gör' : 'Sonraki →'}
+      </button>
+    `;
+  }
+  
+  speak(q.q.replace('___', correct));
+}
+
+function nextWurdeQ() {
+  wqState.idx++;
+  renderWurdeQuiz();
+}
+
+function setWurdeQuizCat(cat) {
+  wqState.cat = cat;
+  startWurdeQuiz();
+}
+
 // ═══════════════════════════════════════════
 // GRAMMAR LESSONS (KONU ANLATIMI)
 // ═══════════════════════════════════════════
@@ -2298,7 +2504,7 @@ function renderLessons() {
     c.innerHTML = `
       <div class="sec-head">
         <div class="sec-title">Konu Anlatımları</div>
-        <div class="sec-badge">3 Ders</div>
+        <div class="sec-badge">4 Ders</div>
       </div>
       
       <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 8px;">
@@ -2315,6 +2521,11 @@ function renderLessons() {
         <div class="lesson-card" onclick="currentLesson = 3; renderLessons();">
           <div class="lesson-card-title">⚖️ Ders 3: Edat Durumları (Akkusativ vs. Dativ)</div>
           <div class="lesson-card-desc">Hangi edat hangi durumu (Kasus) gerektirir? Akkusativ ve Dativ ayrımı, fiil listeleri ve öğrenme ipuçları.</div>
+        </div>
+
+        <div class="lesson-card" onclick="currentLesson = 4; renderLessons();">
+          <div class="lesson-card-title">⚖️ Ders 4: wurde / geworden / worden</div>
+          <div class="lesson-card-desc">wurde, geworden ve worden yardımcı fiillerinin anlam farkları, kullanım mantığı, karşılaştırma tablosu ve karar akışları.</div>
         </div>
       </div>
     `;
@@ -2448,6 +2659,114 @@ function renderLessons() {
           <div class="lesson-actions" style="margin-top: 20px;">
             <button class="rbtn" onclick="startQuizFromLesson('standard', 'Akk')" style="width: 100%;">🎯 Akkusativ Alıştırması Çöz</button>
             <button class="fnbtn" onclick="startQuizFromLesson('standard', 'Dat')" style="width: 100%; padding: 12px; border-radius: var(--r-pill);">🍀 Dativ Alıştırması Çöz</button>
+          </div>
+        </div>
+      </div>
+    `;
+  } else if (currentLesson === 4) {
+    c.innerHTML = `
+      <button class="back-btn" onclick="currentLesson = null; renderLessons();">
+        ← Konulara Dön
+      </button>
+      
+      <div class="lesson-detail">
+        <div class="lesson-title">📚 Ders 4: wurde / geworden / worden</div>
+        <div class="lesson-content">
+          <p>Almanca'da <strong>werden</strong> (olmak) fiili, hem kendi başına bir eylem olarak hem de edilgen çatı (Passiv) veya gelecek zaman (Futur) kurarken yardımcı fiil olarak sıkça kullanılır. En çok karıştırılan üç çekimi şunlardır: <strong class="c-wurde">wurde(n)</strong>, <strong class="c-geworden">geworden</strong> ve <strong class="c-worden">worden</strong>.</p>
+          
+          <div class="lesson-section-title">1. wurde(n) — Präteritum</div>
+          <p><strong>werden</strong> fiilinin geçmiş zaman (hikaye) halidir. İki farklı kullanımı mevcuttur:</p>
+          <ul>
+            <li><strong>Değişim/Gelişim Anlatımı (Ana Fiil):</strong> Durum veya meslek değişimini ifade eder.
+              <div class="lesson-ex-box">
+                Er <strong>wurde</strong> Arzt. <span class="tr">(Doktor oldu. - Meslek değişimi)</span>
+              </div>
+              <div class="lesson-ex-box">
+                Es <strong>wurde</strong> dunkel. <span class="tr">(Hava karardı. - Durum değişimi)</span>
+              </div>
+            </li>
+            <li><strong>Passiv Präteritum (Yardımcı Fiil):</strong> Geçmişte edilgen bir eylemi belirtir.
+              <div class="lesson-ex-box">
+                Das Haus <strong>wurde</strong> 1995 gebaut. <span class="tr">(Ev 1995'te inşa edildi.)</span>
+              </div>
+            </li>
+          </ul>
+
+          <div class="lesson-section-title">2. geworden — Partizip II (Vollverb)</div>
+          <p><strong>werden</strong> fiilinin edilgen olmayan Perfekt (yakın geçmiş zaman) cümlelerindeki halidir. Yardımcı fiil olarak <strong>sein</strong> ile kullanılır. "Olmak / haline gelmek" anlamındadır.</p>
+          <div class="lesson-ex-box">
+            Er ist Arzt <strong>geworden</strong>. <span class="tr">(O doktor oldu. - Perfekt)</span>
+          </div>
+          <div class="lesson-ex-box">
+            Das Wetter ist in den letzten Tagen viel besser <strong>geworden</strong>. <span class="tr">(Hava son günlerde çok daha iyi oldu/hale geldi.)</span>
+          </div>
+
+          <div class="lesson-section-title">3. worden — Passiv Perfekt (Yardımcı Fiil)</div>
+          <p><strong>worden</strong> sadece Passiv Perfekt (edilgen yakın geçmiş zaman) cümlelerinde yardımcı fiil olarak kullanılır. Tek başına ana fiil olarak kullanılamaz. Edilgen Perfekt yapısında <em>geworden</em> fiilinin başındaki <em>ge-</em> eki düşer ve <strong>worden</strong> halini alır.</p>
+          <div class="lesson-ex-box">
+            Die Abteilung ist letzten Monat geschlossen <strong>worden</strong>. <span class="tr">(Bölüm geçen ay kapatıldı / kapatılmış oldu.)</span>
+          </div>
+          <div class="lesson-ex-box">
+            Das Projekt ist wegen Geldmangel abgesagt <strong>worden</strong>. <span class="tr">(Proje bütçe yetersizliğinden iptal edildi.)</span>
+          </div>
+
+          <div class="lesson-section-title" style="margin-top: 20px; border-top: 1px solid var(--border-2); padding-top: 15px;">Hızlı Karşılaştırma Tablosu</div>
+          <div class="table-wrapper" style="margin-top: 8px;">
+            <table class="pa-table">
+              <thead><tr><th>Form</th><th>Tip</th><th>Yapı</th><th>Anlam</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td><strong class="c-wurde">wurde(n)</strong></td>
+                  <td>Präteritum</td>
+                  <td>Subj + wurde + (Adj/Nomen/Part.II)</td>
+                  <td>oldu / -ildi (basit geçmiş)</td>
+                </tr>
+                <tr>
+                  <td><strong class="c-geworden">geworden</strong></td>
+                  <td>Partizip II (Vollverb)</td>
+                  <td>Subj + ist/sind + ... + geworden</td>
+                  <td>oldu / olmuştur (Perfekt)</td>
+                </tr>
+                <tr>
+                  <td><strong class="c-worden">worden</strong></td>
+                  <td>Passiv Perfekt</td>
+                  <td>Subj + ist/sind + Part.II + worden</td>
+                  <td>-ildi / -ilmiş oldu (Edilgen Perfekt)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="lesson-section-title">🚦 Karar Akışı (Nasıl Seçilir?)</div>
+          
+          <div class="flow-card">
+            <div class="flow-q">1. Cümlede edilgen (Passiv) anlam var mı? ("Birisi tarafından yapıldı" mı?)</div>
+            <div class="flow-branch"><span class="flow-tag bg-wurde-badge">HAYIR</span> Öznenin kendisi bir duruma/mesleğe geçiyor (dunkel werden, Arzt werden) ➔ Adım 2a'ya git.</div>
+            <div class="flow-branch"><span class="flow-tag bg-worden-badge">EVET</span> Eylem bir başkası tarafından gerçekleştirilmiş ➔ Adım 2b'ye git.</div>
+          </div>
+          
+          <div class="flow-card">
+            <div class="flow-q">2a. Edilgen Olmayan Durum (Vollverb) ➔ Hangi Zaman?</div>
+            <div class="flow-branch"><span class="flow-tag bg-wurde-badge">Präteritum</span> Basit geçmiş zaman ➔ <strong class="c-wurde">wurde(n)</strong> + Adjektiv/Nomen<br>Örn: Er <strong>wurde</strong> Lehrer. (Öğretmen oldu.)</div>
+            <div class="flow-branch"><span class="flow-tag bg-geworden-badge">Perfekt</span> Yakın geçmiş zaman ➔ sein + ... + <strong class="c-geworden">geworden</strong><br>Örn: Er ist Lehrer <strong>geworden</strong>. (Öğretmen oldu.)</div>
+          </div>
+
+          <div class="flow-card">
+            <div class="flow-q">2b. Edilgen Durum (Passiv) ➔ Hangi Zaman?</div>
+            <div class="flow-branch"><span class="flow-tag bg-wurde-badge">Präteritum Passiv</span> Hikaye edilgen ➔ Subj + <strong class="c-wurde">wurde(n)</strong> + Partizip II<br>Örn: Die Tür <strong>wurde</strong> geöffnet. (Kapı açıldı.)</div>
+            <div class="flow-branch"><span class="flow-tag bg-worden-badge">Perfekt Passiv</span> Yakın geçmiş edilgen ➔ Subj + sein + Partizip II + <strong class="c-worden">worden</strong><br>Örn: Die Tür ist geöffnet <strong>worden</strong>. (Kapı açıldı.)</div>
+          </div>
+
+          <div class="flow-card">
+            <div class="flow-q">💡 Pratik İpucu</div>
+            <div class="flow-branch" style="color:var(--text-1)">Cümlede "ist/sind" yardımcı fiili var mı?</div>
+            <div class="flow-branch"><span class="flow-tag bg-worden-badge">EVET</span> Partizip II (ge-...-t / -en) de varsa ➔ <strong class="c-worden">worden</strong> (Edilgen Perfekt)</div>
+            <div class="flow-branch"><span class="flow-tag bg-geworden-badge">EVET</span> Sadece sıfat/isim varsa (Partizip II yok) ➔ <strong class="c-geworden">geworden</strong> (Etken Perfekt)</div>
+            <div class="flow-branch"><span class="flow-tag bg-wurde-badge">HAYIR</span> Yardımcı fiil "ist/sind" yoksa ➔ <strong class="c-wurde">wurde(n)</strong> (Präteritum)</div>
+          </div>
+
+          <div class="lesson-actions" style="margin-top: 20px;">
+            <button class="rbtn" onclick="startQuizFromLesson('wurde_geworden_worden')" style="width: 100%;">🚀 wurde/geworden/worden Alıştırması Çöz</button>
           </div>
         </div>
       </div>
