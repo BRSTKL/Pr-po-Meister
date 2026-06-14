@@ -1363,6 +1363,27 @@ const wurdeQuizData = [
   {c:'mixed',q:'Die alte Fabrik ist zu einem Museum ___.',o:['wurde','geworden','worden','wird'],a:'geworden',e:'sein + zu + Nomen + geworden → bir şeye dönüşme, edilgen değil, Perfekt'},
 ];
 
+const nullartikelQuizData = [
+  {c:'nom',q:'___ Kaffee schmeckt nicht gut. (kalt, der Kaffee)',o:['Kalter','Kalte','Kaltes','Kalten'],a:'Kalter',e:'Nominativ Maskulin Nullartikel → -er (der → -er)'},
+  {c:'nom',q:'___ Luft tut dem Körper gut. (frisch, die Luft)',o:['Frischer','Frische','Frisches','Frischen'],a:'Frische',e:'Nominativ Feminin Nullartikel → -e (die → -e)'},
+  {c:'nom',q:'___ Wetter macht alle glücklich. (gut, das Wetter)',o:['Guter','Gute','Gutes','Guten'],a:'Gutes',e:'Nominativ Neutral Nullartikel → -es (das → -es)'},
+  {c:'akk',q:'Ich trinke gern ___ Kaffee. (kalt, den Kaffee)',o:['kalter','kalte','kaltes','kalten'],a:'kalten',e:'Akkusativ Maskulin Nullartikel → -en (den → -en)'},
+  {c:'akk',q:'Ich brauche ___ Luft. (frisch, die Luft)',o:['frischer','frische','frisches','frischen'],a:'frische',e:'Akkusativ Feminin Nullartikel → -e (die → -e)'},
+  {c:'akk',q:'Wir wünschen ___ Wetter für die Reise. (gut, das Wetter)',o:['guter','gute','gutes','guten'],a:'gutes',e:'Akkusativ Neutral Nullartikel → -es (das → -es)'},
+  {c:'dat',q:'Das Land leidet unter ___ Inflation. (stark, der Inflation - feminin)',o:['starker','starke','starkem','starken'],a:'starker',e:'Dativ Feminin Nullartikel → -er (der → -er)'},
+  {c:'dat',q:'Bei ___ Wetter gehen wir spazieren. (schön, dem Wetter - neutr.)',o:['schöner','schöne','schönem','schönen'],a:'schönem',e:'Dativ Neutral Nullartikel → -em (dem → -em)'},
+  {c:'dat',q:'Das Zimmer war in ___ Chaos. (total, dem Chaos - neutr.)',o:['totaler','totale','totalem','totalen'],a:'totalem',e:'Dativ Neutral Nullartikel → -em (dem → -em)'},
+  {c:'dat',q:'Mit ___ Interesse habe ich den Artikel gelesen. (groß, dem Interesse - neutr.)',o:['großer','große','großem','großen'],a:'großem',e:'Dativ Neutral Nullartikel → -em (dem → -em)'},
+  {c:'dat',q:'Nach ___ Reise war ich sehr müde. (lang, der Reise - feminin)',o:['langer','lange','langem','langen'],a:'langer',e:'Dativ Feminin Nullartikel → -er (der → -er)'},
+  {c:'dat',q:'Mit ___ Erfolg hat sie das Projekt abgeschlossen. (groß, dem Erfolg - mask.)',o:['großer','grosse','grossem','grossen'],a:'grossem',e:'Dativ Maskulin Nullartikel → -em (dem → -em)'},
+  {c:'gen',q:'Das ist ein Zeichen ___ Höflichkeit. (groß, der Höflichkeit - feminin)',o:['großer','große','großem','großen'],a:'großer',e:'Genitiv Feminin Nullartikel → -er (der → -er)'},
+  {c:'gen',q:'Trotz ___ Regens sind wir spazieren gegangen. (stark, des Regens - mask.)',o:['starker','starke','starkem','starken'],a:'starken',e:'Genitiv Maskulin Nullartikel → -en (istisna! normalde -es, burada -en)'},
+  {c:'mixed',q:'___ Glück bringt diese Pflanze, sagt man. (groß, das Glück)',o:['Großer','Große','Großes','Großen'],a:'Großes',e:'Nominativ Neutral Nullartikel → -es (das → -es)'},
+  {c:'mixed',q:'Sie hat das mit ___ Geduld erklärt. (viel, der Geduld - feminin)',o:['vieler','viele','vielem','vielen'],a:'vieler',e:'Dativ Feminin Nullartikel → -er (der → -er)'},
+  {c:'mixed',q:'Er trinkt nur ___ Wasser. (kalt, das Wasser)',o:['kalter','kalte','kaltes','kalten'],a:'kaltes',e:'Akkusativ Neutral Nullartikel → -es (das → -es)'},
+  {c:'mixed',q:'Bei ___ Nebel sollte man langsam fahren. (dicht, dem Nebel - mask.)',o:['dichter','dichte','dichtem','dichten'],a:'dichtem',e:'Dativ Maskulin Nullartikel → -em (dem → -em)'}
+];
+
 // STATE
 // ═══════════════════════════════════════════
 let lf={level:'all',kasus:'all',status:'all'};
@@ -1381,6 +1402,7 @@ let PA = [];
 let wqState = { cat: 'all', data: [], idx: 0, score: 0, answered: false };
 let rqState = { cat: 'all', data: [], idx: 0, score: 0, answered: false };
 let currentLesson = null;
+let nqState = { cat: 'all', data: [], idx: 0, score: 0, answered: false };
 
 function initPAData() {
   const vowels = ['a', 'e', 'i', 'o', 'u', 'ä', 'ö', 'ü', 'A', 'E', 'I', 'O', 'U', 'Ä', 'Ö', 'Ü'];
@@ -1836,7 +1858,7 @@ function showQuizSetup(){
   const c = document.getElementById('quiz-c');
   if(!c) return;
   
-  const showFilters = quizSettings.type !== 'wurde_geworden_worden' && quizSettings.type !== 'reflexive_pronouns';
+  const showFilters = quizSettings.type !== 'wurde_geworden_worden' && quizSettings.type !== 'reflexive_pronouns' && quizSettings.type !== 'nullartikel';
   
   c.innerHTML = `
     <div class="setup-card" style="background: var(--bg-card); border: 1px solid var(--border-1); border-radius: var(--r-lg); padding: 20px; display: flex; flex-direction: column; gap: 16px;">
@@ -1850,6 +1872,7 @@ function showQuizSetup(){
           <button class="fb fb-starred ${quizSettings.type==='pa'?'on':''}" onclick="setQuizSetting('type','pa',this)">Edat Zamirleri (da/wo)</button>
           <button class="fb fb-b1 ${quizSettings.type==='wurde_geworden_worden'?'on':''}" onclick="setQuizSetting('type','wurde_geworden_worden',this)">wurde / geworden / worden</button>
           <button class="fb fb-b2 ${quizSettings.type==='reflexive_pronouns'?'on':''}" onclick="setQuizSetting('type','reflexive_pronouns',this)">Dönüşlü Zamirler (Akk vs. Dat)</button>
+          <button class="fb fb-b3 ${quizSettings.type==='nullartikel'?'on':''}" onclick="setQuizSetting('type','nullartikel',this)">Artikelsiz Sıfat Çekimi (Nullartikel)</button>
         </div>
       </div>
 
@@ -1907,7 +1930,7 @@ function setQuizSetting(key, val, btn){
   if (key === 'type') {
     const filtersContainer = document.getElementById('quiz-filters-container');
     if (filtersContainer) {
-      const show = val !== 'wurde_geworden_worden' && val !== 'reflexive_pronouns';
+      const show = val !== 'wurde_geworden_worden' && val !== 'reflexive_pronouns' && val !== 'nullartikel';
       filtersContainer.style.display = show ? 'flex' : 'none';
       filtersContainer.style.flexDirection = 'column';
       filtersContainer.style.gap = '16px';
@@ -2257,6 +2280,8 @@ function startQuiz(){
     startWurdeQuiz();
   } else if (quizSettings.type === 'reflexive_pronouns') {
     startReflexiveQuiz();
+  } else if (quizSettings.type === 'nullartikel') {
+    startNullartikelQuiz();
   } else {
     let pool=V;
     if(quizSettings.levels && quizSettings.levels.length < 4){
@@ -2712,16 +2737,137 @@ function setReflexiveQuizCat(cat) {
   startReflexiveQuiz();
 }
 
+function startNullartikelQuiz() {
+  const pool = nqState.cat === 'all' ? nullartikelQuizData : nullartikelQuizData.filter(q => q.c === nqState.cat);
+  const shuffled = [...pool].sort(() => Math.random() - 0.5);
+  nqState.data = shuffled.slice(0, Math.min(10, shuffled.length));
+  nqState.idx = 0;
+  nqState.score = 0;
+  nqState.answered = false;
+  renderNullartikelQuiz();
+}
+
+function renderNullartikelQuiz() {
+  const c = document.getElementById('quiz-c');
+  if (!c) return;
+  
+  if (nqState.idx >= nqState.data.length) {
+    recordQuizCompletion(nqState.score, nqState.data.length);
+    const pct = Math.round(nqState.score / nqState.data.length * 100);
+    const emoji = pct >= 80 ? '🎉' : pct >= 50 ? '👍' : '💪';
+    c.innerHTML = `
+      <div class="scard">
+        <div style="font-size:40px;margin-bottom:10px">${emoji}</div>
+        <div class="sbig">${nqState.score}/${nqState.data.length}</div>
+        <div class="slbl">%${pct} başarı</div>
+        <div style="display: flex; flex-direction: column; gap: 8px; max-width: 240px; margin: 0 auto; width: 100%;">
+          <button class="rbtn" onclick="startNullartikelQuiz()" style="width: 100%;">Aynı Ayarlarla Tekrarla</button>
+          <button class="fnbtn" onclick="showQuizSetup()" style="width: 100%; padding: 12px; border-radius: var(--r-pill);">Ayarları Değiştir</button>
+        </div>
+      </div>
+    `;
+    return;
+  }
+  
+  const q = nqState.data[nqState.idx];
+  const pct = Math.round(nqState.idx / nqState.data.length * 100);
+  
+  const catNames = { nom: 'Nominativ', akk: 'Akkusativ', dat: 'Dativ', gen: 'Genitiv', mixed: 'Karışık' };
+  const badgeHtml = `<span class="lvlbadge bg-wurde-badge">${catNames[q.c]}</span>`;
+  
+  let filtersHtml = `
+    <div class="filters" style="margin-bottom: 14px; padding-bottom: 2px;">
+      <button class="fb fb-all ${nqState.cat === 'all' ? 'on' : ''}" onclick="setNullartikelQuizCat('all')">Tümü</button>
+      <button class="fb fb-a1 ${nqState.cat === 'nom' ? 'on' : ''}" onclick="setNullartikelQuizCat('nom')">Nominativ</button>
+      <button class="fb fb-a2 ${nqState.cat === 'akk' ? 'on' : ''}" onclick="setNullartikelQuizCat('akk')">Akkusativ</button>
+      <button class="fb fb-b1 ${nqState.cat === 'dat' ? 'on' : ''}" onclick="setNullartikelQuizCat('dat')">Dativ</button>
+      <button class="fb fb-b2 ${nqState.cat === 'gen' ? 'on' : ''}" onclick="setNullartikelQuizCat('gen')">Genitiv</button>
+      <button class="fb fb-starred ${nqState.cat === 'mixed' ? 'on' : ''}" onclick="setNullartikelQuizCat('mixed')">Karışık</button>
+    </div>
+  `;
+  
+  const sent = q.q.replace('___', '<span class="blank">___</span>');
+  
+  c.innerHTML = `
+    ${filtersHtml}
+    <div class="ptxt" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+      <span>${nqState.idx + 1} / ${nqState.data.length}</span>
+      ${badgeHtml}
+    </div>
+    <div class="pbar"><div class="pfill" style="width:${pct}%"></div></div>
+    <div class="qcard">
+      <div class="qtype">Cümleyi uygun sıfat çekimi ile tamamlayın</div>
+      <div class="qsent">${sent}</div>
+      <div class="opts" id="nullartikel-opts">
+        ${q.o.map(o => `<button class="obtn" data-val="${o}" onclick="checkNullartikelQ(this)">${o}</button>`).join('')}
+      </div>
+      <div id="nqfb"></div>
+    </div>
+  `;
+}
+
+function checkNullartikelQ(btn) {
+  if (nqState.answered) return;
+  nqState.answered = true;
+  
+  const q = nqState.data[nqState.idx];
+  const chosen = btn.getAttribute('data-val');
+  const correct = q.a;
+  const isOk = chosen === correct;
+  
+  if (isOk) nqState.score++;
+  
+  document.querySelectorAll('#nullartikel-opts .obtn').forEach(b => {
+    b.disabled = true;
+    const t = b.getAttribute('data-val');
+    if (t === correct) {
+      b.classList.add(isOk && t === chosen ? 'correct' : 'show-ok');
+    } else if (t === chosen && !isOk) {
+      b.classList.add('wrong');
+    }
+  });
+  
+  const fb = document.getElementById('nqfb');
+  if (fb) {
+    fb.innerHTML = `
+      <div class="fb2 ${isOk ? 'ok' : 'no'}">
+        ${isOk ? '✓ Doğru!' : '✗ Yanlış — Doğru: <strong>' + correct + '</strong>'}
+        <div style="margin-top:6px;font-size:12px;opacity:.85;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+          <div>📌 ${q.q.replace('___', '<strong>' + correct + '</strong>')}</div>
+          <button class="speak-btn" onclick="speak('${q.q.replace('___', correct).replace(/'/g, "\\'")}')" style="padding:2px;color:inherit;opacity:0.8;" title="Telaffuz et"><svg viewBox="0 0 24 24" style="width:14px;height:14px;"><path fill="currentColor" d="M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.85 14,18.71V20.77C18,19.86 21,16.28 21,12C21,7.72 18,4.14 14,3.23M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16C15.5,15.29 16.5,13.77 16.5,12M3,9V15H7L12,20V4L7,9H3Z"/></svg></button>
+        </div>
+        <div style="margin-top:4px;font-size:11px;opacity:.85;">
+          ${q.e}
+        </div>
+      </div>
+      <button class="nbtn" onclick="nextNullartikelQ()" style="width:100%; margin-top:12px;">
+        ${nqState.idx + 1 >= nqState.data.length ? 'Sonuçları Gör' : 'Sonraki →'}
+      </button>
+    `;
+  }
+  
+  speak(q.q.replace('___', correct));
+}
+
+function nextNullartikelQ() {
+  nqState.idx++;
+  renderNullartikelQuiz();
+}
+
+function setNullartikelQuizCat(cat) {
+  nqState.cat = cat;
+  startNullartikelQuiz();
+}
+
 function renderLessons() {
   const c = document.getElementById('pa-lessons-c');
   if (!c) return;
 
-  
   if (currentLesson === null) {
     c.innerHTML = `
       <div class="sec-head">
         <div class="sec-title">Konu Anlatımları</div>
-        <div class="sec-badge">5 Ders</div>
+        <div class="sec-badge">6 Ders</div>
       </div>
       
       <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 8px;">
@@ -2748,6 +2894,11 @@ function renderLessons() {
         <div class="lesson-card" onclick="currentLesson = 5; renderLessons();">
           <div class="lesson-card-title">⚖️ Ders 5: Dativ Alan Dönüşlü Fiiller (Reflexive Verben im Dativ)</div>
           <div class="lesson-card-desc">Dönüşlü zamirin (Reflexivpronomen) Dativ durumunda çekimlendiği fiiller, kuralları, zamir karşılaştırma tablosu ve örnek fiil kartları.</div>
+        </div>
+
+        <div class="lesson-card" onclick="currentLesson = 6; renderLessons();">
+          <div class="lesson-card-title">📚 Ders 6: Artikelsiz Sıfat Çekimi (Nullartikel Adjektivdeklination)</div>
+          <div class="lesson-card-desc">Önünde artikel bulunmayan isimlerin sıfat çekim kuralları, belirli artikel eklik ilişkisi ve durum tabloları.</div>
         </div>
       </div>
     `;
@@ -3090,6 +3241,105 @@ function renderLessons() {
 
           <div class="lesson-actions" style="margin-top: 20px;">
             <button class="rbtn" onclick="startQuizFromLesson('reflexive_pronouns')" style="width: 100%;">🚀 Dönüşlü Zamirler Alıştırması Çöz</button>
+          </div>
+        </div>
+      </div>
+    `;
+  } else if (currentLesson === 6) {
+    c.innerHTML = `
+      <button class="back-btn" onclick="currentLesson = null; renderLessons();">
+        ← Konulara Dön
+      </button>
+      
+      <div class="lesson-detail">
+        <div class="lesson-title">📚 Ders 6: Artikelsiz Sıfat Çekimi (Nullartikel Adjektivdeklination)</div>
+        <div class="lesson-content">
+          <p>Bir ismin önünde artikel (der/die/das, ein/eine, mein/kein vb.) <strong>yoksa</strong> (Nullartikel), sıfat o ismin önünde olması gereken <strong>belirli artikelin (bestimmter Artikel) ekini</strong> alır. Yani sıfat, "kaybolan" artikelin görevini üstlenerek durum ve cinsiyet belirtir.</p>
+          
+          <div class="lesson-section-title">Temel Mantık ve Formül</div>
+          <p>Artikel ortadan kalktığında sıfat artikel gibi davranır:</p>
+          <div class="arrow-row">
+            <span class="arrow-box bg-dem">(in) dem Chaos</span>
+            <span class="arrow-sep">artikel kalkar ➔</span>
+            <span class="arrow-box bg-result">in totalem Chaos</span>
+          </div>
+          <p>Burada "dem" edatı Dativ Neutral ekidir: <strong class="c-wurde">-em</strong>. Artikel olmadığı için sıfat bu eki alarak <strong>total<strong class="c-wurde">em</strong> Chaos</strong> haline gelir.</p>
+
+          <div class="lesson-section-title" style="margin-top: 20px; border-top: 1px solid var(--border-2); padding-top: 15px;">Sıfat Çekim Tablosu (Nullartikel)</div>
+          <p>Sıfatlar durumlarına göre şu belirli artikel takılarını alırlar:</p>
+          <div class="table-wrapper" style="margin-top: 8px;">
+            <table class="pa-table">
+              <thead><tr><th>Durum</th><th>Maskulin</th><th>Feminin</th><th>Neutral</th><th>Plural</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td>Nominativ</td>
+                  <td><strong class="c-wurde">-er</strong><br><span style="font-size:11px;color:var(--text-3)">kalter Kaffee</span></td>
+                  <td><strong class="c-wurde">-e</strong><br><span style="font-size:11px;color:var(--text-3)">frische Luft</span></td>
+                  <td><strong class="c-wurde">-es</strong><br><span style="font-size:11px;color:var(--text-3)">gutes Wetter</span></td>
+                  <td><strong class="c-wurde">-e</strong><br><span style="font-size:11px;color:var(--text-3)">kalte Getränke</span></td>
+                </tr>
+                <tr>
+                  <td>Akkusativ</td>
+                  <td><strong class="c-wurde">-en</strong><br><span style="font-size:11px;color:var(--text-3)">kalten Kaffee</span></td>
+                  <td><strong class="c-wurde">-e</strong><br><span style="font-size:11px;color:var(--text-3)">frische Luft</span></td>
+                  <td><strong class="c-wurde">-es</strong><br><span style="font-size:11px;color:var(--text-3)">gutes Wetter</span></td>
+                  <td><strong class="c-wurde">-e</strong><br><span style="font-size:11px;color:var(--text-3)">kalte Getränke</span></td>
+                </tr>
+                <tr>
+                  <td>Dativ</td>
+                  <td><strong class="c-wurde">-em</strong><br><span style="font-size:11px;color:var(--text-3)">kaltem Kaffee</span></td>
+                  <td><strong class="c-wurde">-er</strong><br><span style="font-size:11px;color:var(--text-3)">frischer Luft</span></td>
+                  <td><strong class="c-wurde">-em</strong><br><span style="font-size:11px;color:var(--text-3)">totalem Chaos</span></td>
+                  <td><strong class="c-wurde">-en</strong><br><span style="font-size:11px;color:var(--text-3)">kalten Getränken</span></td>
+                </tr>
+                <tr>
+                  <td>Genitiv</td>
+                  <td><strong class="c-wurde">-en</strong><br><span style="font-size:11px;color:var(--text-3)">kalten Kaffees</span></td>
+                  <td><strong class="c-wurde">-er</strong><br><span style="font-size:11px;color:var(--text-3)">frischer Luft</span></td>
+                  <td><strong class="c-wurde">-en</strong><br><span style="font-size:11px;color:var(--text-3)">guten Wetters</span></td>
+                  <td><strong class="c-wurde">-er</strong><br><span style="font-size:11px;color:var(--text-3)">kalter Getränke</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="lesson-section-title">⚠️ Kritik İstisna (Genitiv)</div>
+          <div class="flow-card">
+            <div style="font-size: 12px; line-height: 1.5;">
+              Maskulin ve Neutral cinsiyetteki kelimelerin <strong>Genitiv</strong> çekiminde, sıfat normalde "-es" alması gerekirken (des Regens gibi) ismin sonuna zaten "-s/-es" takısı geldiği için sıfat <strong>-en</strong> takısı alır:
+              <br><br>
+              <strong class="c-wurde">Trotz starken Regens</strong> (stark<strong>es</strong> değil!)
+              <br>
+              <strong class="c-wurde">Zeichen guten Wetters</strong> (gut<strong>es</strong> değil!)
+            </div>
+          </div>
+
+          <div class="lesson-section-title" style="margin-top: 20px; border-top: 1px solid var(--border-2); padding-top: 15px;">Örnek Cümle Analizleri</div>
+          
+          <div class="flow-card">
+            <div class="flow-q">Nominativ Örnekleri</div>
+            <div class="lesson-ex-box"><strong>Kalter</strong> Kaffee schmeckt mir nicht. <span class="tr">(Soğuk kahve hoşuma gitmiyor. Kaffee → der → -er)</span></div>
+            <div class="lesson-ex-box"><strong>Frische</strong> Luft tut dem Körper gut. <span class="tr">(Temiz hava vücuda iyi gelir. Luft → die → -e)</span></div>
+            <div class="lesson-ex-box"><strong>Gutes</strong> Wetter macht glücklich. <span class="tr">(Güzel hava mutlu eder. Wetter → das → -es)</span></div>
+          </div>
+
+          <div class="flow-card">
+            <div class="flow-q">Akkusativ Örnekleri</div>
+            <div class="lesson-ex-box">Ich trinke gern <strong>kalten</strong> Kaffee. <span class="tr">(Soğuk kahve içmeyi severim. Kaffee → den → -en)</span></div>
+            <div class="lesson-ex-box">Ich brauche <strong>frische</strong> Luft. <span class="tr">(Temiz havaya ihtiyacım var. Luft → die → -e)</span></div>
+          </div>
+
+          <div class="flow-card">
+            <div class="flow-q">Dativ Örnekleri</div>
+            <div class="lesson-ex-box">Das Zimmer war in <strong>totalem</strong> Chaos. <span class="tr">(Oda tam bir kaos içindeydi. Chaos → dem → -em)</span></div>
+            <div class="flow-card" style="margin-top: 6px; padding: 8px; border: 0.5px solid var(--border-2);">
+              <div style="font-size:11px;color:var(--text-2)"><strong>Neden -em?</strong> in edatı durum değişimi değil bulunma bildirdiği için Dativ gerektirir. Chaos nötrdür (das Chaos). Artikel kalkınca "dem" yerine sıfata "-em" eklenir.</div>
+            </div>
+            <div class="lesson-ex-box">Das Land leidet unter <strong>starker</strong> Inflation. <span class="tr">(Ülke şiddetli enflasyon altında. Inflation → der → -er)</span></div>
+          </div>
+
+          <div class="lesson-actions" style="margin-top: 20px;">
+            <button class="rbtn" onclick="startQuizFromLesson('nullartikel')" style="width: 100%;">🚀 Artikelsiz Sıfat Çekimi Alıştırması Çöz</button>
           </div>
         </div>
       </div>
