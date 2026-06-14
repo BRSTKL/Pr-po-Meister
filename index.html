@@ -619,6 +619,160 @@ body{
 .pa-opt-lbl { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-3); margin-bottom:6px; text-align:left; }
 .pa-formula { display:flex; align-items:center; justify-content:center; gap:10px; font-size:16px; font-weight:700; margin-top:12px; padding:10px; background:var(--bg-elevated); border-radius:var(--r-md); border:1px dashed var(--border-2); color:var(--text-2); }
 .pa-formula .val { color:var(--accent); border-bottom:2px solid var(--accent); min-width:40px; text-align:center; }
+
+/* STREAK BADGE STYLES */
+.streak-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--orange);
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  padding: 3px 8px;
+  border-radius: var(--r-pill);
+  cursor: pointer;
+  transition: all 0.2s var(--ease);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.streak-badge:active {
+  transform: scale(0.92);
+}
+.streak-badge.completed {
+  background: rgba(245, 158, 11, 0.18);
+  border-color: rgba(245, 158, 11, 0.4);
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.25);
+}
+@keyframes pulse-fire {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); filter: drop-shadow(0 0 2px var(--orange)); }
+  100% { transform: scale(1); }
+}
+.streak-badge.completed .fire-emoji {
+  animation: pulse-fire 2s infinite ease-in-out;
+  display: inline-block;
+}
+
+/* STATS PANEL STYLES */
+.stats-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+.stats-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-1);
+  border-radius: var(--r-lg);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+.stats-card-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-3);
+  margin-bottom: 8px;
+  text-align: left;
+}
+.stats-val-large {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--text-1);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+.stats-bar-group {
+  margin-bottom: 8px;
+}
+.stats-bar-group:last-child {
+  margin-bottom: 0;
+}
+.stats-bar-lbl {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.stats-progress-bg {
+  height: 6px;
+  background: var(--border-2);
+  border-radius: var(--r-pill);
+  overflow: hidden;
+}
+.stats-progress-fill {
+  height: 100%;
+  border-radius: var(--r-pill);
+  transition: width 0.4s var(--ease);
+}
+.multi-progress {
+  display: flex;
+  height: 8px;
+  background: var(--border-2);
+  border-radius: var(--r-pill);
+  overflow: hidden;
+  margin: 12px 0 6px;
+}
+.multi-progress-segment {
+  height: 100%;
+  transition: width 0.4s var(--ease);
+}
+.multi-legend {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-2);
+  margin-top: 6px;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.legend-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.reset-btn {
+  background: transparent;
+  color: var(--red);
+  border: 1px solid rgba(240, 96, 96, 0.2);
+  padding: 12px 16px;
+  border-radius: var(--r-md);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s var(--ease);
+  width: 100%;
+  margin-top: 16px;
+  font-family: var(--font);
+  text-align: center;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.reset-btn:active {
+  transform: scale(0.97);
+  background: var(--red-bg);
+  border-color: var(--red);
+}
+.chart-bar-group rect {
+  transition: opacity 0.2s var(--ease);
+}
+.chart-bar-group:hover rect {
+  opacity: 1;
+  filter: brightness(1.1);
+}
+.chart-bar-group text {
+  pointer-events: none;
+}
 </style>
 </head>
 <body>
@@ -633,7 +787,12 @@ body{
       <span class="flag">🇩🇪</span>
       <span id="header-text">Verben mit Präp.</span>
     </div>
-    <div class="app-header-sub" id="header-badge">A1–B2</div>
+    <div style="display: flex; gap: 8px; align-items: center; position: absolute; right: 20px; top: 50%; transform: translateY(-50%);">
+      <div class="streak-badge" id="streak-badge" style="display: none;" onclick="switchTab('stats')">
+        <span class="fire-emoji">🔥</span> <span id="streak-count">0</span> Gün
+      </div>
+      <div class="app-header-sub" id="header-badge" style="position: static; transform: none; padding: 3px 10px;">A1–B2</div>
+    </div>
   </div>
 
   <!-- Scrollable Page Content -->
@@ -811,6 +970,14 @@ body{
       <div class="pa-quiz-area" id="paquiz-c"></div>
     </div>
 
+    <!-- ═══════════ STATS ═══════════ -->
+    <div class="section" id="sec-stats">
+      <div class="sec-head">
+        <div class="sec-title">İstatistikler</div>
+      </div>
+      <div class="stats-grid" id="stats-c"></div>
+    </div>
+
   </div><!-- /page-content -->
 
   <!-- ═══════════ TAB BAR ═══════════ -->
@@ -834,6 +1001,10 @@ body{
     <button class="tab" id="tab-paquiz" onclick="switchTab('paquiz')">
       <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
       <span class="tab-label">PA Quiz</span>
+    </button>
+    <button class="tab" id="tab-stats" onclick="switchTab('stats')">
+      <svg viewBox="0 0 24 24"><rect x="18" y="3" width="4" height="18" rx="1"/><rect x="10" y="8" width="4" height="13" rx="1"/><rect x="2" y="13" width="4" height="8" rx="1"/></svg>
+      <span class="tab-label">Analiz</span>
     </button>
   </nav>
 </div>
@@ -1445,12 +1616,12 @@ function getWeightedRandomSamplePA(pool, sampleSize){
   return result;
 }
 
-const headerTitles={liste:'Fiil Listesi',karten:'Flashcard',quiz:'Quiz',pa:'da(r)- / wo(r)-',paquiz:'PA Quiz'};
+const headerTitles={liste:'Fiil Listesi',karten:'Flashcard',quiz:'Quiz',pa:'da(r)- / wo(r)-',paquiz:'PA Quiz',stats:'İstatistik & Seri'};
 
 // ═══════════════════════════════════════════
 // TAB SWITCHING
 // ═══════════════════════════════════════════
-const tabNames=['liste','karten','quiz','pa','paquiz'];
+const tabNames=['liste','karten','quiz','pa','paquiz','stats'];
 
 function switchTab(n){
   if (n !== 'karten' && typeof stopFCAutoPlay === 'function') {
@@ -1469,6 +1640,7 @@ function switchTab(n){
   if(n==='paquiz'&&pqData.length===0)showPAQuizSetup();
   if(n==='karten'){applyFCFilter();renderFC();}
   if(n==='pa')renderPATable();
+  if(n==='stats')renderStats();
 }
 
 // ═══════════════════════════════════════════
@@ -1930,6 +2102,7 @@ function startQuiz(){
 function renderQuiz(){
   const c=document.getElementById('quiz-c');
   if(qIdx>=qData.length){
+    recordQuizCompletion(qScore, qData.length);
     const pct=Math.round(qScore/qData.length*100);
     const e=pct>=80?'🎉':pct>=50?'👍':'💪';
     c.innerHTML=`<div class="scard">
@@ -2110,6 +2283,7 @@ function startPAQuiz(){
 function renderPAQuiz(){
   const c=document.getElementById('paquiz-c');
   if(pqIdx>=pqData.length){
+    recordQuizCompletion(pqScore, pqData.length);
     const pct=Math.round(pqScore/pqData.length*100);
     const e=pct>=80?'🎉':pct>=50?'👍':'💪';
     c.innerHTML=`<div class="scard">
@@ -2284,10 +2458,342 @@ document.addEventListener('keydown',e=>{
 });
 
 // ═══════════════════════════════════════════
+// STATS & STREAK LOGIC
+// ═══════════════════════════════════════════
+let userStats = {
+  streak: 0,
+  maxStreak: 0,
+  lastActiveDate: null,
+  quizCount: 0,
+  quizScores: []
+};
+
+function loadStats() {
+  try {
+    const saved = localStorage.getItem('deutsch_verben_stats');
+    if (saved) {
+      userStats = JSON.parse(saved);
+      if (userStats.streak === undefined) userStats.streak = 0;
+      if (userStats.maxStreak === undefined) userStats.maxStreak = 0;
+      if (userStats.lastActiveDate === undefined) userStats.lastActiveDate = null;
+      if (userStats.quizCount === undefined) userStats.quizCount = 0;
+      if (userStats.quizScores === undefined) userStats.quizScores = [];
+    }
+  } catch (e) {
+    console.warn("Stats load failed:", e);
+  }
+}
+
+function saveStats() {
+  try {
+    localStorage.setItem('deutsch_verben_stats', JSON.stringify(userStats));
+  } catch (e) {}
+}
+
+function getTodayDateString() {
+  const d = new Date();
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+function getYesterdayDateString() {
+  const d = new Date();
+  d.setDate(d.getDate() - 1);
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+function checkAndUpdateStreak(isQuizCompleted = false) {
+  const todayStr = getTodayDateString();
+  const yesterdayStr = getYesterdayDateString();
+  
+  if (isQuizCompleted) {
+    if (userStats.lastActiveDate === yesterdayStr) {
+      userStats.streak++;
+      userStats.lastActiveDate = todayStr;
+    } else if (userStats.lastActiveDate === null) {
+      userStats.streak = 1;
+      userStats.lastActiveDate = todayStr;
+    } else if (userStats.lastActiveDate !== todayStr) {
+      userStats.streak = 1;
+      userStats.lastActiveDate = todayStr;
+    }
+    
+    if (userStats.streak > userStats.maxStreak) {
+      userStats.maxStreak = userStats.streak;
+    }
+    saveStats();
+    updateStreakUI();
+  } else {
+    if (userStats.lastActiveDate !== null && userStats.lastActiveDate !== yesterdayStr && userStats.lastActiveDate !== todayStr) {
+      userStats.streak = 0;
+      saveStats();
+      updateStreakUI();
+    }
+  }
+}
+
+function recordQuizCompletion(score, total) {
+  const pct = Math.round((score / total) * 100);
+  userStats.quizCount++;
+  userStats.quizScores.push(pct);
+  if (userStats.quizScores.length > 20) {
+    userStats.quizScores.shift();
+  }
+  saveStats();
+  checkAndUpdateStreak(true);
+}
+
+function updateStreakUI() {
+  const badge = document.getElementById('streak-badge');
+  const count = document.getElementById('streak-count');
+  if (!badge || !count) return;
+  
+  if (userStats.streak > 0) {
+    count.textContent = userStats.streak;
+    badge.style.display = 'flex';
+    
+    const todayStr = getTodayDateString();
+    if (userStats.lastActiveDate === todayStr) {
+      badge.classList.add('completed');
+      badge.title = `Bugün çalışarak seriyi korudun! (${userStats.streak} Gün)`;
+    } else {
+      badge.classList.remove('completed');
+      badge.title = `Seriyi devam ettirmek için bugün bir sınav çözün!`;
+    }
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+function renderQuizHistoryChart() {
+  const scores = userStats.quizScores || [];
+  if (scores.length === 0) {
+    return `<div style="text-align: center; color: var(--text-3); font-size: 11px; padding: 20px 0;">Henüz sınav tamamlanmadı.</div>`;
+  }
+  
+  const lastScores = scores.slice(-10);
+  const chartHeight = 80;
+  const barWidth = 16;
+  const gap = 10;
+  const width = lastScores.length * (barWidth + gap) - gap;
+  
+  let barsHTML = '';
+  lastScores.forEach((score, idx) => {
+    const height = (score / 100) * chartHeight;
+    const x = idx * (barWidth + gap);
+    const y = chartHeight - height;
+    const color = score >= 80 ? 'var(--green)' : (score >= 50 ? 'var(--accent)' : 'var(--red)');
+    
+    barsHTML += `
+      <g class="chart-bar-group">
+        <rect x="${x}" y="${y}" width="${barWidth}" height="${height}" rx="3" fill="${color}" opacity="0.85">
+          <animate attributeName="height" from="0" to="${height}" dur="0.4s" begin="${idx * 0.05}s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.4 0 0.2 1"/>
+          <animate attributeName="y" from="${chartHeight}" to="${y}" dur="0.4s" begin="${idx * 0.05}s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.4 0 0.2 1"/>
+        </rect>
+        <text x="${x + barWidth/2}" y="${y - 4}" font-family="var(--font)" font-size="9" font-weight="700" fill="var(--text-2)" text-anchor="middle">%${score}</text>
+        <text x="${x + barWidth/2}" y="${chartHeight + 12}" font-family="var(--font)" font-size="8" font-weight="600" fill="var(--text-3)" text-anchor="middle">S${scores.length - lastScores.length + idx + 1}</text>
+      </g>
+    `;
+  });
+  
+  return `
+    <div style="display: flex; justify-content: center; align-items: center; padding: 12px 0 24px; overflow-x: auto;">
+      <svg width="${width}" height="${chartHeight + 18}" style="overflow: visible;">
+        ${barsHTML}
+      </svg>
+    </div>
+  `;
+}
+
+function renderStats() {
+  const container = document.getElementById('stats-c');
+  if (!container) return;
+  
+  const total = V.length;
+  let mastered = 0, learning = 0, unseen = 0;
+  
+  V.forEach(v => {
+    const s = getWordState(v.v, v.p).score || 0;
+    if (s === 5) mastered++;
+    else if (s > 0) learning++;
+    else unseen++;
+  });
+  
+  const masteredPct = total > 0 ? Math.round((mastered / total) * 100) : 0;
+  const learningPct = total > 0 ? Math.round((learning / total) * 100) : 0;
+  const unseenPct = total > 0 ? 100 - masteredPct - learningPct : 100;
+  
+  const levels = ['A1', 'A2', 'B1', 'B2'];
+  const levelData = levels.map(lvl => {
+    const pool = V.filter(v => v.l === lvl);
+    const m = pool.filter(v => getWordState(v.v, v.p).score === 5).length;
+    const pct = pool.length > 0 ? Math.round((m / pool.length) * 100) : 0;
+    return { lvl, m, total: pool.length, pct };
+  });
+  
+  const cases = ['Akk', 'Dat'];
+  const caseData = cases.map(k => {
+    const pool = V.filter(v => v.k === k);
+    const m = pool.filter(v => getWordState(v.v, v.p).score === 5).length;
+    const pct = pool.length > 0 ? Math.round((m / pool.length) * 100) : 0;
+    return { 
+      name: k === 'Akk' ? 'Akkusativ' : 'Dativ', 
+      m, 
+      total: pool.length, 
+      pct, 
+      color: k === 'Akk' ? 'var(--akk-c)' : 'var(--dat-c)' 
+    };
+  });
+  
+  const todayStr = getTodayDateString();
+  const streakCompletedToday = userStats.lastActiveDate === todayStr;
+  const streakMsg = streakCompletedToday 
+    ? '🎉 Harika! Bugünün günlük hedefini tamamladın ve seriyi korudun.' 
+    : '⏳ Seriyi kaybetmemek veya başlatmak için bugün bir sınav (Quiz / PA Quiz) çözün!';
+  
+  const avgScore = userStats.quizScores.length > 0 
+    ? Math.round(userStats.quizScores.reduce((a, b) => a + b, 0) / userStats.quizScores.length) 
+    : 0;
+  
+  let html = `
+    <!-- STREAK CARD -->
+    <div class="stats-card" style="border-left: 4px solid var(--orange); position: relative; overflow: hidden;">
+      <div style="position: absolute; right: 16px; top: 16px; font-size: 50px; opacity: 0.15; user-select: none;">🔥</div>
+      <div class="stats-card-title">Günlük Seri (Streak)</div>
+      <div style="display: flex; align-items: baseline; gap: 8px;">
+        <span class="stats-val-large">${userStats.streak}</span>
+        <span style="font-weight: 700; color: var(--text-2); font-size: 14px;">Günlük Aktif Seri</span>
+      </div>
+      <div style="font-size: 11px; font-weight: 600; color: var(--text-3); margin-top: 4px;">
+        En Uzun Seri: <strong style="color: var(--text-1);">${userStats.maxStreak} Gün</strong>
+      </div>
+      <div style="font-size: 12px; color: ${streakCompletedToday ? 'var(--green)' : 'var(--orange)'}; font-weight: 600; margin-top: 12px; border-top: 1px solid var(--border-1); padding-top: 8px; line-height: 1.4; text-align: left;">
+        ${streakMsg}
+      </div>
+    </div>
+    
+    <!-- WORD LEARNING STATE -->
+    <div class="stats-card">
+      <div class="stats-card-title">Kelime Öğrenme İlerlemesi</div>
+      <div style="display: flex; align-items: baseline; gap: 6px;">
+        <span class="stats-val-large">${mastered}</span>
+        <span style="font-weight: 600; color: var(--text-2); font-size: 12px;">/ ${total} kelime tamamen öğrenildi</span>
+      </div>
+      
+      <div class="multi-progress">
+        <div class="multi-progress-segment" style="width: ${masteredPct}%; background: var(--green);" title="Tamamen Öğrenildi (%${masteredPct})"></div>
+        <div class="multi-progress-segment" style="width: ${learningPct}%; background: var(--accent);" title="Öğrenme Aşamasında (%${learningPct})"></div>
+        <div class="multi-progress-segment" style="width: ${unseenPct}%; background: var(--border-3);" title="Görülmedi (%${unseenPct})"></div>
+      </div>
+      
+      <div class="multi-legend">
+        <div class="legend-item"><span class="legend-dot" style="background: var(--green);"></span> Öğrenildi (${mastered})</div>
+        <div class="legend-item"><span class="legend-dot" style="background: var(--accent);"></span> Öğreniliyor (${learning})</div>
+        <div class="legend-item"><span class="legend-dot" style="background: var(--text-3);"></span> Görülmedi (${unseen})</div>
+      </div>
+    </div>
+    
+    <!-- LEVEL BREAKDOWN -->
+    <div class="stats-card">
+      <div class="stats-card-title">Seviye Başarı Oranları</div>
+      <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 4px;">
+        ${levelData.map(ld => `
+          <div class="stats-bar-group">
+            <div class="stats-bar-lbl">
+              <span style="font-weight: 700; color: var(--text-1);">${ld.lvl} Seviyesi</span>
+              <span style="color: var(--text-2); font-size: 11px;">%${ld.pct} (${ld.m}/${ld.total})</span>
+            </div>
+            <div class="stats-progress-bg">
+              <div class="stats-progress-fill" style="width: ${ld.pct}%; background: var(--${ld.lvl.toLowerCase()});"></div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+    
+    <!-- KASUS BREAKDOWN -->
+    <div class="stats-card">
+      <div class="stats-card-title">Edat Durumu (Kasus) Analizi</div>
+      <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 4px;">
+        ${caseData.map(cd => `
+          <div class="stats-bar-group">
+            <div class="stats-bar-lbl">
+              <span style="font-weight: 700; color: ${cd.color};">${cd.name}</span>
+              <span style="color: var(--text-2); font-size: 11px;">%${cd.pct} (${cd.m}/${cd.total})</span>
+            </div>
+            <div class="stats-progress-bg">
+              <div class="stats-progress-fill" style="width: ${cd.pct}%; background: ${cd.color};"></div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+    
+    <!-- QUIZ STATS & CHART -->
+    <div class="stats-card">
+      <div class="stats-card-title">Sınav Performansı</div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+        <div style="background: var(--bg-card-alt); border: 1px solid var(--border-1); border-radius: var(--r-md); padding: 10px; text-align: center;">
+          <div style="font-size: 11px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;">Toplam Sınav</div>
+          <div style="font-size: 20px; font-weight: 800; color: var(--text-1);">${userStats.quizCount}</div>
+        </div>
+        <div style="background: var(--bg-card-alt); border: 1px solid var(--border-1); border-radius: var(--r-md); padding: 10px; text-align: center;">
+          <div style="font-size: 11px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;">Ortalama Skor</div>
+          <div style="font-size: 20px; font-weight: 800; color: ${avgScore >= 80 ? 'var(--green)' : (avgScore >= 50 ? 'var(--accent)' : 'var(--red)')};">%${avgScore}</div>
+        </div>
+      </div>
+      
+      <div style="font-size: 11px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; text-align: left;">Son Sınav Sonuçları (Trend)</div>
+      ${renderQuizHistoryChart()}
+    </div>
+    
+    <!-- RESET BUTTON -->
+    <button class="reset-btn" onclick="confirmResetAllProgress()">
+      🗑️ Tüm İlerlemeyi ve İstatistikleri Sıfırla
+    </button>
+  `;
+  
+  container.innerHTML = html;
+}
+
+function confirmResetAllProgress() {
+  const conf1 = confirm("⚠️ DİKKAT!\nTüm öğrenme ilerlemeniz, favorileriniz, istatistikleriniz ve günlük seriniz kalıcı olarak sıfırlanacaktır. Bu işlem geri alınamaz!\n\nDevam etmek istiyor musunuz?");
+  if (conf1) {
+    const conf2 = confirm("Son bir kez onaylayın:\nTüm verilerinizi tamamen silmek istediğinizden emin misiniz?");
+    if (conf2) {
+      localStorage.removeItem('deutsch_verben_progress');
+      localStorage.removeItem('deutsch_verben_stats');
+      
+      loadProgress();
+      loadStats();
+      checkAndUpdateStreak(false);
+      updateProgressUI();
+      updateStreakUI();
+      renderListe();
+      applyFCFilter();
+      renderFC();
+      initPAData();
+      renderPATable();
+      
+      switchTab('liste');
+      alert("Tüm ilerlemeniz başarıyla sıfırlandı!");
+    }
+  }
+}
+
+// ═══════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════
 loadProgress();
+loadStats();
+checkAndUpdateStreak(false);
 updateProgressUI();
+updateStreakUI();
 renderListe();
 applyFCFilter();
 renderFC();
