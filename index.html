@@ -962,14 +962,6 @@ body{
       </div>
     </div>
 
-    <!-- ═══════════ PA QUIZ ═══════════ -->
-    <div class="section" id="sec-paquiz">
-      <div class="sec-head">
-        <div class="sec-title">PA Quiz</div>
-      </div>
-      <div class="pa-quiz-area" id="paquiz-c"></div>
-    </div>
-
     <!-- ═══════════ STATS ═══════════ -->
     <div class="section" id="sec-stats">
       <div class="sec-head">
@@ -997,10 +989,6 @@ body{
     <button class="tab" id="tab-pa" onclick="switchTab('pa')">
       <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
       <span class="tab-label">da/wo</span>
-    </button>
-    <button class="tab" id="tab-paquiz" onclick="switchTab('paquiz')">
-      <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-      <span class="tab-label">PA Quiz</span>
     </button>
     <button class="tab" id="tab-stats" onclick="switchTab('stats')">
       <svg viewBox="0 0 24 24"><rect x="18" y="3" width="4" height="18" rx="1"/><rect x="10" y="8" width="4" height="13" rx="1"/><rect x="2" y="13" width="4" height="8" rx="1"/></svg>
@@ -1242,8 +1230,7 @@ let fcFlip=false;
 let qData=[],qIdx=0,qScore=0,qAnswered=false;
 let pqData=[],pqIdx=0,pqScore=0,pqAnswered=false;
 let userProgress={};
-let quizSettings={levels:['A1','A2','B1','B2'],kasus:'all',starredOnly:false};
-let paQuizSettings={levels:['A1','A2','B1','B2'],kasus:'all',starredOnly:false};
+let quizSettings={levels:['A1','A2','B1','B2'],kasus:'all',starredOnly:false,type:'standard'};
 let currentQuestion={correct:'',ex:'',tr:''};
 let selectedPA = { prefix: '', prep: '' };
 let PA = [];
@@ -1616,12 +1603,12 @@ function getWeightedRandomSamplePA(pool, sampleSize){
   return result;
 }
 
-const headerTitles={liste:'Fiil Listesi',karten:'Flashcard',quiz:'Quiz',pa:'da(r)- / wo(r)-',paquiz:'PA Quiz',stats:'İstatistik & Seri'};
+const headerTitles={liste:'Fiil Listesi',karten:'Flashcard',quiz:'Quiz',pa:'da(r)- / wo(r)-',stats:'İstatistik & Seri'};
 
 // ═══════════════════════════════════════════
 // TAB SWITCHING
 // ═══════════════════════════════════════════
-const tabNames=['liste','karten','quiz','pa','paquiz','stats'];
+const tabNames=['liste','karten','quiz','pa','stats'];
 
 function switchTab(n){
   if (n !== 'karten' && typeof stopFCAutoPlay === 'function') {
@@ -1637,7 +1624,6 @@ function switchTab(n){
   // Update header
   document.getElementById('header-text').textContent=headerTitles[n]||'Verben mit Präp.';
   if(n==='quiz'&&qData.length===0)showQuizSetup();
-  if(n==='paquiz'&&pqData.length===0)showPAQuizSetup();
   if(n==='karten'){applyFCFilter();renderFC();}
   if(n==='pa')renderPATable();
   if(n==='stats')renderStats();
@@ -1707,15 +1693,24 @@ function showQuizSetup(){
     <div class="setup-card" style="background: var(--bg-card); border: 1px solid var(--border-1); border-radius: var(--r-lg); padding: 20px; display: flex; flex-direction: column; gap: 16px;">
       <div style="font-size: 15px; font-weight: 700; color: var(--text-1); border-bottom: 1px solid var(--border-2); padding-bottom: 8px; margin-bottom: 4px;">Sınav Ayarları</div>
       
+      <!-- Sınav Türü Seçimi -->
+      <div>
+        <div style="font-size: 12px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Sınav Türü</div>
+        <div class="setup-chips" style="display: flex; gap: 6px;">
+          <button class="fb fb-all ${quizSettings.type==='standard'?'on':''}" onclick="setQuizSetting('type','standard',this)">Edatlar & Anlamlar</button>
+          <button class="fb fb-starred ${quizSettings.type==='pa'?'on':''}" onclick="setQuizSetting('type','pa',this)">Edat Zamirleri (da/wo)</button>
+        </div>
+      </div>
+
       <!-- Seviye Seçimi -->
       <div>
         <div style="font-size: 12px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Çalışma Seviyesi</div>
         <div class="setup-chips" style="display: flex; gap: 6px; flex-wrap: wrap;">
-          <button class="fb fb-all ${quizSettings.levels.length===4?'on':''}" onclick="toggleQuizLevel('all',this,false)">Tümü</button>
-          <button class="fb fb-a1 ${quizSettings.levels.includes('A1')?'on':''}" onclick="toggleQuizLevel('A1',this,false)">A1</button>
-          <button class="fb fb-a2 ${quizSettings.levels.includes('A2')?'on':''}" onclick="toggleQuizLevel('A2',this,false)">A2</button>
-          <button class="fb fb-b1 ${quizSettings.levels.includes('B1')?'on':''}" onclick="toggleQuizLevel('B1',this,false)">B1</button>
-          <button class="fb fb-b2 ${quizSettings.levels.includes('B2')?'on':''}" onclick="toggleQuizLevel('B2',this,false)">B2</button>
+          <button class="fb fb-all ${quizSettings.levels.length===4?'on':''}" onclick="toggleQuizLevel('all',this)">Tümü</button>
+          <button class="fb fb-a1 ${quizSettings.levels.includes('A1')?'on':''}" onclick="toggleQuizLevel('A1',this)">A1</button>
+          <button class="fb fb-a2 ${quizSettings.levels.includes('A2')?'on':''}" onclick="toggleQuizLevel('A2',this)">A2</button>
+          <button class="fb fb-b1 ${quizSettings.levels.includes('B1')?'on':''}" onclick="toggleQuizLevel('B1',this)">B1</button>
+          <button class="fb fb-b2 ${quizSettings.levels.includes('B2')?'on':''}" onclick="toggleQuizLevel('B2',this)">B2</button>
         </div>
       </div>
       
@@ -1757,8 +1752,8 @@ function setQuizSetting(key, val, btn){
   btn.classList.add('on');
 }
 
-function toggleQuizLevel(level, btn, isPA) {
-  const settings = isPA ? paQuizSettings : quizSettings;
+function toggleQuizLevel(level, btn) {
+  const settings = quizSettings;
   const allLevels = ['A1', 'A2', 'B1', 'B2'];
   
   if (level === 'all') {
@@ -2066,37 +2061,56 @@ function runFCAutoPlayLoop() {
 // QUIZ
 // ═══════════════════════════════════════════
 function startQuiz(){
-  let pool=V;
-  if(quizSettings.levels && quizSettings.levels.length < 4){
-    pool=pool.filter(v=>quizSettings.levels.includes(v.l));
-  }
-  if(quizSettings.kasus!=='all'){
-    pool=pool.filter(v=>v.k===quizSettings.kasus);
-  }
-  if(quizSettings.starredOnly){
-    pool=pool.filter(v=>{
-      const state=getWordState(v.v,v.p);
-      return state.starred;
-    });
-  }
-  
   const c=document.getElementById('quiz-c');
-  if(!pool.length){
-    if(c){
-      c.innerHTML=`
-        <div class="scard" style="padding: 30px 20px;">
-          <div style="font-size: 40px; margin-bottom: 12px;">⚠️</div>
-          <div style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">Kelime Bulunamadı</div>
-          <div style="font-size: 13px; color: var(--text-2); margin-bottom: 20px; line-height: 1.55;">Seçtiğiniz kriterlere uygun kelime bulunamadı. Lütfen filtreleri değiştirin veya bazı kelimeleri favorilere ekleyin.</div>
-          <button class="rbtn" onclick="showQuizSetup()" style="width: 100%;">Ayarlara Dön</button>
-        </div>
-      `;
+  if (quizSettings.type === 'pa') {
+    let pool = filteredPA(quizSettings);
+    if(!pool.length){
+      if(c){
+        c.innerHTML=`
+          <div class="scard" style="padding: 30px 20px;">
+            <div style="font-size: 40px; margin-bottom: 12px;">⚠️</div>
+            <div style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">Kelime Bulunamadı</div>
+            <div style="font-size: 13px; color: var(--text-2); margin-bottom: 20px; line-height: 1.55;">Seçtiğiniz kriterlere uygun kelime bulunamadı. Lütfen filtreleri değiştirin veya bazı kelimeleri favorilere ekleyin.</div>
+            <button class="rbtn" onclick="showQuizSetup()" style="width: 100%;">Ayarlara Dön</button>
+          </div>
+        `;
+      }
+      return;
     }
-    return;
+    pqData = getWeightedRandomSamplePA(pool, Math.min(10, pool.length));
+    pqIdx=0;pqScore=0;renderPAQuiz();
+  } else {
+    let pool=V;
+    if(quizSettings.levels && quizSettings.levels.length < 4){
+      pool=pool.filter(v=>quizSettings.levels.includes(v.l));
+    }
+    if(quizSettings.kasus!=='all'){
+      pool=pool.filter(v=>v.k===quizSettings.kasus);
+    }
+    if(quizSettings.starredOnly){
+      pool=pool.filter(v=>{
+        const state=getWordState(v.v,v.p);
+        return state.starred;
+      });
+    }
+    
+    if(!pool.length){
+      if(c){
+        c.innerHTML=`
+          <div class="scard" style="padding: 30px 20px;">
+            <div style="font-size: 40px; margin-bottom: 12px;">⚠️</div>
+            <div style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">Kelime Bulunamadı</div>
+            <div style="font-size: 13px; color: var(--text-2); margin-bottom: 20px; line-height: 1.55;">Seçtiğiniz kriterlere uygun kelime bulunamadı. Lütfen filtreleri değiştirin veya bazı kelimeleri favorilere ekleyin.</div>
+            <button class="rbtn" onclick="showQuizSetup()" style="width: 100%;">Ayarlara Dön</button>
+          </div>
+        `;
+      }
+      return;
+    }
+    
+    qData=getWeightedRandomSample(pool,Math.min(10,pool.length));
+    qIdx=0;qScore=0;renderQuiz();
   }
-  
-  qData=getWeightedRandomSample(pool,Math.min(10,pool.length));
-  qIdx=0;qScore=0;renderQuiz();
 }
 
 function renderQuiz(){
@@ -2199,89 +2213,8 @@ function renderPATable(){
 // ═══════════════════════════════════════════
 // PA QUIZ
 // ═══════════════════════════════════════════
-function showPAQuizSetup(){
-  pqData = [];
-  const c = document.getElementById('paquiz-c');
-  if(!c) return;
-  
-  c.innerHTML = `
-    <div class="setup-card" style="background: var(--bg-card); border: 1px solid var(--border-1); border-radius: var(--r-lg); padding: 20px; display: flex; flex-direction: column; gap: 16px;">
-      <div style="font-size: 15px; font-weight: 700; color: var(--text-1); border-bottom: 1px solid var(--border-2); padding-bottom: 8px; margin-bottom: 4px;">Sınav Ayarları</div>
-      
-      <!-- Seviye Seçimi -->
-      <div>
-        <div style="font-size: 12px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Çalışma Seviyesi</div>
-        <div class="setup-chips" style="display: flex; gap: 6px; flex-wrap: wrap;">
-          <button class="fb fb-all ${paQuizSettings.levels.length===4?'on':''}" onclick="toggleQuizLevel('all',this,true)">Tümü</button>
-          <button class="fb fb-a1 ${paQuizSettings.levels.includes('A1')?'on':''}" onclick="toggleQuizLevel('A1',this,true)">A1</button>
-          <button class="fb fb-a2 ${paQuizSettings.levels.includes('A2')?'on':''}" onclick="toggleQuizLevel('A2',this,true)">A2</button>
-          <button class="fb fb-b1 ${paQuizSettings.levels.includes('B1')?'on':''}" onclick="toggleQuizLevel('B1',this,true)">B1</button>
-          <button class="fb fb-b2 ${paQuizSettings.levels.includes('B2')?'on':''}" onclick="toggleQuizLevel('B2',this,true)">B2</button>
-        </div>
-      </div>
-      
-      <!-- Kasus Seçimi -->
-      <div>
-        <div style="font-size: 12px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Edat Durumu (Kasus)</div>
-        <div class="setup-chips" style="display: flex; gap: 6px;">
-          <button class="fb fb-all ${paQuizSettings.kasus==='all'?'on':''}" onclick="setPAQuizSetting('kasus','all',this)">Tümü</button>
-          <button class="fb fb-akk ${paQuizSettings.kasus==='Akk'?'on':''}" onclick="setPAQuizSetting('kasus','Akk',this)">Akkusativ</button>
-          <button class="fb fb-dat ${paQuizSettings.kasus==='Dat'?'on':''}" onclick="setPAQuizSetting('kasus','Dat',this)">Dativ</button>
-        </div>
-      </div>
-      
-      <!-- Kapsam -->
-      <div>
-        <div style="font-size: 12px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Kelime Kapsamı</div>
-        <div class="setup-chips" style="display: flex; gap: 6px;">
-          <button class="fb fb-all ${!paQuizSettings.starredOnly?'on':''}" onclick="setPAQuizSetting('starredOnly',false,this)">Tüm Kelimeler</button>
-          <button class="fb fb-starred ${paQuizSettings.starredOnly?'on':''}" onclick="setPAQuizSetting('starredOnly',true,this)">⭐ Sadece Favoriler</button>
-        </div>
-      </div>
-      
-      <button class="rbtn" onclick="startPAQuiz()" style="width: 100%; border-radius: var(--r-md); margin-top: 8px; font-weight: 800; font-size: 15px; letter-spacing: 0.02em; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; cursor: pointer;">
-        🚀 Sınavı Başlat
-      </button>
-      <div style="font-size: 11px; color: var(--text-3); margin-top: 6px; text-align: center; opacity: 0.95; border-top: 1px solid var(--border-2); padding-top: 8px; display: flex; align-items: center; justify-content: center; gap: 6px;">
-        <span>🔊 Aktif Ses:</span>
-        <select class="voice-select" onchange="userSelectVoice(this.value)" style="background: var(--bg-input); color: var(--text-1); border: 1px solid var(--border-2); border-radius: 6px; padding: 2px 4px; font-size: 11px; max-width: 140px; font-family: var(--font); outline: none; cursor: pointer;"></select>
-      </div>
-    </div>
-  `;
-  updateActiveVoiceIndicator();
-}
-
-function setPAQuizSetting(key, val, btn){
-  paQuizSettings[key] = val;
-  const container = btn.parentElement;
-  container.querySelectorAll('button').forEach(b => b.classList.remove('on'));
-  btn.classList.add('on');
-}
-
-function startPAQuiz(){
-  let pool = filteredPA(paQuizSettings);
-  
-  const c = document.getElementById('paquiz-c');
-  if(!pool.length){
-    if(c){
-      c.innerHTML=`
-        <div class="scard" style="padding: 30px 20px;">
-          <div style="font-size: 40px; margin-bottom: 12px;">⚠️</div>
-          <div style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">Kelime Bulunamadı</div>
-          <div style="font-size: 13px; color: var(--text-2); margin-bottom: 20px; line-height: 1.55;">Seçtiğiniz kriterlere uygun kelime bulunamadı. Lütfen filtreleri değiştirin veya bazı kelimeleri favorilere ekleyin.</div>
-          <button class="rbtn" onclick="showPAQuizSetup()" style="width: 100%;">Ayarlara Dön</button>
-        </div>
-      `;
-    }
-    return;
-  }
-  
-  pqData = getWeightedRandomSamplePA(pool, Math.min(10, pool.length));
-  pqIdx=0;pqScore=0;renderPAQuiz();
-}
-
 function renderPAQuiz(){
-  const c=document.getElementById('paquiz-c');
+  const c=document.getElementById('quiz-c');
   if(pqIdx>=pqData.length){
     recordQuizCompletion(pqScore, pqData.length);
     const pct=Math.round(pqScore/pqData.length*100);
@@ -2291,8 +2224,8 @@ function renderPAQuiz(){
       <div class="sbig">${pqScore}/${pqData.length}</div>
       <div class="slbl">%${pct} başarı</div>
       <div style="display: flex; flex-direction: column; gap: 8px; max-width: 240px; margin: 0 auto; width: 100%;">
-        <button class="rbtn" onclick="startPAQuiz()" style="width: 100%;">Aynı Ayarlarla Tekrarla</button>
-        <button class="fnbtn" onclick="showPAQuizSetup()" style="width: 100%; padding: 12px; border-radius: var(--r-pill);">Ayarları Değiştir</button>
+        <button class="rbtn" onclick="startQuiz()" style="width: 100%;">Aynı Ayarlarla Tekrarla</button>
+        <button class="fnbtn" onclick="showQuizSetup()" style="width: 100%; padding: 12px; border-radius: var(--r-pill);">Ayarları Değiştir</button>
       </div>
     </div>`;
     return;
