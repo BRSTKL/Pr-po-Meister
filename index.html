@@ -773,6 +773,125 @@ body{
 .chart-bar-group text {
   pointer-events: none;
 }
+
+/* LESSONS STYLES */
+.lesson-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-1);
+  border-radius: var(--r-lg);
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s var(--ease);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+  margin-bottom: 12px;
+}
+.lesson-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  background: var(--bg-card-alt);
+}
+.lesson-card:active {
+  transform: translateY(0);
+}
+.lesson-card-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-1);
+}
+.lesson-card-desc {
+  font-size: 12px;
+  color: var(--text-2);
+  line-height: 1.45;
+}
+.lesson-detail {
+  background: var(--bg-card);
+  border: 1px solid var(--border-1);
+  border-radius: var(--r-lg);
+  padding: 20px;
+  text-align: left;
+}
+.back-btn {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-2);
+  color: var(--text-2);
+  padding: 6px 12px;
+  border-radius: var(--r-pill);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 16px;
+  transition: all 0.2s var(--ease);
+  font-family: var(--font);
+  outline: none;
+  border: 1px solid var(--border-2);
+}
+.back-btn:hover {
+  color: var(--text-1);
+  border-color: var(--border-3);
+  background: var(--bg-card-alt);
+}
+.lesson-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-1);
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--border-2);
+  padding-bottom: 10px;
+  text-align: left;
+}
+.lesson-content {
+  font-size: 13px;
+  color: var(--text-1);
+  line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.lesson-section-title {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--accent-2);
+  margin-top: 10px;
+  text-align: left;
+}
+.lesson-content ul {
+  padding-left: 20px;
+  margin: 4px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.lesson-ex-box {
+  background: var(--bg-card-alt);
+  border-left: 3px solid var(--accent);
+  padding: 10px 12px;
+  border-radius: 0 var(--r-md) var(--r-md) 0;
+  font-style: italic;
+  margin: 6px 0;
+}
+.lesson-ex-box strong {
+  font-style: normal;
+  color: var(--text-1);
+}
+.lesson-ex-box .tr {
+  font-size: 11px;
+  color: var(--text-2);
+  margin-top: 2px;
+}
+.lesson-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 20px;
+  border-top: 1px solid var(--border-2);
+  padding-top: 16px;
+}
 </style>
 </head>
 <body>
@@ -917,49 +1036,9 @@ body{
     </div>
 
     <!-- ═══════════ PA AÇIKLAMA ═══════════ -->
+    <!-- ═══════════ REHBER ═══════════ -->
     <div class="section" id="sec-pa">
-      <div class="sec-head">
-        <div class="sec-title">da(r)- / wo(r)-</div>
-      </div>
-      <div class="pa-intro">
-        <strong>Präpositionaladverbien nedir?</strong><br>
-        Bir fiil sabit bir edat alıyorsa (<em>warten auf, freuen über…</em>), bu edatı zamirle değil <strong>da(r)+edat</strong> veya <strong>wo(r)+edat</strong> ile ifade ederiz.<br><br>
-        <strong>da(r)+</strong> → yanıt / referans &nbsp;|&nbsp; <strong>wo(r)+</strong> → soru<br>
-        Edat sesli harfle başlıyorsa araya <strong>-r-</strong> girer: <em>da+auf = darauf</em>
-      </div>
-      <div class="pa-grid">
-        <div class="pa-card">
-          <div class="pa-form">da(r) + Präp</div>
-          <div class="pa-rule">Yanıt / referans için</div>
-          <div class="pa-ex">Ich <span class="pa-hl">warte darauf</span>, dass er kommt.</div>
-          <div class="pa-tr">Onun gelmesini bekliyorum.</div>
-        </div>
-        <div class="pa-card">
-          <div class="pa-form">wo(r) + Präp</div>
-          <div class="pa-rule">Soru sormak için</div>
-          <div class="pa-ex"><span class="pa-hl">Worauf</span> wartest du?</div>
-          <div class="pa-tr">Neyi bekliyorsun?</div>
-        </div>
-        <div class="pa-card">
-          <div class="pa-form">dass-Satz</div>
-          <div class="pa-rule">da(r)+ → dass ile genişletme</div>
-          <div class="pa-ex">Ich freue mich <span class="pa-hl">darüber</span>, dass du kommst.</div>
-          <div class="pa-tr">Geldiğin için sevindim.</div>
-        </div>
-        <div class="pa-card">
-          <div class="pa-form">zu+Infinitiv</div>
-          <div class="pa-rule">da(r)+ → zu+Inf ile genişletme</div>
-          <div class="pa-ex">Ich habe keine Lust <span class="pa-hl">dazu</span>, zu lernen.</div>
-          <div class="pa-tr">Çalışmaya hiç niyetim yok.</div>
-        </div>
-      </div>
-      <div class="section-title">Sık kullanılan çiftler</div>
-      <div class="table-wrapper">
-        <table class="pa-table">
-          <thead><tr><th>Fiil + Edat</th><th>da(r)+</th><th>wo(r)+</th><th>Örnek soru</th></tr></thead>
-          <tbody id="pa-table-body"></tbody>
-        </table>
-      </div>
+      <div id="pa-lessons-c"></div>
     </div>
 
     <!-- ═══════════ STATS ═══════════ -->
@@ -987,8 +1066,8 @@ body{
       <span class="tab-label">Quiz</span>
     </button>
     <button class="tab" id="tab-pa" onclick="switchTab('pa')">
-      <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
-      <span class="tab-label">da/wo</span>
+      <svg viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.168.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+      <span class="tab-label">Rehber</span>
     </button>
     <button class="tab" id="tab-stats" onclick="switchTab('stats')">
       <svg viewBox="0 0 24 24"><rect x="18" y="3" width="4" height="18" rx="1"/><rect x="10" y="8" width="4" height="13" rx="1"/><rect x="2" y="13" width="4" height="8" rx="1"/></svg>
@@ -1603,7 +1682,7 @@ function getWeightedRandomSamplePA(pool, sampleSize){
   return result;
 }
 
-const headerTitles={liste:'Fiil Listesi',karten:'Flashcard',quiz:'Quiz',pa:'da(r)- / wo(r)-',stats:'İstatistik & Seri'};
+const headerTitles={liste:'Fiil Listesi',karten:'Flashcard',quiz:'Quiz',pa:'Dil Bilgisi Rehberi',stats:'İstatistik & Seri'};
 
 // ═══════════════════════════════════════════
 // TAB SWITCHING
@@ -1625,7 +1704,7 @@ function switchTab(n){
   document.getElementById('header-text').textContent=headerTitles[n]||'Verben mit Präp.';
   if(n==='quiz'&&qData.length===0)showQuizSetup();
   if(n==='karten'){applyFCFilter();renderFC();}
-  if(n==='pa')renderPATable();
+  if(n==='pa')renderLessons();
   if(n==='stats')renderStats();
 }
 
@@ -2198,16 +2277,182 @@ function checkQ(btn){
 function nextQ(){qIdx++;renderQuiz();}
 
 // ═══════════════════════════════════════════
-// PA TABLE
+// GRAMMAR LESSONS (KONU ANLATIMI)
 // ═══════════════════════════════════════════
-function renderPATable(){
-  const tb=document.getElementById('pa-table-body');
-  tb.innerHTML=PA.map(p=>`<tr>
-    <td><strong>${p.verb}</strong> + ${p.prep}</td>
-    <td style="color:var(--accent);font-weight:700">${p.dar}</td>
-    <td style="color:var(--green);font-weight:700">${p.wor}</td>
-    <td style="color:var(--text-2);font-size:11px">${p.ex_wo}</td>
-  </tr>`).join('');
+let currentLesson = null;
+
+function startQuizFromLesson(type, kasus = 'all') {
+  quizSettings.type = type;
+  quizSettings.kasus = kasus;
+  quizSettings.levels = ['A1', 'A2', 'B1', 'B2'];
+  quizSettings.starredOnly = false;
+  switchTab('quiz');
+  startQuiz();
+}
+
+function renderLessons() {
+  const c = document.getElementById('pa-lessons-c');
+  if (!c) return;
+  
+  if (currentLesson === null) {
+    c.innerHTML = `
+      <div class="sec-head">
+        <div class="sec-title">Konu Anlatımları</div>
+        <div class="sec-badge">3 Ders</div>
+      </div>
+      
+      <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 8px;">
+        <div class="lesson-card" onclick="currentLesson = 1; renderLessons();">
+          <div class="lesson-card-title">📚 Ders 1: Almanca Fiiller ve Edatları (Giriş)</div>
+          <div class="lesson-card-desc">Almanca fiillerin edatlarla kullanım mantığı, Dativ ve Akkusativ edatların fiillerle ilişkisi ve temel kurallar.</div>
+        </div>
+        
+        <div class="lesson-card" onclick="currentLesson = 2; renderLessons();">
+          <div class="lesson-card-title">🔗 Ders 2: Edat Zamirleri (da- / wo- zamirleri)</div>
+          <div class="lesson-card-desc">Nesneler için da(r)- ve sorular için wo(r)- edat zamirlerinin oluşum kuralları, ses uyumları ve tüm edatların referans listesi.</div>
+        </div>
+        
+        <div class="lesson-card" onclick="currentLesson = 3; renderLessons();">
+          <div class="lesson-card-title">⚖️ Ders 3: Edat Durumları (Akkusativ vs. Dativ)</div>
+          <div class="lesson-card-desc">Hangi edat hangi durumu (Kasus) gerektirir? Akkusativ ve Dativ ayrımı, fiil listeleri ve öğrenme ipuçları.</div>
+        </div>
+      </div>
+    `;
+  } else if (currentLesson === 1) {
+    c.innerHTML = `
+      <button class="back-btn" onclick="currentLesson = null; renderLessons();">
+        ← Konulara Dön
+      </button>
+      
+      <div class="lesson-detail">
+        <div class="lesson-title">📚 Ders 1: Almanca Fiiller ve Edatları (Giriş)</div>
+        <div class="lesson-content">
+          <p>Almanca'da birçok fiil, cümlenin diğer ögelerine sabit bir edat (<strong>Präposition</strong>) ile bağlanır. Bu yapıya Almanca'da <strong>"Verben mit Präpositionen"</strong> (Edatlı Fiiller) denir.</p>
+          
+          <div class="lesson-section-title">Neden Edat Kullanılır?</div>
+          <p>Edatlar, fiilin anlamını tamamlar veya yönünü belirtir. Örneğin Türkçe'de "birini beklemek" deriz (belirtme durumu), ancak Almanca'da <strong>warten</strong> fiili her zaman <strong>auf</strong> edatı ile kullanılır:</p>
+          
+          <div class="lesson-ex-box">
+            Ich <strong>warte auf</strong> den Bus.<br>
+            <span class="tr">(Otobüsü bekliyorum.)</span>
+          </div>
+          
+          <div class="lesson-section-title">Temel Kurallar ve Tavsiyeler</div>
+          <ul>
+            <li><strong>Birlikte Ezberleyin:</strong> Bir fiili öğrenirken sadece anlamını değil, hangi edatla kullanıldığını ve o edatın hangi durumu (Akkusativ mi Dativ mi) gerektirdiğini mutlaka birlikte ezberleyin.</li>
+            <li><strong>Edatın Kendi Anlamına Takılmayın:</strong> Edatlar fiillerle birleştiğinde kendi ana anlamlarını (örn: <em>auf</em> = üzerinde) kaybedebilirler.</li>
+          </ul>
+          
+          <div class="lesson-actions">
+            <button class="rbtn" onclick="switchTab('liste')" style="width: 100%;">📇 Kelime Listesine Git</button>
+            <button class="fnbtn" onclick="startQuizFromLesson('standard', 'all')" style="width: 100%; padding: 12px; border-radius: var(--r-pill);">🚀 Hemen Genel Quiz Çöz</button>
+          </div>
+        </div>
+      </div>
+    `;
+  } else if (currentLesson === 2) {
+    const tableRows = PA.map(p => `
+      <tr>
+        <td><strong>${p.verb}</strong> + ${p.prep}</td>
+        <td style="color:var(--accent);font-weight:700">${p.dar}</td>
+        <td style="color:var(--green);font-weight:700">${p.wor}</td>
+        <td style="color:var(--text-2);font-size:11px">${p.ex_wo}</td>
+      </tr>
+    `).join('');
+    
+    c.innerHTML = `
+      <button class="back-btn" onclick="currentLesson = null; renderLessons();">
+        ← Konulara Dön
+      </button>
+      
+      <div class="lesson-detail">
+        <div class="lesson-title">🔗 Ders 2: Edat Zamirleri (da- / wo- zamirleri)</div>
+        <div class="lesson-content">
+          <p>Edatlı bir fiil kullanırken, edattan sonra gelen nesne eğer bir <strong>insan</strong> ise normal şahıs zamirlerini (<em>mich, dir, ihn, uns...</em>) kullanırız:</p>
+          <div class="lesson-ex-box">
+            Ich warte <strong>auf dich</strong>. <span class="tr">(Seni bekliyorum - İnsan)</span>
+          </div>
+          
+          <p>Ancak nesne bir <strong>cansız varlık, kavram veya eylem</strong> ise şahıs zamiri yerine <strong>Edat Zamiri</strong> (Präpositionaladverb) kullanırız.</p>
+          
+          <div class="lesson-section-title">1. da(r)- + Edat (Referans / Yanıt)</div>
+          <p>Bir duruma işaret etmek, yanıt vermek veya o durumdan bahsetmek için kullanılır:</p>
+          <div class="lesson-ex-box">
+            Ich warte <strong>darauf</strong>, dass er anruft.<br>
+            <span class="tr">(Onun aramasını bekliyorum - Durum)</span>
+          </div>
+          
+          <div class="lesson-section-title">2. wo(r)- + Edat (Soru Yapısı)</div>
+          <p>Nesneler veya eylemler hakkında soru sormak için kullanılır (İnsanlar için kullanılmaz!):</p>
+          <div class="lesson-ex-box">
+            <strong>Worauf</strong> wartest du?<br>
+            <span class="tr">(Neyi bekliyorsun? - Soru)</span>
+          </div>
+          
+          <div class="lesson-section-title">Ses Uyum Kuralı (-r- kaynaştırması)</div>
+          <p>Eğer edat <strong>sesli harfle</strong> başlıyorsa (<em>an, auf, in, über...</em>), da/wo ile edat arasına <strong>-r-</strong> harfi eklenir:</p>
+          <ul>
+            <li>da + <strong>a</strong>uf = da<strong>r</strong>auf | wo + <strong>a</strong>uf = wo<strong>r</strong>auf</li>
+            <li>da + <strong>ü</strong>ber = da<strong>r</strong>über | wo + <strong>ü</strong>ber = wo<strong>r</strong>über</li>
+            <li>da + mit = damit | wo + mit = womit (M sessiz olduğu için 'r' almaz)</li>
+          </ul>
+          
+          <div class="lesson-section-title" style="margin-top: 20px; border-top: 1px solid var(--border-2); padding-top: 15px;">Sık Kullanılan Edat Zamirleri Listesi</div>
+          <div class="table-wrapper" style="margin-top: 8px;">
+            <table class="pa-table">
+              <thead><tr><th>Fiil + Edat</th><th>da(r)+</th><th>wo(r)+</th><th>Soru Kalıbı</th></tr></thead>
+              <tbody>
+                ${tableRows}
+              </tbody>
+            </table>
+          </div>
+          
+          <div class="lesson-actions">
+            <button class="fnbtn" onclick="startQuizFromLesson('pa')" style="width: 100%; padding: 12px; border-radius: var(--r-pill);">🚀 Edat Zamirlerini Quiz ile Pekiştir</button>
+          </div>
+        </div>
+      </div>
+    `;
+  } else if (currentLesson === 3) {
+    c.innerHTML = `
+      <button class="back-btn" onclick="currentLesson = null; renderLessons();">
+        ← Konulara Dön
+      </button>
+      
+      <div class="lesson-detail">
+        <div class="lesson-title">⚖️ Ders 3: Edat Durumları (Akkusativ vs. Dativ)</div>
+        <div class="lesson-content">
+          <p>Edatlı fiillerde, edattan sonra gelecek ismin durumu (Kasus), doğrudan kullanılan edat tarafından belirlenir. Bu edatlar <strong>Akkusativ</strong> veya <strong>Dativ</strong> durumunu zorunlu kılar.</p>
+          
+          <div class="lesson-section-title">1. Akkusativ (Belirtme Hali) Alan Edatlar</div>
+          <p>Almanca fiillerle en sık kullanılan Akkusativ edatları şunlardır: <strong>auf, über, für, an, um, gegen</strong>.</p>
+          <div class="lesson-ex-box">
+            sich interessieren <strong>für + Akk</strong> ➔ Ich interessiere mich für <strong>den</strong> Kurs.<br>
+            <span class="tr">(Kursla ilgileniyorum.)</span>
+          </div>
+          
+          <div class="lesson-section-title">2. Dativ (E-Hali) Alan Edatlar</div>
+          <p>Almanca fiillerle en sık kullanılan Dativ edatları şunlardır: <strong>mit, bei, von, zu, nach, aus, unter, vor</strong>.</p>
+          <div class="lesson-ex-box">
+            telefonieren <strong>mit + Dat</strong> ➔ Ich telefoniere mit <strong>meinem</strong> Vater.<br>
+            <span class="tr">(Babamla telefonlaşıyorum.)</span>
+          </div>
+          
+          <div class="lesson-section-title">Çift Durumlu (Wechselpräpositionen) Edatlar</div>
+          <p><strong>an, in, auf, unter, vor</strong> gibi edatlar normalde hareket yönüne göre Akkusativ veya Dativ alırlar. Ancak fiillerle kalıplaştıklarında bu kural devre dışı kalır ve fiil hangi durumu seçmişse edat o durumda sabitlenir:</p>
+          <ul>
+            <li><strong>denken an + Akk:</strong> "an dich denken" (Seni düşünmek - sabit Akkusativ)</li>
+            <li><strong>zweifeln an + Dat:</strong> "am Erfolg zweifeln" (Başarıdan şüphe etmek - sabit Dativ)</li>
+          </ul>
+          
+          <div class="lesson-actions" style="margin-top: 20px;">
+            <button class="rbtn" onclick="startQuizFromLesson('standard', 'Akk')" style="width: 100%;">🎯 Akkusativ Alıştırması Çöz</button>
+            <button class="fnbtn" onclick="startQuizFromLesson('standard', 'Dat')" style="width: 100%; padding: 12px; border-radius: var(--r-pill);">🍀 Dativ Alıştırması Çöz</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
 }
 
 // ═══════════════════════════════════════════
