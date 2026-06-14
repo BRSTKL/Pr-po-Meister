@@ -1379,6 +1379,7 @@ let currentQuestion={correct:'',ex:'',tr:''};
 let selectedPA = { prefix: '', prep: '' };
 let PA = [];
 let wqState = { cat: 'all', data: [], idx: 0, score: 0, answered: false };
+let rqState = { cat: 'all', data: [], idx: 0, score: 0, answered: false };
 
 function initPAData() {
   const vowels = ['a', 'e', 'i', 'o', 'u', 'ä', 'ö', 'ü', 'A', 'E', 'I', 'O', 'U', 'Ä', 'Ö', 'Ü'];
@@ -1834,7 +1835,7 @@ function showQuizSetup(){
   const c = document.getElementById('quiz-c');
   if(!c) return;
   
-  const showFilters = quizSettings.type !== 'wurde_geworden_worden';
+  const showFilters = quizSettings.type !== 'wurde_geworden_worden' && quizSettings.type !== 'reflexive_pronouns';
   
   c.innerHTML = `
     <div class="setup-card" style="background: var(--bg-card); border: 1px solid var(--border-1); border-radius: var(--r-lg); padding: 20px; display: flex; flex-direction: column; gap: 16px;">
@@ -1847,6 +1848,7 @@ function showQuizSetup(){
           <button class="fb fb-all ${quizSettings.type==='standard'?'on':''}" onclick="setQuizSetting('type','standard',this)">Edatlar & Anlamlar</button>
           <button class="fb fb-starred ${quizSettings.type==='pa'?'on':''}" onclick="setQuizSetting('type','pa',this)">Edat Zamirleri (da/wo)</button>
           <button class="fb fb-b1 ${quizSettings.type==='wurde_geworden_worden'?'on':''}" onclick="setQuizSetting('type','wurde_geworden_worden',this)">wurde / geworden / worden</button>
+          <button class="fb fb-b2 ${quizSettings.type==='reflexive_pronouns'?'on':''}" onclick="setQuizSetting('type','reflexive_pronouns',this)">Dönüşlü Zamirler (Akk vs. Dat)</button>
         </div>
       </div>
 
@@ -1904,12 +1906,24 @@ function setQuizSetting(key, val, btn){
   if (key === 'type') {
     const filtersContainer = document.getElementById('quiz-filters-container');
     if (filtersContainer) {
-      filtersContainer.style.display = val === 'wurde_geworden_worden' ? 'none' : 'flex';
+      const show = val !== 'wurde_geworden_worden' && val !== 'reflexive_pronouns';
+      filtersContainer.style.display = show ? 'flex' : 'none';
       filtersContainer.style.flexDirection = 'column';
       filtersContainer.style.gap = '16px';
     }
   }
 }
+
+function startQuizFromLesson(type, filter) {
+  switchTab('quiz');
+  quizSettings.type = type;
+  if (type === 'standard' && filter) {
+    quizSettings.kasus = filter;
+  }
+  showQuizSetup();
+  startQuiz();
+}
+
 
 function toggleQuizLevel(level, btn) {
   const settings = quizSettings;
@@ -2240,6 +2254,8 @@ function startQuiz(){
     pqIdx=0;pqScore=0;renderPAQuiz();
   } else if (quizSettings.type === 'wurde_geworden_worden') {
     startWurdeQuiz();
+  } else if (quizSettings.type === 'reflexive_pronouns') {
+    startReflexiveQuiz();
   } else {
     let pool=V;
     if(quizSettings.levels && quizSettings.levels.length < 4){
@@ -2482,29 +2498,229 @@ function setWurdeQuizCat(cat) {
   startWurdeQuiz();
 }
 
-// ═══════════════════════════════════════════
-// GRAMMAR LESSONS (KONU ANLATIMI)
-// ═══════════════════════════════════════════
-let currentLesson = null;
+function generateReflexiveQuizData() {
+  const list = [];
+  
+  // 1. Gather reflexive verbs from V (which are Akkusativ reflexive in V)
+  V.forEach(item => {
+    if (item.v.startsWith('sich ')) {
+      const ex = item.ex;
+      const matches = [];
+      const words = ex.toLowerCase().replace(/[.,!?;:]/g, '').split(/\s+/);
+      
+      const akkPronouns = ['mich', 'dich', 'sich', 'uns', 'euch'];
+      akkPronouns.forEach(p => {
+        if (words.includes(p)) {
+          matches.push(p);
+        }
+      });
+      
+      if (matches.length > 0) {
+        let correctPronoun = matches[0];
+        if (matches.length > 1) {
+          const firstWord = words[0];
+          if (firstWord === 'ich') correctPronoun = 'mich';
+          else if (firstWord === 'du') correctPronoun = 'dich';
+          else if (firstWord === 'wir') correctPronoun = 'uns';
+          else if (firstWord === 'ihr') correctPronoun = 'euch';
+          else correctPronoun = 'sich';
+        }
+        
+        const regex = new RegExp('\\b' + correctPronoun + '\\b', 'i');
+        const qText = item.ex.replace(regex, '___');
+        
+        if (qText !== item.ex) {
+          list.push({
+            verb: item.v,
+            q: qText,
+            a: correctPronoun,
+            o: getReflexivePronounOptions(correctPronoun),
+            e: `<strong>${item.v}</strong> fiili Akkusativ dönüşlü zamir alır. Cümledeki özneye göre uygun zamir: <strong>${correctPronoun}</strong>.`,
+            tr: item.tr
+          });
+        }
+      }
+    }
+  });
 
-function startQuizFromLesson(type, kasus = 'all') {
-  quizSettings.type = type;
-  quizSettings.kasus = kasus;
-  quizSettings.levels = ['A1', 'A2', 'B1', 'B2'];
-  quizSettings.starredOnly = false;
-  switchTab('quiz');
-  startQuiz();
+  // 2. Dativ reflexive verbs
+  const dativVerbs = [
+    { v: 'sich etwas merken', ex: 'Ich merke mir die Telefonnummer.', a: 'mir', tr: 'Telefon numarasını aklımda tutuyorum.', e: 'sich etwas merken → Dativ Reflexivpronomen: mir (ich)' },
+    { v: 'sich etwas merken', ex: 'Kannst du dir diesen Namen merken?', a: 'dir', tr: 'Bu ismi aklında tutabilir misin?', e: 'sich etwas merken → Dativ: dir (du)' },
+    { v: 'sich etwas vorstellen', ex: 'Ich kann mir ein Leben ohne Handy nicht vorstellen.', a: 'mir', tr: 'Telefonsuz bir hayatı hayal edemiyorum.', e: 'sich etwas vorstellen → Dativ: mir (ich)' },
+    { v: 'sich etwas vorstellen', ex: 'Stell dir vor, du gewinnst im Lotto!', a: 'dir', tr: 'Hayal et, lottoyu kazandın!', e: 'sich etwas vorstellen → Dativ: dir (du)' },
+    { v: 'sich etwas leisten können', ex: 'Ich kann mir dieses Auto nicht leisten.', a: 'mir', tr: 'Bu arabaya gücüm yetmiyor.', e: 'sich etwas leisten können → Dativ: mir (ich)' },
+    { v: 'sich etwas leisten können', ex: 'Wir können uns jedes Jahr einen Urlaub leisten.', a: 'uns', tr: 'Her yıl bir tatile gücümüz yetiyor.', e: 'sich etwas leisten können → Dativ: uns (wir)' },
+    { v: 'sich etwas wünschen', ex: 'Ich wünsche mir ein neues Fahrrad zum Geburtstag.', a: 'mir', tr: 'Doğum günüm için yeni bir bisiklet diliyorum.', e: 'sich etwas wünschen → Dativ: mir (ich)' },
+    { v: 'sich etwas wünschen', ex: 'Was wünschst du dir fürs new Jahr?', a: 'dir', tr: 'Yeni yıl için ne diliyorsun?', e: 'sich etwas wünschen → Dativ: dir (du)' },
+    { v: 'sich etwas überlegen', ex: 'Ich überlege mir, ob ich den Job annehme.', a: 'mir', tr: 'İşi kabul edip etmeyeceğimi düşünüyorum.', e: 'sich etwas überlegen → Dativ: mir (ich)' },
+    { v: 'sich etwas überlegen', ex: 'Überleg dir das gut, bevor du unterschreibst.', a: 'dir', tr: 'İmzalamadan önce bunu iyice düşün.', e: 'sich etwas überlegen → Dativ: dir (du)' },
+    { v: 'sich etwas kaufen', ex: 'Ich habe mir ein neues Book gekauft.', a: 'mir', tr: 'Kendime yeni bir kitap aldım.', e: 'sich etwas kaufen → Dativ: mir (ich)' },
+    { v: 'sich etwas kaufen', ex: 'Kauf dir doch endlich neue Schuhe!', a: 'dir', tr: 'Kendine artık yeni ayakkabı al!', e: 'sich etwas kaufen → Dativ: dir (du)' },
+    { v: 'sich Sorgen machen', ex: 'Ich mache mir Sorgen um die Zukunft.', a: 'mir', tr: 'Gelecek hakkında endişeleniyorum.', e: 'sich Sorgen machen → Dativ: mir (ich)' },
+    { v: 'sich Sorgen machen', ex: 'Macht euch keine Sorgen, alles wird gut.', a: 'euch', tr: 'Endişelenmeyin, her şey iyi olacak.', e: 'sich Sorgen machen → Dativ: euch (ihr)' },
+    { v: 'sich Sorgen machen', ex: 'Sie macht sich Sorgen um ihre Eltern.', a: 'sich', tr: 'Ebeveynleri hakkında endişeleniyor.', e: 'sich Sorgen machen → Dativ: sich (sie)' }
+  ];
+
+  dativVerbs.forEach(item => {
+    const regex = new RegExp('\\b' + item.a + '\\b', 'i');
+    const qText = item.ex.replace(regex, '___');
+    list.push({
+      verb: item.v,
+      q: qText,
+      a: item.a,
+      o: getReflexivePronounOptions(item.a),
+      e: item.e,
+      tr: item.tr
+    });
+  });
+
+  return list;
+}
+
+function getReflexivePronounOptions(correct) {
+  const all = ['mich', 'mir', 'dich', 'dir', 'sich', 'uns', 'euch'];
+  const filtered = all.filter(p => p !== correct);
+  const distractors = filtered.sort(() => Math.random() - 0.5).slice(0, 3);
+  return [correct, ...distractors].sort(() => Math.random() - 0.5);
+}
+
+function startReflexiveQuiz() {
+  let pool = generateReflexiveQuizData();
+  
+  if (rqState.cat === 'akk') {
+    pool = pool.filter(q => !['mir', 'dir'].includes(q.a) && !q.e.includes('Dativ'));
+  } else if (rqState.cat === 'dat') {
+    pool = pool.filter(q => ['mir', 'dir'].includes(q.a) || q.e.includes('Dativ'));
+  }
+  
+  const shuffled = [...pool].sort(() => Math.random() - 0.5);
+  rqState.data = shuffled.slice(0, Math.min(10, shuffled.length));
+  rqState.idx = 0;
+  rqState.score = 0;
+  rqState.answered = false;
+  renderReflexiveQuiz();
+}
+
+function renderReflexiveQuiz() {
+  const c = document.getElementById('quiz-c');
+  if (!c) return;
+  
+  if (rqState.idx >= rqState.data.length) {
+    recordQuizCompletion(rqState.score, rqState.data.length);
+    const pct = Math.round(rqState.score / rqState.data.length * 100);
+    const emoji = pct >= 80 ? '🎉' : pct >= 50 ? '👍' : '💪';
+    c.innerHTML = `
+      <div class="scard">
+        <div style="font-size:40px;margin-bottom:10px">${emoji}</div>
+        <div class="sbig">${rqState.score}/${rqState.data.length}</div>
+        <div class="slbl">%${pct} başarı</div>
+        <div style="display: flex; flex-direction: column; gap: 8px; max-width: 240px; margin: 0 auto; width: 100%;">
+          <button class="rbtn" onclick="startReflexiveQuiz()" style="width: 100%;">Aynı Ayarlarla Tekrarla</button>
+          <button class="fnbtn" onclick="showQuizSetup()" style="width: 100%; padding: 12px; border-radius: var(--r-pill);">Ayarları Değiştir</button>
+        </div>
+      </div>
+    `;
+    return;
+  }
+  
+  const q = rqState.data[rqState.idx];
+  const pct = Math.round(rqState.idx / rqState.data.length * 100);
+  
+  const catBadgeClass = q.a === 'mir' || q.a === 'dir' || q.e.includes('Dativ') ? 'bg-wurde-badge' : 'bg-geworden-badge';
+  const badgeHtml = `<span class="lvlbadge ${catBadgeClass}">${q.a === 'mir' || q.a === 'dir' || q.e.includes('Dativ') ? 'Dativ' : 'Akkusativ'}</span>`;
+  
+  let filtersHtml = `
+    <div class="filters" style="margin-bottom: 14px; padding-bottom: 2px;">
+      <button class="fb fb-all ${rqState.cat === 'all' ? 'on' : ''}" onclick="setReflexiveQuizCat('all')">Tümü</button>
+      <button class="fb fb-a1 ${rqState.cat === 'akk' ? 'on' : ''}" onclick="setReflexiveQuizCat('akk')">Akkusativ</button>
+      <button class="fb fb-a2 ${rqState.cat === 'dat' ? 'on' : ''}" onclick="setReflexiveQuizCat('dat')">Dativ</button>
+    </div>
+  `;
+  
+  const sent = q.q.replace('___', '<span class="blank">___</span>');
+  
+  c.innerHTML = `
+    ${filtersHtml}
+    <div class="ptxt" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+      <span>${rqState.idx + 1} / ${rqState.data.length}</span>
+      ${badgeHtml}
+    </div>
+    <div class="pbar"><div class="pfill" style="width:${pct}%"></div></div>
+    <div class="qcard">
+      <div class="qtype">Cümledeki boşluğa uygun dönüşlü zamiri seçin</div>
+      <div class="qsent">${sent}</div>
+      <div class="opts" id="reflexive-opts">
+        ${q.o.map(o => `<button class="obtn" data-val="${o}" onclick="checkReflexiveQ(this)">${o}</button>`).join('')}
+      </div>
+      <div id="rqfb"></div>
+    </div>
+  `;
+}
+
+function checkReflexiveQ(btn) {
+  if (rqState.answered) return;
+  rqState.answered = true;
+  
+  const q = rqState.data[rqState.idx];
+  const chosen = btn.getAttribute('data-val');
+  const correct = q.a;
+  const isOk = chosen === correct;
+  
+  if (isOk) rqState.score++;
+  
+  document.querySelectorAll('#reflexive-opts .obtn').forEach(b => {
+    b.disabled = true;
+    const t = b.getAttribute('data-val');
+    if (t === correct) {
+      b.classList.add(isOk && t === chosen ? 'correct' : 'show-ok');
+    } else if (t === chosen && !isOk) {
+      b.classList.add('wrong');
+    }
+  });
+  
+  const fb = document.getElementById('rqfb');
+  if (fb) {
+    fb.innerHTML = `
+      <div class="fb2 ${isOk ? 'ok' : 'no'}">
+        ${isOk ? '✓ Doğru!' : '✗ Yanlış — Doğru: <strong>' + correct + '</strong>'}
+        <div style="margin-top:6px;font-size:12px;opacity:.85;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+          <div>📌 ${q.q.replace('___', '<strong>' + correct + '</strong>')}</div>
+          <button class="speak-btn" onclick="speak('${q.q.replace('___', correct).replace(/'/g, "\\'")}')" style="padding:2px;color:inherit;opacity:0.8;" title="Telaffuz et"><svg viewBox="0 0 24 24" style="width:14px;height:14px;"><path fill="currentColor" d="M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.85 14,18.71V20.77C18,19.86 21,16.28 21,12C21,7.72 18,4.14 14,3.23M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16C15.5,15.29 16.5,13.77 16.5,12M3,9V15H7L12,20V4L7,9H3Z"/></svg></button>
+        </div>
+        <div style="margin-top:4px;font-size:11px;opacity:.85;">
+          ${q.e}
+        </div>
+      </div>
+      <button class="nbtn" onclick="nextReflexiveQ()" style="width:100%; margin-top:12px;">
+        ${rqState.idx + 1 >= rqState.data.length ? 'Sonuçları Gör' : 'Sonraki →'}
+      </button>
+    `;
+  }
+  
+  speak(q.q.replace('___', correct));
+}
+
+function nextReflexiveQ() {
+  rqState.idx++;
+  renderReflexiveQuiz();
+}
+
+function setReflexiveQuizCat(cat) {
+  rqState.cat = cat;
+  startReflexiveQuiz();
 }
 
 function renderLessons() {
   const c = document.getElementById('pa-lessons-c');
   if (!c) return;
+
   
   if (currentLesson === null) {
     c.innerHTML = `
       <div class="sec-head">
         <div class="sec-title">Konu Anlatımları</div>
-        <div class="sec-badge">4 Ders</div>
+        <div class="sec-badge">5 Ders</div>
       </div>
       
       <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 8px;">
@@ -2526,6 +2742,11 @@ function renderLessons() {
         <div class="lesson-card" onclick="currentLesson = 4; renderLessons();">
           <div class="lesson-card-title">⚖️ Ders 4: wurde / geworden / worden</div>
           <div class="lesson-card-desc">wurde, geworden ve worden yardımcı fiillerinin anlam farkları, kullanım mantığı, karşılaştırma tablosu ve karar akışları.</div>
+        </div>
+
+        <div class="lesson-card" onclick="currentLesson = 5; renderLessons();">
+          <div class="lesson-card-title">⚖️ Ders 5: Dativ Alan Dönüşlü Fiiller (Reflexive Verben im Dativ)</div>
+          <div class="lesson-card-desc">Dönüşlü zamirin (Reflexivpronomen) Dativ durumunda çekimlendiği fiiller, kuralları, zamir karşılaştırma tablosu ve örnek fiil kartları.</div>
         </div>
       </div>
     `;
@@ -2767,6 +2988,107 @@ function renderLessons() {
 
           <div class="lesson-actions" style="margin-top: 20px;">
             <button class="rbtn" onclick="startQuizFromLesson('wurde_geworden_worden')" style="width: 100%;">🚀 wurde/geworden/worden Alıştırması Çöz</button>
+          </div>
+        </div>
+      </div>
+    `;
+  } else if (currentLesson === 5) {
+    c.innerHTML = `
+      <button class="back-btn" onclick="currentLesson = null; renderLessons();">
+        ← Konulara Dön
+      </button>
+      
+      <div class="lesson-detail">
+        <div class="lesson-title">⚖️ Ders 5: Dativ Alan Dönüşlü Fiiller (Reflexive Verben im Dativ)</div>
+        <div class="lesson-content">
+          <p>Almanca'da dönüşlü fiillerin (reflexive Verben) büyük çoğunluğunda dönüşlü zamir (Reflexivpronomen) Akkusativ (belirtme) durumundadır. Ancak bazı fiillerde dönüşlü zamir <strong>Dativ</strong> durumunda çekimlenir. Bunun temel nedeni, cümlede zaten doğrudan bir <strong>Akkusativ nesnenin (etwas)</strong> bulunmasıdır.</p>
+          
+          <div class="lesson-section-title">Temel Cümle Yapısı</div>
+          <p>Dativ alan dönüşlü fiillerde cümle yapısı şöyledir:</p>
+          <div class="lesson-ex-box" style="font-family: var(--font-mono); font-style: normal;">
+            Subjekt + Verb + Reflexivpronomen (Dativ) + Akkusativ-Objekt
+          </div>
+          <p>Örnek: <em>Ich merke <strong class="c-wurde">mir</strong> die Telefonnummer.</em></p>
+          <ul>
+            <li><strong>Subjekt:</strong> Ich</li>
+            <li><strong>Reflexivpronomen (Dativ):</strong> mir (Kendime)</li>
+            <li><strong>Akkusativ-Objekt:</strong> die Telefonnummer (Telefon numarasını)</li>
+          </ul>
+
+          <div class="lesson-section-title" style="margin-top: 20px; border-top: 1px solid var(--border-2); padding-top: 15px;">Dönüşlü Zamirler Tablosu (Akkusativ vs. Dativ)</div>
+          <p>Dönüşlü zamirler Dativ durumunda sadece <strong>ich</strong> (mich ➔ mir) ve <strong>du</strong> (dich ➔ dir) için değişir. Diğer tüm şahıslarda zamirler Akkusativ ile aynı kalır.</p>
+          <div class="table-wrapper" style="margin-top: 8px;">
+            <table class="pa-table">
+              <thead><tr><th>Kişi</th><th>Reflexiv Akkusativ</th><th>Reflexiv Dativ</th></tr></thead>
+              <tbody>
+                <tr><td>ich</td><td>mich</td><td><strong class="c-wurde">mir</strong></td></tr>
+                <tr><td>du</td><td>dich</td><td><strong class="c-wurde">dir</strong></td></tr>
+                <tr><td>er / sie / es</td><td>sich</td><td><strong class="c-wurde">sich</strong></td></tr>
+                <tr><td>wir</td><td>uns</td><td><strong class="c-wurde">uns</strong></td></tr>
+                <tr><td>ihr</td><td>euch</td><td><strong class="c-wurde">euch</strong></td></tr>
+                <tr><td>sie / Sie</td><td>sich</td><td><strong class="c-wurde">sich</strong></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="lesson-section-title">💡 En Sık Yapılan Hata</div>
+          <div class="flow-card">
+            <div class="flow-branch" style="color: var(--red); font-weight: 600;">❌ Ich kann mich das nicht vorstellen.</div>
+            <div class="flow-branch" style="color: var(--green); font-weight: 600;">✅ Ich kann mir das nicht vorstellen.</div>
+            <div style="font-size: 11px; color: var(--text-2); margin-top: 6px; line-height: 1.4;">
+              Burada "das" cümlenin Akkusativ nesnesidir, bu nedenle dönüşlü zamir mutlaka Dativ ("mir") olmak zorundadır.
+            </div>
+          </div>
+
+          <div class="lesson-section-title" style="margin-top: 20px; border-top: 1px solid var(--border-2); padding-top: 15px;">Çalışılması Gereken Başlıca Dativ Dönüşlü Fiiller</div>
+          
+          <div class="flow-card">
+            <div class="flow-q">sich etwas merken <span class="lvlbadge bg-wurde-badge">Dativ</span></div>
+            <div style="font-size:12px; color:var(--text-2); margin-bottom:6px;">Bir şeyi aklında tutmak / ezberlemek</div>
+            <div class="lesson-ex-box">Ich merke <strong>mir</strong> die Nummer. <span class="tr">(Numarayı aklımda tutuyorum.)</span></div>
+            <div class="lesson-ex-box">Kannst du <strong>dir</strong> den Namen merken? <span class="tr">(Bu ismi aklında tutabilir misin?)</span></div>
+          </div>
+
+          <div class="flow-card">
+            <div class="flow-q">sich etwas vorstellen <span class="lvlbadge bg-wurde-badge">Dativ</span></div>
+            <div style="font-size:12px; color:var(--text-2); margin-bottom:6px;">Bir şeyi hayal etmek / zihninde canlandırmak</div>
+            <div class="lesson-ex-box">Ich can <strong>mir</strong> ein Leben ohne Handy nicht vorstellen. <span class="tr">(Telefonsuz bir hayatı hayal edemiyorum.)</span></div>
+            <div class="lesson-ex-box">Stell <strong>dir</strong> vor, du gewinnst im Lotto! <span class="tr">(Düşün bir kere, lotoyu kazandın!)</span></div>
+          </div>
+
+          <div class="flow-card">
+            <div class="flow-q">sich etwas leisten <span class="lvlbadge bg-wurde-badge">Dativ</span></div>
+            <div style="font-size:12px; color:var(--text-2); margin-bottom:6px;">Bir şeye (maddi/manevi) gücü yetmek</div>
+            <div class="lesson-ex-box">Ich can <strong>mir</strong> bu pahalı arabayı leisten. <span class="tr">(Bu pahalı arabaya gücüm yetmiyor.)</span></div>
+            <div class="lesson-ex-box">Wir können <strong>uns</strong> einen Urlaub leisten. <span class="tr">(Tatile gücümüz yetiyor.)</span></div>
+          </div>
+
+          <div class="flow-card">
+            <div class="flow-q">sich etwas wünschen <span class="lvlbadge bg-wurde-badge">Dativ</span></div>
+            <div style="font-size:12px; color:var(--text-2); margin-bottom:6px;">Kendine bir şey dilemek / istemek</div>
+            <div class="lesson-ex-box">Ich wünsche <strong>mir</strong> ein neues Buch. <span class="tr">(Yeni bir kitap diliyorum.)</span></div>
+          </div>
+
+          <div class="flow-card">
+            <div class="flow-q">sich etwas überlegen <span class="lvlbadge bg-wurde-badge">Dativ</span></div>
+            <div style="font-size:12px; color:var(--text-2); margin-bottom:6px;">Bir konuyu enine boyuna düşünmek / karar vermek</div>
+            <div class="lesson-ex-box">Ich überlege <strong>mir</strong>, ob ich den Job annehme. <span class="tr">(İşi kabul edip etmeyeceğimi düşünüyorum.)</span></div>
+          </div>
+
+          <div class="flow-card">
+            <div class="flow-q">sich etwas kaufen <span class="lvlbadge bg-wurde-badge">Dativ</span></div>
+            <div style="font-size:12px; color:var(--text-2); margin-bottom:6px;">Kendine bir şey satın almak</div>
+            <div class="lesson-ex-box">Ich habe <strong>mir</strong> ein neues Sofa gekauft. <span class="tr">(Kendime yeni bir kanepe satın aldım.)</span></div>
+          </div>
+
+          <div class="flow-card">
+            <div class="flow-q">sich Sorgen machen <span class="lvlbadge bg-wurde-badge">Dativ</span></div>
+            <div style="font-size:12px; color:var(--text-2); margin-bottom:6px;">Endişelenmek / kaygılanmak</div>
+            <div class="lesson-ex-box">Ich mache <strong>mir</strong> Sorgen um die Zukunft. <span class="tr">(Gelecek hakkında endişeleniyorum.)</span></div>
+          </div>
+
+          <div class="lesson-actions" style="margin-top: 20px;">
+            <button class="rbtn" onclick="startQuizFromLesson('reflexive_pronouns')" style="width: 100%;">🚀 Dönüşlü Zamirler Alıştırması Çöz</button>
           </div>
         </div>
       </div>
